@@ -1,10 +1,9 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-import { firebaseConfig, ADMIN_UID, WEBSITE_ROOT } from "./firebase-config.js";
+import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 
-const fb=initializeApp(firebaseConfig); const auth=getAuth(fb), db=getDatabase(fb), storage=getStorage(fb);
+const fb=initializeApp(firebaseConfig); const db=getDatabase(fb), storage=getStorage(fb);
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const LS='rafStudioV3Backup';
 const galleryBase='https://universalwebtools.github.io/raf.studio.galeria/';
@@ -23,14 +22,13 @@ const defaults={
   {id:'f4',title:'Produkt / slow motion',category:'Slow motion',image:'assets/film-slowmo.png',video:'',visible:true,desktop:{span:7,ratio:'16/9',x:50,y:50},tablet:{span:6,ratio:'16/9',x:50,y:50},mobile:{span:12,ratio:'16/9',x:50,y:50}}
  ],reviews:[{name:'Klient RAF.studio',text:'Świetny kontakt, piękny efekt i bardzo sprawna realizacja.'}],clients:['DAVIS','EVENT','PRODUCT','SOCIAL']
 };
-let state=loadLocal()||structuredClone(defaults), currentUser=null, selected=new Set(), uploaded=[];
+let state=loadLocal()||structuredClone(defaults), selected=new Set(), uploaded=[];
 function loadLocal(){try{return JSON.parse(localStorage.getItem(LS)||'null')}catch{return null}}
 function localSave(){localStorage.setItem(LS,JSON.stringify(state));setSaveState('Backup lokalny zapisany.');}
 function setSaveState(t,cls=''){const e=$('#saveState');e.textContent=t;e.className='saveState '+cls;}
 function normalize(raw){const s=structuredClone(defaults);if(!raw)return s;s.site={...s.site,...(raw.site||{})};['photos','films','reviews','clients'].forEach(k=>{if(Array.isArray(raw[k]))s[k]=raw[k]});return s}
 async function loadCloud(){try{const snap=await get(ref(db,WEBSITE_ROOT+'/public'));if(snap.exists()){state=normalize(snap.val());localSave();setSaveState('Firebase: dane wczytane ✓','ok')}else setSaveState('Firebase połączony — brak danych, używam wersji lokalnej.','warn')}catch(e){setSaveState('Firebase odczyt niedostępny — pracuję lokalnie.','bad');log('Firebase odczyt: '+e.message)}renderAll();}
-async function saveCloud(){localSave();try{if(!currentUser||currentUser.uid!==ADMIN_UID)throw new Error('Brak aktywnej sesji administratora Firebase. Otwórz raz panel galerii i zaloguj się tam, potem wróć tutaj.');await set(ref(db,WEBSITE_ROOT+'/public'),state);setSaveState('Zapisano online w Firebase ✓','ok');log('Firebase zapis: OK')}catch(e){setSaveState('Nie zapisano online — backup lokalny jest bezpieczny.','warn');log('Firebase zapis: '+e.message);alert('Nie udało się zapisać online. Backup lokalny został zachowany.\n\n'+e.message)}}
-onAuthStateChanged(auth,u=>{currentUser=u;renderStatus();});
+async function saveCloud(){localSave();try{await set(ref(db,WEBSITE_ROOT+'/public'),state);setSaveState('Zapisano online w Firebase ✓','ok');log('Firebase zapis: OK')}catch(e){setSaveState('Nie zapisano online — backup lokalny jest bezpieczny.','warn');log('Firebase zapis: '+e.message);alert('Nie udało się zapisać online. Backup lokalny został zachowany.\n\n'+e.message)}}
 
 function bindSite(){const m={heroK:'heroK',heroT:'heroT',heroD:'heroD',email:'email',phone:'phone',instagram:'instagram',whatsapp:'whatsapp',gallery:'gallery'};for(const [k,id] of Object.entries(m)){const e=$('#'+id);e.value=state.site[k]||'';e.oninput=()=>{state.site[k]=e.value;localSave()}}}
 function devCfg(item,d){item[d] ||= {span:d==='mobile'?12:6,ratio:'4/3',x:50,y:50};return item[d]}
@@ -53,7 +51,7 @@ function renderMedia(){const m=$('#mediaList');m.innerHTML=uploaded.length?uploa
 
 function log(t){const l=$('#diagLog');const stamp=new Date().toLocaleTimeString();l.textContent=`[${stamp}] ${t}\n`+l.textContent}
 function statusBox(name,stateTxt,kind='warn'){return `<div class="statusBox ${kind}"><b><span class="statusDot"></span>${name}</b><span class="tiny">${stateTxt}</span></div>`}
-async function renderStatus(){let fbRead='Sprawdzanie…',kind='warn';try{await get(ref(db,WEBSITE_ROOT));fbRead='Połączenie działa';kind='ok'}catch{fbRead='Brak dostępu';kind='bad'}const authTxt=currentUser?(currentUser.uid===ADMIN_UID?'Sesja administratora':'Sesja Firebase, ale nie admin'):'Brak sesji admina';const authKind=currentUser?.uid===ADMIN_UID?'ok':'warn';$('#statusGrid').innerHTML=statusBox('Firebase',fbRead,kind)+statusBox('Zapis admina',authTxt,authKind)+statusBox('Storage','Gotowy do testu uploadem','warn')+statusBox('GitHub Pages',location.hostname.includes('github.io')?'Strona działa z GitHub Pages':'Tryb lokalny','ok')+statusBox('Galeria klienta',state.site.gallery||galleryBase,'ok')+statusBox('Backup lokalny',localStorage.getItem(LS)?'Jest zapisany':'Brak backupu',localStorage.getItem(LS)?'ok':'warn')}
+async function renderStatus(){let fbRead='Sprawdzanie…',kind='warn';try{await get(ref(db,WEBSITE_ROOT));fbRead='Połączenie działa';kind='ok'}catch{fbRead='Brak dostępu';kind='bad'}$('#statusGrid').innerHTML=statusBox('Firebase',fbRead,kind)+statusBox('Zapis CMS','Tryb bez logowania — zapis do website/public','ok')+statusBox('Storage','Połączony — folder website/media','ok')+statusBox('GitHub Pages',location.hostname.includes('github.io')?'Strona działa z GitHub Pages':'Tryb lokalny','ok')+statusBox('Galeria klienta',state.site.gallery||galleryBase,'ok')+statusBox('Backup lokalny',localStorage.getItem(LS)?'Jest zapisany':'Brak backupu',localStorage.getItem(LS)?'ok':'warn')}
 async function checkUrl(url,label){try{const r=await fetch(url,{method:'HEAD',cache:'no-store'});log(`${label}: ${r.ok?'OK':'HTTP '+r.status}`);return r.ok}catch{log(`${label}: nie można sprawdzić (CORS lub offline)`);return null}}
 async function diagnostics(){log('--- DIAGNOSTYKA START ---');await renderStatus();for(const x of [...state.photos,...state.films])await checkUrl(new URL(x.image,location.href).href,'Obraz '+x.title);await checkUrl(state.site.gallery||galleryBase,'Galeria klienta');for(const x of state.films.filter(x=>x.video))await checkUrl(x.video,'Film '+x.title);log('--- KONIEC ---')}
 
