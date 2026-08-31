@@ -5,7 +5,8 @@ import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const fb = initializeApp(firebaseConfig);
 const db = getDatabase(fb);
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
-const galleryUrl='https://universalwebtools.github.io/raf.studio.galeria/';
+const galleryUrl='https://galeria.raf-studio.pl/';
+const legacyGalleryUrl='https://universalwebtools.github.io/raf.studio.galeria/';
 
 const defaults={
   site:{heroK:'FOTOGRAFIA • FILM • BIELSKO-BIAŁA',heroT:'OBRAZ, KTÓRY ZOSTAJE.',heroD:'Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.',email:'',phone:'',instagram:'',whatsapp:'',gallery:galleryUrl},
@@ -29,6 +30,7 @@ let state=structuredClone(defaults);
 function mergeState(remote){
   if(!remote)return;
   state.site={...state.site,...(remote.site||{})};
+  if(!state.site.gallery || state.site.gallery===legacyGalleryUrl || state.site.gallery.includes('universalwebtools.github.io/raf.studio.galeria')) state.site.gallery=galleryUrl;
   if(Array.isArray(remote.photos))state.photos=remote.photos;
   if(Array.isArray(remote.films))state.films=remote.films;
   if(Array.isArray(remote.reviews))state.reviews=remote.reviews;
