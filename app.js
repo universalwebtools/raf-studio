@@ -1,41 +1,85 @@
-const RAF_DEFAULTS={
-  contact:{email:'kontakt@raf-studio.pl',phone:'+48 000 000 000',instagram:'#',whatsapp:'#',gallery:'https://universalwebtools.github.io/raf.studio.galeria/'},
-  hero:{kicker:'FOTOGRAFIA • FILM • BIELSKO-BIAŁA',title:'OBRAZ, KTÓRY ZOSTAJE.',text:'Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.'},
-  photo:[
-   {id:'wedding',title:'Śluby / reportaż',cat:'Śluby',img:'assets/photo-wedding.png',span:7,ratio:'4/3',x:50,y:50,visible:true},
-   {id:'session',title:'Sesje',cat:'Sesje',img:'assets/photo-session.png',span:5,ratio:'4/3',x:50,y:46,visible:true},
-   {id:'product',title:'Produkt',cat:'Produkt',img:'assets/photo-product.png',span:4,ratio:'1/1',x:50,y:50,visible:true},
-   {id:'event',title:'Eventy / marki',cat:'Eventy',img:'assets/photo-event.png',span:8,ratio:'16/9',x:50,y:50,visible:true}],
-  film:[
-   {id:'ad',title:'Film reklamowy',cat:'Reklama',img:'assets/film-ad.png',span:8,ratio:'16/9',x:50,y:50,url:'',visible:true},
-   {id:'social',title:'Social media',cat:'Social media',img:'assets/film-social.png',span:4,ratio:'9/16',x:50,y:50,url:'',visible:true},
-   {id:'eventfilm',title:'Event',cat:'Event',img:'assets/film-event.png',span:5,ratio:'16/9',x:50,y:50,url:'',visible:true},
-   {id:'slowmo',title:'Produkt / slow motion',cat:'Produkt',img:'assets/film-slowmo.png',span:7,ratio:'16/9',x:50,y:50,url:'',visible:true}],
-  reviews:[
-   {text:'Bardzo sprawna współpraca, świetny kontakt i materiał oddany w dokładnie takim stylu, jaki ustaliliśmy.',name:'Klient fotograficzny'},
-   {text:'Film wygląda nowocześnie i profesjonalnie. Cały proces od pomysłu do finalnego pliku był bardzo konkretny.',name:'Klient biznesowy'},
-   {text:'Naturalne zdjęcia, bez sztucznego pozowania. Dokładnie o taki reportaż nam chodziło.',name:'Para młoda'}],
-  clients:['DAVIS FABRICS','BRAND ONE','STUDIO X','EVENT LAB','LOCAL BUSINESS']
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getDatabase, ref, get, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
+
+const fb = initializeApp(firebaseConfig);
+const db = getDatabase(fb);
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const galleryUrl='https://universalwebtools.github.io/raf.studio.galeria/';
+
+const defaults={
+  site:{heroK:'FOTOGRAFIA • FILM • BIELSKO-BIAŁA',heroT:'OBRAZ, KTÓRY ZOSTAJE.',heroD:'Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.',email:'',phone:'',instagram:'',whatsapp:'',gallery:galleryUrl},
+  photos:[
+    {id:'p1',title:'Śluby / reportaż',category:'Śluby',image:'assets/photo-wedding.png',visible:true,desktop:{span:7,ratio:'4/3',x:50,y:50},tablet:{span:6,ratio:'4/3',x:50,y:50},mobile:{span:12,ratio:'4/3',x:50,y:50}},
+    {id:'p2',title:'Sesje',category:'Sesje',image:'assets/photo-session.png',visible:true,desktop:{span:5,ratio:'4/3',x:50,y:50},tablet:{span:6,ratio:'4/3',x:50,y:50},mobile:{span:12,ratio:'4/3',x:50,y:50}},
+    {id:'p3',title:'Produkt',category:'Produkt',image:'assets/photo-product.png',visible:true,desktop:{span:4,ratio:'4/3',x:50,y:50},tablet:{span:6,ratio:'4/3',x:50,y:50},mobile:{span:12,ratio:'1/1',x:50,y:50}},
+    {id:'p4',title:'Eventy / marki',category:'Event',image:'assets/photo-event.png',visible:true,desktop:{span:8,ratio:'4/3',x:50,y:50},tablet:{span:6,ratio:'4/3',x:50,y:50},mobile:{span:12,ratio:'4/3',x:50,y:50}}
+  ],
+  films:[
+    {id:'f1',title:'Film reklamowy',category:'Reklama',image:'assets/film-ad.png',video:'',visible:true,desktop:{span:8,ratio:'16/9',x:50,y:50},tablet:{span:6,ratio:'16/9',x:50,y:50},mobile:{span:12,ratio:'16/9',x:50,y:50}},
+    {id:'f2',title:'Social media',category:'Social media',image:'assets/film-social.png',video:'',visible:true,desktop:{span:4,ratio:'16/9',x:50,y:50},tablet:{span:6,ratio:'16/9',x:50,y:50},mobile:{span:12,ratio:'16/9',x:50,y:50}},
+    {id:'f3',title:'Event',category:'Event',image:'assets/film-event.png',video:'',visible:true,desktop:{span:5,ratio:'16/9',x:50,y:50},tablet:{span:6,ratio:'16/9',x:50,y:50},mobile:{span:12,ratio:'16/9',x:50,y:50}},
+    {id:'f4',title:'Produkt / slow motion',category:'Slow motion',image:'assets/film-slowmo.png',video:'',visible:true,desktop:{span:7,ratio:'16/9',x:50,y:50},tablet:{span:6,ratio:'16/9',x:50,y:50},mobile:{span:12,ratio:'16/9',x:50,y:50}}
+  ],
+  reviews:[{name:'Klient RAF.studio',text:'Świetny kontakt, piękny efekt i bardzo sprawna realizacja.'},{name:'Marka / event',text:'Materiały wyglądały dokładnie tak, jak chcieliśmy — nowocześnie i profesjonalnie.'}],
+  clients:['DAVIS','EVENT','PRODUCT','SOCIAL']
 };
-function rafCfg(){try{return {...RAF_DEFAULTS,...JSON.parse(localStorage.getItem('rafstudio_v2')||'{}')}}catch(e){return structuredClone(RAF_DEFAULTS)}}
-function saveCfg(c){localStorage.setItem('rafstudio_v2',JSON.stringify(c));window.dispatchEvent(new Event('raf-config-changed'))}
-function esc(s=''){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function nav(){const c=rafCfg();return `<nav class="nav"><div class="wrap navin"><a class="brand" href="index.html">RAF<span>.studio</span></a><div class="navlinks"><a class="hideMob" href="fotografia.html">Fotografia</a><a class="hideMob" href="film.html">Film</a><a class="hideMob" href="index.html#omnie">O mnie</a><a class="hideMob" href="index.html#kontakt">Kontakt</a><a class="pill hideMob" href="${esc(c.contact.gallery)}">Strefa klienta</a><a class="pill keep" href="admin.html">⚙ Admin</a></div></div></nav>`}
-function footer(){return `<footer class="wrap"><span>© ${new Date().getFullYear()} RAF.studio</span><span><a href="privacy.html">Polityka prywatności</a> • Fotografia • Film</span></footer>`}
-function floating(){const c=rafCfg();return `<div class="floatContact"><a class="dark" href="tel:${esc(c.contact.phone.replace(/\s/g,''))}" title="Telefon">☎</a><a href="${esc(c.contact.whatsapp)}" title="WhatsApp">W</a></div>`}
-function tileHTML(item,type){if(item.visible===false)return '';return `<article class="tile fade" data-id="${item.id}" data-type="${type}" style="--span:${item.span};--ratio:${item.ratio};--pos:${item.x}% ${item.y}%"><img src="${item.img}" alt="${esc(item.title)}"><div class="tileMeta"><div><div class="eyebrow">${type==='photo'?'Fotografia':'Film'} / ${esc(item.cat)}</div><div class="tileTitle">${esc(item.title)}</div></div>${type==='film'?'<div class="play">▶</div>':''}</div></article>`}
-function renderTiles(container,items,type,cat='Wszystkie'){container.innerHTML=items.filter(x=>cat==='Wszystkie'||x.cat===cat).map(x=>tileHTML(x,type)).join('');bindTiles(container,items,type);observe()}
-function bindTiles(container,items,type){container.querySelectorAll('.tile').forEach(el=>el.addEventListener('click',()=>{const item=items.find(x=>x.id===el.dataset.id);if(type==='film')openVideo(item);else openViewer(items.filter(x=>x.visible!==false),item.id)}))}
-function buildFilters(el,items,callback){const cats=['Wszystkie',...new Set(items.map(x=>x.cat))];el.innerHTML=cats.map((x,i)=>`<button class="filter ${i===0?'active':''}" data-cat="${esc(x)}">${esc(x)}</button>`).join('');el.querySelectorAll('.filter').forEach(b=>b.onclick=()=>{el.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');callback(b.dataset.cat)})}
-let viewerItems=[],viewerIndex=0;
-function ensureModals(){if(!document.querySelector('#rafViewer'))document.body.insertAdjacentHTML('beforeend',`<div class="viewer" id="rafViewer"><div class="viewerShell"><div class="viewerTop"><b id="viewerTitle">Zdjęcie</b><div class="viewerNav"><button class="iconBtn" id="viewerPrev">←</button><button class="iconBtn" id="viewerNext">→</button><button class="iconBtn" id="viewerClose">✕</button></div></div><div class="viewerMedia"><img id="viewerImg"></div></div></div><div class="videoModal" id="rafVideo"><div class="videoShell"><div class="videoTop"><b id="videoTitle">Film</b><button class="iconBtn" id="videoClose">✕</button></div><div class="videoStage" id="videoStage"></div></div></div>`);
- const v=document.querySelector('#rafViewer');document.querySelector('#viewerClose').onclick=()=>v.classList.remove('open');document.querySelector('#viewerPrev').onclick=()=>showViewer(viewerIndex-1);document.querySelector('#viewerNext').onclick=()=>showViewer(viewerIndex+1);v.onclick=e=>{if(e.target===v)v.classList.remove('open')};const m=document.querySelector('#rafVideo');document.querySelector('#videoClose').onclick=()=>closeVideo();m.onclick=e=>{if(e.target===m)closeVideo()};document.addEventListener('keydown',e=>{if(e.key==='Escape'){v.classList.remove('open');closeVideo()}})}
-function openViewer(items,id){ensureModals();viewerItems=items;viewerIndex=Math.max(0,items.findIndex(x=>x.id===id));showViewer(viewerIndex);document.querySelector('#rafViewer').classList.add('open')}
-function showViewer(i){viewerIndex=(i+viewerItems.length)%viewerItems.length;const item=viewerItems[viewerIndex];document.querySelector('#viewerImg').src=item.img;document.querySelector('#viewerTitle').textContent=item.title}
-function youtubeEmbed(url){let m=url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([^?&/]+)/);return m?`https://www.youtube.com/embed/${m[1]}?autoplay=1`:null}
-function vimeoEmbed(url){let m=url.match(/vimeo\.com\/(?:video\/)?(\d+)/);return m?`https://player.vimeo.com/video/${m[1]}?autoplay=1`:null}
-function openVideo(item){ensureModals();const stage=document.querySelector('#videoStage');document.querySelector('#videoTitle').textContent=item.title;stage.innerHTML='';const src=item.url||'';const yt=youtubeEmbed(src),vi=vimeoEmbed(src);if(yt||vi){stage.innerHTML=`<iframe allow="autoplay; fullscreen; picture-in-picture" allowfullscreen src="${yt||vi}"></iframe>`}else if(src){stage.innerHTML=`<video src="${esc(src)}" controls autoplay playsinline></video>`}else{stage.innerHTML=`<div style="height:100%;display:grid;place-items:center;color:#999;text-align:center;padding:30px">Ten film nie ma jeszcze podpiętego linku.<br>Dodasz go w panelu administratora.</div>`}document.querySelector('#rafVideo').classList.add('open')}
-function closeVideo(){const m=document.querySelector('#rafVideo');if(!m)return;const v=m.querySelector('video');if(v)v.pause();m.classList.remove('open');document.querySelector('#videoStage').innerHTML=''}
-function observe(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('show')}),{threshold:.08});document.querySelectorAll('.fade:not(.show)').forEach(x=>io.observe(x))}
-function hydrateChrome(){document.querySelectorAll('[data-raf-nav]').forEach(x=>x.outerHTML=nav());document.querySelectorAll('[data-raf-footer]').forEach(x=>x.outerHTML=footer());document.body.insertAdjacentHTML('beforeend',floating());ensureModals();observe()}
-document.addEventListener('DOMContentLoaded',hydrateChrome);
+let state=structuredClone(defaults);
+
+function mergeState(remote){
+  if(!remote)return;
+  state.site={...state.site,...(remote.site||{})};
+  if(Array.isArray(remote.photos))state.photos=remote.photos;
+  if(Array.isArray(remote.films))state.films=remote.films;
+  if(Array.isArray(remote.reviews))state.reviews=remote.reviews;
+  if(Array.isArray(remote.clients))state.clients=remote.clients;
+}
+function deviceSettings(item){
+  const w=innerWidth;
+  return w<=640?(item.mobile||item.desktop):w<=980?(item.tablet||item.desktop):(item.desktop||{});
+}
+function applySite(){
+  $$('[data-gallery]').forEach(a=>a.href=state.site.gallery||galleryUrl);
+  if($('#heroK'))$('#heroK').textContent=state.site.heroK;
+  if($('#heroT'))$('#heroT').innerHTML=(state.site.heroT||'').replace(/, /,',<br>');
+  if($('#heroD'))$('#heroD').textContent=state.site.heroD;
+  $$('[data-email]').forEach(a=>{if(state.site.email){a.textContent=state.site.email;a.href='mailto:'+state.site.email}else a.style.display='none'});
+  $$('[data-phone]').forEach(a=>{if(state.site.phone){a.textContent=state.site.phone;a.href='tel:'+state.site.phone}else a.style.display='none'});
+  $$('[data-instagram]').forEach(a=>{if(state.site.instagram)a.href=state.site.instagram});
+  $$('[data-whatsapp]').forEach(a=>{if(state.site.whatsapp){a.href='https://wa.me/'+state.site.whatsapp.replace(/\D/g,'');a.style.display='grid'}else a.style.display='none'});
+}
+function itemCard(item,type){
+  const d=deviceSettings(item), el=document.createElement('article');
+  el.className='portfolioCard reveal'; el.style.setProperty('--span',d.span||12); el.style.aspectRatio=d.ratio||'4/3';
+  el.dataset.id=item.id; el.dataset.type=type;
+  el.innerHTML=`<img loading="lazy" src="${item.image}" alt="${item.title}"><div class="shade"></div><div class="cap"><small>${item.category||''}</small><b>${item.title}</b>${type==='film'?'<span class="play">▶</span>':''}</div>`;
+  const im=$('img',el); im.style.objectPosition=`${d.x??50}% ${d.y??50}%`;
+  el.addEventListener('click',()=>type==='photo'?openLightbox(item.id):openVideo(item));
+  return el;
+}
+function renderGrid(id,items,type){const g=$(id);if(!g)return;g.innerHTML='';items.filter(x=>x.visible!==false).forEach(x=>g.append(itemCard(x,type)));reveal();}
+function renderExtras(){
+  const r=$('#reviews'); if(r){r.innerHTML='';state.reviews.forEach(x=>r.insertAdjacentHTML('beforeend',`<div class="review"><p>“${x.text}”</p><b>${x.name}</b></div>`));}
+  const l=$('#logos'); if(l){l.innerHTML='';state.clients.forEach(x=>l.insertAdjacentHTML('beforeend',`<div class="logoChip">${x}</div>`));}
+}
+function render(){applySite();renderGrid('#photoGrid',state.photos,'photo');renderGrid('#filmGrid',state.films,'film');renderExtras();}
+
+function ensureLightbox(){if($('#lightbox'))return;document.body.insertAdjacentHTML('beforeend',`<div id="lightbox" class="lightbox" hidden><button class="lbClose">×</button><button class="lbPrev">‹</button><img><div class="lbCaption"></div><button class="lbNext">›</button></div>`);$('.lbClose').onclick=closeLightbox;$('.lbPrev').onclick=()=>stepLight(-1);$('.lbNext').onclick=()=>stepLight(1);$('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox')closeLightbox()});}
+let lbItems=[],lbIndex=0;
+function openLightbox(id){ensureLightbox();lbItems=state.photos.filter(x=>x.visible!==false);lbIndex=Math.max(0,lbItems.findIndex(x=>x.id===id));showLb();}
+function showLb(){const x=lbItems[lbIndex],lb=$('#lightbox');$('img',lb).src=x.image;$('.lbCaption',lb).textContent=x.title;lb.hidden=false;document.body.style.overflow='hidden';}
+function stepLight(n){lbIndex=(lbIndex+n+lbItems.length)%lbItems.length;showLb()}
+function closeLightbox(){if($('#lightbox'))$('#lightbox').hidden=true;document.body.style.overflow=''}
+
+function videoEmbed(url){if(!url)return'';try{const u=new URL(url);if(u.hostname.includes('youtu')){const id=u.hostname==='youtu.be'?u.pathname.slice(1):u.searchParams.get('v');return id?`https://www.youtube.com/embed/${id}?autoplay=1`:''}if(u.hostname.includes('vimeo.com')){const id=u.pathname.split('/').filter(Boolean).pop();return `https://player.vimeo.com/video/${id}?autoplay=1`}}catch{}return url;}
+function openVideo(item){const url=videoEmbed(item.video||'');if(!url){location.href=`realizacja.html?id=${encodeURIComponent(item.id)}&type=film`;return}let m=$('#videoModal');if(!m){document.body.insertAdjacentHTML('beforeend',`<div id="videoModal" class="videoModal" hidden><div class="videoBox"><button>×</button><div class="videoStage"></div></div></div>`);m=$('#videoModal');$('button',m).onclick=()=>{m.hidden=true;$('.videoStage',m).innerHTML=''};m.onclick=e=>{if(e.target===m)$('button',m).click()};}const st=$('.videoStage',m);st.innerHTML=url.match(/\.(mp4|webm)(\?|$)/i)?`<video src="${url}" controls autoplay playsinline></video>`:`<iframe src="${url}" allow="autoplay; fullscreen" allowfullscreen></iframe>`;m.hidden=false;}
+
+function reveal(){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.08});$$('.reveal:not(.in)').forEach(e=>io.observe(e));}
+function initCookie(){const b=$('#cookieBar');if(!b)return;if(localStorage.rafCookies==='ok')b.remove();else $('button',b).onclick=()=>{localStorage.rafCookies='ok';b.remove()}}
+function initMobileNav(){if($('.mobileDock'))return;document.body.insertAdjacentHTML('beforeend',`<nav class="mobileDock"><a href="fotografia.html">Foto</a><a href="film.html">Film</a><a data-gallery href="${state.site.gallery||galleryUrl}">Galeria</a><a href="index.html#kontakt">Kontakt</a></nav>`)}
+
+async function loadCloud(){
+  try{onValue(ref(db,WEBSITE_ROOT+'/public'),snap=>{if(snap.exists()){state=structuredClone(defaults);mergeState(snap.val());render();initMobileNav();applySite();}})}catch(e){console.warn('Firebase public sync unavailable',e)}
+}
+window.addEventListener('resize',()=>{renderGrid('#photoGrid',state.photos,'photo');renderGrid('#filmGrid',state.films,'film')});
+render();reveal();initCookie();initMobileNav();loadCloud();
