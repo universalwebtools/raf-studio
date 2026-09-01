@@ -1,14 +1,14 @@
-// RAF.studio v6.4 — immediately refresh public page after a verified publish
+// RAF.studio v6.5 — refresh + authoritative Firebase sync on every public page
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const q=new URLSearchParams(location.search);
 if(!q.has('editor')){
+  import('./public-force-sync-v65.js?v=6.5.0').catch(console.error);
   const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
   let first=true,initial='';
   try{
-    const stamp=localStorage.getItem('rafPublishedAt');
-    const seen=sessionStorage.getItem('rafSeenPublish');
+    const stamp=localStorage.getItem('rafPublishedAt'),seen=sessionStorage.getItem('rafSeenPublish');
     if(stamp&&seen!==stamp&&q.get('fresh')!==stamp){sessionStorage.setItem('rafSeenPublish',stamp);const u=new URL(location.href);u.searchParams.set('fresh',stamp);location.replace(u.toString())}
   }catch{}
   onValue(ref(db,`${WEBSITE_ROOT}/public/publishedAt`),s=>{
