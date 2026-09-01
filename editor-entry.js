@@ -10,25 +10,13 @@ if(mode==='direct'||mode==='1'){
 
       if(portfolio){
         await import('./portfolio-editor.js?v=1.0.1');
+        await import('./editor-ui-v4.js?v=4.0.0');
       }else{
-        // Najpierw przygotowujemy DOM, żeby linki i logo były normalnie klikalne w edytorze.
         await import('./editor-prep-v34.js?v=3.4.0');
         await import('./direct-editor-v3.js?v=3.0.1');
-        // Potem tylko jeden stabilny silnik drag przejmuje uchwyty transformacji.
         await import('./direct-drag-v34.js?v=3.4.0');
-        await import('./direct-publish-v32.js?v=3.3.0');
-      }
-
-      const editorBrand=portfolio?document.querySelector('.peTop b'):document.querySelector('#rafTop3 b');
-      if(editorBrand)editorBrand.innerHTML='<img src="https://galeria.raf-studio.pl/logo-white.png" alt="RAF.studio" style="display:block;width:86px;height:28px;object-fit:contain">';
-
-      if(!portfolio){
-        const nav=document.createElement('div');
-        nav.id='rafPageSwitch';
-        nav.style.cssText='position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:1000030;background:#111e;border:1px solid #ffffff25;border-radius:12px;padding:6px;display:flex;gap:5px;backdrop-filter:blur(18px);font:11px system-ui';
-        nav.innerHTML='<button data-p="index" style="background:#fff;color:#111">Strona główna</button><button data-p="foto">Fotografia</button><button data-p="film">Film</button>';
-        nav.querySelectorAll('button').forEach(b=>{b.style.cssText+=';border:1px solid #ffffff22;border-radius:8px;padding:7px 10px;cursor:pointer';b.onclick=()=>{location.href=b.dataset.p==='foto'?'fotografia.html?editor=direct':b.dataset.p==='film'?'film.html?editor=direct':'index.html?editor=direct'}});
-        document.body.appendChild(nav);
+        await import('./direct-publish-v32.js?v=3.4.0');
+        await import('./editor-ui-v4.js?v=4.0.0');
       }
     }catch(err){
       console.error('RAF visual editor bootstrap error',err);
