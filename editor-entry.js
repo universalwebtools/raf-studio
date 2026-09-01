@@ -25,7 +25,10 @@ if(mode==='direct'||mode==='1'){
      if(requested==='5.4')await import('./editor-sections-v54.js?v=5.4.0');
      if(['5.5','6.0'].includes(requested))await import('./editor-sections-v55.js?v=5.5.0');
      if(['5.0','5.4','5.5','6.0'].includes(requested))await import('./editor-history-v50.js?v=5.5.0');
-     if(requested==='6.0')await import('./editor-pro-v60.js?v=6.0.0');
+     if(requested==='6.0'){
+       await import('./editor-pro-v60.js?v=6.0.0');
+       await import('./group-guides-v60.js?v=6.0.0');
+     }
      if(['5.0','5.4','5.5','6.0'].includes(requested))await import('./editor-chrome-v50.js?v=6.0.0');
      else await import('./editor-chrome-v47.js?v=4.7.0');
    }
