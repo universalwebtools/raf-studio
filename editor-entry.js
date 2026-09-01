@@ -1,43 +1,48 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),requested=params.get('ev')||'6.4';
+const params=new URLSearchParams(location.search),mode=params.get('editor'),requested=params.get('ev')||'6.5';
 if(mode==='direct'||mode==='1'){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html');
  (async()=>{try{
    await import('./auth-gate.js?v=3.2.1');
-   if(['6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./image-webp-v60.js?v=6.4.0');
-   if(requested==='6.4'&&!portfolio)await import('./editor-recovery-v64.js?v=6.4.0');
+   if(['6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5'].includes(requested))await import('./image-webp-v60.js?v=6.5.0');
+   if(['6.4','6.5'].includes(requested)&&!portfolio)await import('./editor-recovery-v64.js?v=6.5.0');
    if(portfolio){
      await import('./portfolio-editor.js?v=6.2.0');
      await import('./portfolio-page-v4.js?v=4.0.0');
-     await import('./portfolio-chrome-v47.js?v=6.4.0');
+     await import('./portfolio-chrome-v47.js?v=6.5.0');
    }else{
      await import('./editor-media-prefetch-v43.js?v=4.3.0');
      await import('./editor-prep-v34.js?v=3.4.0');
      await import('./direct-editor-v3.js?v=3.0.1');
      await import('./direct-drag-v34.js?v=3.5.0');
-     await import('./direct-publish-v32.js?v=6.4.0');
+     await import('./direct-publish-v32.js?v=6.5.0');
      await import('./editor-ui-v4.js?v=4.0.0');
      await import('./editor-custom-v42.js?v=4.2.0');
-     await import('./typography-controller-v44.js?v=4.4.0');
+     if(requested==='6.5'){
+       await import('./typography-controller-v65.js?v=6.5.0');
+       await import('./editor-media-section-v65.js?v=6.5.0');
+     }else{
+       await import('./typography-controller-v44.js?v=4.4.0');
+       if(['4.6','4.7','5.0','5.4','5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./editor-media-section-v46.js?v=4.6.0');
+     }
      await import('./motion-preview-fix-v44.js?v=4.4.0');
-     if(['4.5','4.6','4.7','5.0','5.4','5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./editor-motion-fix-v45.js?v=4.5.0');
-     if(['4.6','4.7','5.0','5.4','5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./editor-media-section-v46.js?v=4.6.0');
+     if(['4.5','4.6','4.7','5.0','5.4','5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5'].includes(requested))await import('./editor-motion-fix-v45.js?v=4.5.0');
      if(requested==='4.7')await import('./editor-extras-v47.js?v=4.7.0');
      if(requested==='5.0')await import('./editor-extras-v50.js?v=5.0.0');
      if(requested==='5.4')await import('./editor-sections-v54.js?v=5.4.0');
-     if(['5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./editor-sections-v55.js?v=5.5.0');
+     if(['5.5','6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5'].includes(requested))await import('./editor-sections-v55.js?v=5.5.0');
      if(['5.0','5.4','5.5','6.0'].includes(requested))await import('./editor-history-v50.js?v=5.5.0');
      if(requested==='6.0'){
        await import('./editor-pro-v60.js?v=6.0.0');
        await import('./group-guides-v60.js?v=6.0.0');
        await import('./editor-chrome-v50.js?v=6.0.0');
-     }else if(['6.1','6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested)){
-       await import('./editor-pro-v61.js?v=6.4.0');
-       if(!['6.3','6.3.1','6.4'].includes(requested))await import('./editor-history-v61.js?v=6.2.1');
-       if(['6.2','6.2.1','6.3','6.3.1','6.4'].includes(requested))await import('./custom-sections-editor-v62.js?v=6.4.0');
+     }else if(['6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5'].includes(requested)){
+       await import('./editor-pro-v61.js?v=6.5.0');
+       if(!['6.3','6.3.1','6.4','6.5'].includes(requested))await import('./editor-history-v61.js?v=6.2.1');
+       if(['6.2','6.2.1','6.3','6.3.1','6.4','6.5'].includes(requested))await import('./custom-sections-editor-v62.js?v=6.5.0');
        if(requested==='6.3')await import('./editor-history-preview-v631.js?v=6.3.1');
        if(requested==='6.3.1')await import('./editor-history-preview-v632.js?v=6.3.1');
-       if(requested==='6.4')await import('./editor-history-preview-v64.js?v=6.4.0');
-       await import('./editor-chrome-v61.js?v=6.4.0');
+       if(['6.4','6.5'].includes(requested))await import('./editor-history-preview-v64.js?v=6.5.0');
+       await import('./editor-chrome-v61.js?v=6.5.0');
      }else if(['5.0','5.4','5.5'].includes(requested))await import('./editor-chrome-v50.js?v=5.5.0');
      else await import('./editor-chrome-v47.js?v=4.7.0');
    }
