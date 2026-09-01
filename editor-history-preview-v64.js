@@ -1,0 +1,25 @@
+// RAF.studio — unified history + preview v6.4
+import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
+import {getDatabase,ref,get,set,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+const db=getDatabase(getApp()),$=s=>document.querySelector(s),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const P={main:'website/public/editorDraft',extras:'website/public/editorExtrasDraft',pro:'website/public/proV6Draft'},KEY='rafHistory64';
+let current=null,undo=[],redo=[],busy=false,preview=false,ready=false,timer=null;const live={main:null,extras:null,pro:null};
+const cp=x=>structuredClone(x??null),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
+function load(){try{const x=JSON.parse(sessionStorage.getItem(KEY)||'{}');undo=Array.isArray(x.undo)?x.undo:[];redo=Array.isArray(x.redo)?x.redo:[]}catch{}}
+function persist(){undo=undo.slice(-20);redo=redo.slice(-20);try{sessionStorage.setItem(KEY,JSON.stringify({undo,redo}))}catch{}paintButtons()}
+function paintButtons(){for(const [id,on] of [['u3',undo.length>0],['r3',redo.length>0]]){const b=$('#'+id);if(b){b.disabled=!on;b.style.opacity=on?'1':'.38';b.title=id==='u3'?'Cofnij (Ctrl+Z)':'Ponów (Ctrl+Shift+Z)'}}}
+async function read(){const [a,b,c]=await Promise.all([get(ref(db,P.main)),get(ref(db,P.extras)),get(ref(db,P.pro))]);return{main:a.val()??null,extras:b.val()??null,pro:c.val()??null}}
+async function write(s){await Promise.all([set(ref(db,P.main),s.main??null),set(ref(db,P.extras),s.extras??null),set(ref(db,P.pro),s.pro??null)])}
+function status(x){const e=$('#rafStatus3');if(e)e.textContent=x}
+function record(next){if(!ready||busy||preview||!current||same(next,current))return;undo.push(cp(current));redo=[];current=cp(next);persist()}
+function schedule(){clearTimeout(timer);timer=setTimeout(()=>record(cp(live)),220)}
+async function flush(){try{document.activeElement?.blur?.()}catch{};if(/Zmiany robocze|zapisywanie|zmiany/i.test($('#rafStatus3')?.textContent||''))await wait(2300);else await wait(180);const x=await read();record(x);current=cp(x)}
+async function undoNow(){if(busy)return;busy=true;try{status('Cofanie…');await flush();if(!undo.length){status('Brak zmian do cofnięcia');return}const x=undo.pop();redo.push(cp(current));current=cp(x);persist();sessionStorage.setItem('raf64scroll',String(scrollY));await write(x);location.reload()}finally{busy=false}}
+async function redoNow(){if(busy)return;busy=true;try{status('Ponawianie…');await flush();if(!redo.length){status('Brak zmian do ponowienia');return}const x=redo.pop();undo.push(cp(current));current=cp(x);persist();sessionStorage.setItem('raf64scroll',String(scrollY));await write(x);location.reload()}finally{busy=false}}
+function previewStyle(){if($('#rafPreview64Css'))return;const s=document.createElement('style');s.id='rafPreview64Css';s.textContent=`body.raf-preview64 #rafTop3,body.raf-preview64 #rafPanel3,body.raf-preview64 #rafNav3,body.raf-preview64 .rbox3,body.raf-preview64 .guide3,body.raf-preview64 #rafProModal61,body.raf-preview64>.nav,body.raf-preview64 .floating{display:none!important}body.raf-preview64 #rafPanel3.raf-panel-open62{display:none!important}body.raf-preview64 .rsel,body.raf-preview64 .sel55,body.raf-preview64 .pro61-selected,body.raf-preview64 .custom62-selected{outline:none!important}#rafPreviewBack64{position:fixed;right:18px;top:18px;z-index:1000050;border:1px solid #ffffff35;background:#111e;color:#fff;border-radius:999px;padding:11px 16px;font:700 12px system-ui;cursor:pointer;box-shadow:0 10px 40px #0008}`;document.head.appendChild(s)}
+function setPreview(on){previewStyle();preview=on;const p=$('#rafPanel3');if(p){p.classList.remove('raf-panel-open62');if(on)p.style.setProperty('display','none','important');else p.style.removeProperty('display')}document.body.classList.toggle('raf-preview64',on);let b=$('#rafPreviewBack64');if(on){if(!b){b=document.createElement('button');b.id='rafPreviewBack64';b.textContent='← Wróć do edycji';b.onclick=()=>setPreview(false);document.body.appendChild(b)}b.style.display='block'}else{if(b)b.style.display='none';setTimeout(()=>window.rafSyncPanel64?.(),0)}}
+load();current=await read();Object.assign(live,cp(current));ready=true;paintButtons();const y=sessionStorage.getItem('raf64scroll');if(y){sessionStorage.removeItem('raf64scroll');setTimeout(()=>scrollTo(0,+y||0),120)}
+onValue(ref(db,P.main),s=>{live.main=s.val()??null;schedule()});onValue(ref(db,P.extras),s=>{live.extras=s.val()??null;schedule()});onValue(ref(db,P.pro),s=>{live.pro=s.val()??null;schedule()});
+document.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||e.key.toLowerCase()!=='z')return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();e.shiftKey?redoNow():undoNow()},true);
+document.addEventListener('click',e=>{const b=e.target.closest?.('#u3,#r3,#preview3');if(!b)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(b.id==='u3')undoNow();else if(b.id==='r3')redoNow();else setPreview(true)},true);
+window.rafUndo64=undoNow;window.rafRedo64=redoNow;window.rafPreview64=setPreview;
