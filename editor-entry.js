@@ -14,7 +14,7 @@ if(mode==='direct'||mode==='1'){
       }else{
         await import('./editor-prep-v34.js?v=3.4.0');
         await import('./direct-editor-v3.js?v=3.0.1');
-        await import('./direct-drag-v34.js?v=3.4.0');
+        await import('./direct-drag-v34.js?v=3.5.0');
         await import('./direct-publish-v32.js?v=3.4.0');
         await import('./editor-ui-v4.js?v=4.0.0');
       }
