@@ -4,15 +4,19 @@ import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1
 const db=getDatabase(getApp()),root='website/public';
 const snap=await get(ref(db,`${root}/editorDraft`));
 if(snap.exists()){
-  const d=snap.val()||{};d.builder||={};
+  const d=snap.val()||{};d.builder||={};d.builder.elements||={};
   let changed=false;
-  // Firebase arrays may contain null holes after deleting custom sections/clones. Old editor crashes on s.id.
   const cleanObjects=v=>(Array.isArray(v)?v:Object.values(v||{})).filter(x=>x&&typeof x==='object');
   const cleanStrings=v=>(Array.isArray(v)?v:Object.values(v||{})).filter(x=>typeof x==='string'&&x.trim());
   const cs=cleanObjects(d.builder.customSections),cl=cleanObjects(d.builder.clones),ord=cleanStrings(d.builder.sectionOrder);
   if(JSON.stringify(cs)!==JSON.stringify(d.builder.customSections||[])){d.builder.customSections=cs;changed=true}
   if(JSON.stringify(cl)!==JSON.stringify(d.builder.clones||[])){d.builder.clones=cl;changed=true}
   if(JSON.stringify(ord)!==JSON.stringify(d.builder.sectionOrder||[])){d.builder.sectionOrder=ord;changed=true}
+  // Old versions accidentally stored text for structural navigation containers, destroying all links with textContent.
+  for(const key of ['nav','navlinks','brandLogo']){
+    const by=d.builder.elements[key];if(!by)continue;
+    for(const dev of ['desktop','tablet','mobile'])if(by[dev]&&Object.prototype.hasOwnProperty.call(by[dev],'text')){delete by[dev].text;changed=true}
+  }
   if(d.builder.recoveredV64!=='1'){
     const pub=(await get(ref(db,`${root}/visualStyles`))).val()||{};
     d.visualStyles||={};d.visualStyles.texts||={};d.visualStyles.sections||={};
