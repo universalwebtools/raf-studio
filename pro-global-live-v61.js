@@ -1,0 +1,6 @@
+// RAF.studio v6.1 — keep Global Styles live in editor and public pages
+import { getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getDatabase,ref,onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+const db=getDatabase(getApp()),EDITOR=new URLSearchParams(location.search).has('editor');
+function apply(g={}){let s=document.getElementById('rafGlobalLive61');if(!s){s=document.createElement('style');s.id='rafGlobalLive61';document.head.appendChild(s)}s.textContent=`body.raf-v61{font-size:${Number(g.body)||16}px!important;background:${g.bg||'#050505'}!important;color:${g.text||'#f5f5f5'}!important}body.raf-v61 .hero h1{font-size:clamp(54px,7vw,${Number(g.h1)||92}px)!important}body.raf-v61 .pageHero h1{font-size:clamp(58px,8vw,${Math.max(Number(g.h1)||92,80)}px)!important}body.raf-v61 .sectionHead h2,body.raf-v61 .offerHead54 h2,body.raf-v61 .trustedHead54 h2{font-size:clamp(38px,5vw,${Number(g.h2)||64}px)!important}:root{--raf-muted:${g.muted||'#9b9b9b'};--raf-accent:${g.accent||'#ffffff'};--raf-radius:${Number(g.radius)||16}px}`}
+onValue(ref(db,EDITOR?'website/public/proV6Draft':'website/public/proV6'),s=>apply((s.val()||{}).global||{}));
