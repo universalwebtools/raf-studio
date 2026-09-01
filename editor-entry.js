@@ -10,7 +10,7 @@ if(mode==='direct'||mode==='1'){
 
       if(portfolio){
         await import('./portfolio-editor.js?v=1.0.1');
-        await import('./editor-ui-v4.js?v=4.0.0');
+        await import('./portfolio-page-v4.js?v=4.0.0');
       }else{
         await import('./editor-prep-v34.js?v=3.4.0');
         await import('./direct-editor-v3.js?v=3.0.1');
