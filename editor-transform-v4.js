@@ -1,6 +1,7 @@
 const frame=document.querySelector('#siteFrame');
 const q=s=>document.querySelector(s);
 let active=null;
+let syncRaf=0;
 
 function num(sel,fallback=0){const n=Number(q(sel)?.value);return Number.isFinite(n)?n:fallback}
 function selectedEl(){return frame?.contentDocument?.querySelector('.ve-selected')||null}
@@ -14,13 +15,19 @@ function applyLive(el,x,y,scale,rotate){
 function updateFields(x,y,scale,rotate){
   if(q('#iMoveX'))q('#iMoveX').value=Math.round(x);
   if(q('#iMoveY'))q('#iMoveY').value=Math.round(y);
-  if(q('#iScale'))q('#iScale').value=Number(scale).toFixed(2);
-  if(q('#iRotate'))q('#iRotate').value=Math.round(rotate);
+  if(q('#iScale'))q('#iScale').value=Number(scale).toFixed(3);
+  if(q('#iRotate'))q('#iRotate').value=Number(rotate).toFixed(2);
 }
-function commit(){
-  for(const id of ['#iMoveX','#iMoveY','#iScale','#iRotate']){
-    const el=q(id);if(el)el.dispatchEvent(new Event('input',{bubbles:true}));
-  }
+function syncDraftNow(){
+  const trigger=q('#iMoveX')||q('#iScale')||q('#iRotate');
+  if(trigger)trigger.dispatchEvent(new Event('input',{bubbles:true}));
+}
+function syncDraftLive(){
+  if(syncRaf)return;
+  syncRaf=requestAnimationFrame(()=>{
+    syncRaf=0;
+    syncDraftNow();
+  });
 }
 function start(mode,e,handle){
   const el=selectedEl();if(!el)return;
@@ -48,15 +55,20 @@ function move(e){
     rotate=active.rotate+(a-active.angle)*180/Math.PI;
     if(e.shiftKey)rotate=Math.round(rotate/15)*15;
   }
+  // 1) natychmiastowy ruch wizualny 1:1 z kursorem
   applyLive(active.el,x,y,scale,rotate);
+  // 2) te same wartości trafiają od razu do formularza i właściwego draftu edytora
   updateFields(x,y,scale,rotate);
+  syncDraftLive();
 }
 function end(e){
   if(!active||e.pointerId!==active.pointerId)return;
-  e.preventDefault();e.stopPropagation();
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
   try{active.handle.releasePointerCapture(active.pointerId)}catch{}
   active=null;
-  commit();
+  if(syncRaf){cancelAnimationFrame(syncRaf);syncRaf=0;}
+  // finalny zapis dokładnych wartości przed jakimkolwiek rerenderem
+  syncDraftNow();
 }
 function install(){
   const d=frame?.contentDocument;if(!d||d.documentElement.dataset.rafTransformV4==='1')return;
