@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 
@@ -28,7 +28,7 @@ function localSave(){localStorage.setItem(LS,JSON.stringify(state));setSaveState
 function setSaveState(t,cls=''){const e=$('#saveState');e.textContent=t;e.className='saveState '+cls;}
 function normalize(raw){const s=structuredClone(defaults);if(!raw)return s;s.site={...s.site,...(raw.site||{})};['photos','films','reviews','clients'].forEach(k=>{if(Array.isArray(raw[k]))s[k]=raw[k]});return s}
 async function loadCloud(){try{const snap=await get(ref(db,WEBSITE_ROOT+'/public'));if(snap.exists()){state=normalize(snap.val());localSave();setSaveState('Firebase: dane wczytane ✓','ok')}else setSaveState('Firebase połączony — brak danych, używam wersji lokalnej.','warn')}catch(e){setSaveState('Firebase odczyt niedostępny — pracuję lokalnie.','bad');log('Firebase odczyt: '+e.message)}renderAll();}
-async function saveCloud(){localSave();try{await set(ref(db,WEBSITE_ROOT+'/public'),state);setSaveState('Zapisano online w Firebase ✓','ok');log('Firebase zapis: OK')}catch(e){setSaveState('Nie zapisano online — backup lokalny jest bezpieczny.','warn');log('Firebase zapis: '+e.message);alert('Nie udało się zapisać online. Backup lokalny został zachowany.\n\n'+e.message)}}
+async function saveCloud(){localSave();try{await update(ref(db,WEBSITE_ROOT+'/public'),state);setSaveState('Zapisano online w Firebase ✓','ok');log('Firebase zapis: OK')}catch(e){setSaveState('Nie zapisano online — backup lokalny jest bezpieczny.','warn');log('Firebase zapis: '+e.message);alert('Nie udało się zapisać online. Backup lokalny został zachowany.\n\n'+e.message)}}
 
 function bindSite(){const m={heroK:'heroK',heroT:'heroT',heroD:'heroD',email:'email',phone:'phone',instagram:'instagram',whatsapp:'whatsapp',gallery:'gallery'};for(const [k,id] of Object.entries(m)){const e=$('#'+id);e.value=state.site[k]||'';e.oninput=()=>{state.site[k]=e.value;localSave()}}}
 function devCfg(item,d){item[d] ||= {span:d==='mobile'?12:6,ratio:'4/3',x:50,y:50};return item[d]}
