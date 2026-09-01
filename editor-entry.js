@@ -34,7 +34,7 @@ if(mode==='direct'||mode==='1'){
        await import('./editor-pro-v61.js?v=6.3.0');
        if(requested!=='6.3')await import('./editor-history-v61.js?v=6.2.1');
        if(['6.2','6.2.1','6.3'].includes(requested))await import('./custom-sections-editor-v62.js?v=6.2.1');
-       if(requested==='6.3')await import('./editor-history-preview-v63.js?v=6.3.0');
+       if(requested==='6.3')await import('./editor-history-preview-v631.js?v=6.3.1');
        await import('./editor-chrome-v61.js?v=6.3.0');
      }else if(['5.0','5.4','5.5'].includes(requested))await import('./editor-chrome-v50.js?v=5.5.0');
      else await import('./editor-chrome-v47.js?v=4.7.0');
