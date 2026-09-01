@@ -21,6 +21,8 @@ if(mode==='direct'||mode==='1'){
         await import('./editor-custom-v42.js?v=4.2.0');
         await import('./typography-controller-v44.js?v=4.4.0');
         await import('./motion-preview-fix-v44.js?v=4.4.0');
+        await import('./editor-motion-fix-v45.js?v=4.5.0');
+        await import('./editor-media-section-v46.js?v=4.6.0');
       }
     }catch(err){
       console.error('RAF visual editor bootstrap error',err);
