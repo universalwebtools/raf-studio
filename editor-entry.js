@@ -12,6 +12,9 @@ if(mode==='direct'||mode==='1'){
     imports.push(import('./direct-publish-v32.js?v=3.3.0'));
   }
   Promise.all(imports).then(()=>{
+    const editorBrand=portfolio?document.querySelector('.peTop b'):document.querySelector('#rafTop3 b');
+    if(editorBrand)editorBrand.innerHTML='<img src="https://galeria.raf-studio.pl/logo-white.png" alt="RAF.studio" style="display:block;width:72px;height:24px;object-fit:contain">';
+
     if(!portfolio){
       const nav=document.createElement('div');
       nav.id='rafPageSwitch';
@@ -19,12 +22,6 @@ if(mode==='direct'||mode==='1'){
       nav.innerHTML='<button data-p="index" style="background:#fff;color:#111">Strona główna</button><button data-p="foto">Fotografia</button><button data-p="film">Film</button>';
       nav.querySelectorAll('button').forEach(b=>{b.style.cssText+=';border:1px solid #ffffff22;border-radius:8px;padding:7px 10px;cursor:pointer';b.onclick=()=>{location.href=b.dataset.p==='foto'?'fotografia.html?editor=direct':b.dataset.p==='film'?'film.html?editor=direct':'index.html?editor=direct'}});
       document.body.appendChild(nav);
-
-      const top=document.querySelector('#rafTop3');
-      if(top){
-        const first=top.querySelector('b');
-        if(first){first.innerHTML='<img src="https://galeria.raf-studio.pl/logo-white.png" alt="RAF.studio" style="display:block;width:72px;height:24px;object-fit:contain">'}
-      }
     }
   }).catch(err=>{
     console.error('RAF visual editor bootstrap error',err);
