@@ -3,6 +3,7 @@ if(mode==='direct'||mode==='1'){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html');
  (async()=>{try{
    await import('./auth-gate.js?v=3.2.1');
+   if(requested==='6.0')await import('./image-webp-v60.js?v=6.0.0');
    if(portfolio){
      await import('./portfolio-editor.js?v=1.0.1');
      await import('./portfolio-page-v4.js?v=4.0.0');
