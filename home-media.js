@@ -4,6 +4,7 @@ import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const EDITOR_MODE=new URLSearchParams(location.search).get('editor')==='1';
 const defaults = {
   heroMedia:{url:'assets/portal-film.png',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}},
   photoPortal:{url:'assets/portal-photo.png',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}},
@@ -28,5 +29,5 @@ function apply(key,cfg){
   pre.src=src;
 }
 function render(raw={}){current=raw;for(const key of Object.keys(defaults))apply(key,{...defaults[key],...(raw[key]||{})});}
-onValue(ref(db,`${WEBSITE_ROOT}/public/homeMedia`),snap=>render(snap.val()||{}));
-window.addEventListener('resize',()=>render(current));
+if(!EDITOR_MODE)onValue(ref(db,`${WEBSITE_ROOT}/public/homeMedia`),snap=>render(snap.val()||{}));
+window.addEventListener('resize',()=>{if(!EDITOR_MODE)render(current)});
