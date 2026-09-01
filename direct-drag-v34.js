@@ -1,40 +1,14 @@
-// RAF.studio — pojedynczy, stabilny drag v3.4
-// Nasłuch na WINDOW capture, więc stary drag v3 nie dostaje zdarzeń.
-const q=(s,r=document)=>r.querySelector(s);
-let active=null;
-const last=new WeakMap();
-
+// RAF.studio — pojedynczy, stabilny drag v3.5 zgodny z panelem v4
+const q=(s,r=document)=>r.querySelector(s);let active=null;const last=new WeakMap();
 function n(v,f=0){v=Number(v);return Number.isFinite(v)?v:f}
-function field(id,f){const e=q(id);return e?n(e.value,f):f}
-function sel(){return q('.rsel')}
-function box(){return q('.rbox3')}
+function pick(oldId,newId){return q(newId)||q(oldId)}
+function field(oldId,newId,f){const e=pick(oldId,newId);return e?n(e.value,f):f}
+function sel(){return q('.rsel')}function box(){return q('.rbox3')}
 function updateBox(el){const b=box();if(!b||!el)return;const r=el.getBoundingClientRect();b.style.left=`${r.left+scrollX}px`;b.style.top=`${r.top+scrollY}px`;b.style.width=`${r.width}px`;b.style.height=`${r.height}px`}
 function apply(el,s){if(!el)return;if(s.width>0){el.style.width=`${s.width}px`;el.style.maxWidth=`${s.width}px`}el.style.transformOrigin='center center';el.style.transform=`translate(${s.x}px,${s.y}px) rotate(${s.rotate}deg) scale(${s.scale})`;el.style.position='relative';updateBox(el)}
-function sync(s){for(const [id,v] of [['#x3',s.x],['#y3',s.y],['#sc3',s.scale],['#rot3',s.rotate],['#w3',s.width]]){const e=q(id);if(e)e.value=id==='#sc3'?Number(v).toFixed(3):Math.round(v)}}
-function commit(s){sync(s);const x=q('#x3');if(x)x.dispatchEvent(new Event('change',{bubbles:true}))}
-
-function start(e,h){const el=sel();if(!el)return;const mode=h.classList.contains('rmove3')?'move':h.classList.contains('rscale3')?'scale':h.classList.contains('rrot3')?'rotate':h.classList.contains('rwl3')?'widthL':'widthR';
-  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
-  const r=el.getBoundingClientRect();
-  const remembered=last.get(el);
-  const state=remembered?{...remembered}:{x:field('#x3',0),y:field('#y3',0),scale:field('#sc3',1),rotate:field('#rot3',0),width:field('#w3',r.width)||r.width};
-  // Synchronizujemy panel PRZED ruchem, więc drugie złapanie zawsze zaczyna z aktualnej pozycji.
-  sync(state);
-  const cx=r.left+r.width/2,cy=r.top+r.height/2;
-  active={el,h,mode,pid:e.pointerId,sx:e.clientX,sy:e.clientY,start:state,cx,cy,dist:Math.max(10,Math.hypot(e.clientX-cx,e.clientY-cy)),angle:Math.atan2(e.clientY-cy,e.clientX-cx)};
-  try{h.setPointerCapture(e.pointerId)}catch{}
-}
-function move(e){const a=active;if(!a||e.pointerId!==a.pid)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();let s={...a.start};
-  if(a.mode==='move'){s.x=a.start.x+(e.clientX-a.sx);s.y=a.start.y+(e.clientY-a.sy);if((q('#grid3')?.textContent||'').includes('✓')){s.x=Math.round(s.x/8)*8;s.y=Math.round(s.y/8)*8}}
-  else if(a.mode==='scale'){const d=Math.max(10,Math.hypot(e.clientX-a.cx,e.clientY-a.cy));s.scale=Math.max(.2,Math.min(4,a.start.scale*d/a.dist))}
-  else if(a.mode==='rotate'){const an=Math.atan2(e.clientY-a.cy,e.clientX-a.cx);s.rotate=a.start.rotate+(an-a.angle)*180/Math.PI;if(e.shiftKey)s.rotate=Math.round(s.rotate/15)*15}
-  else if(a.mode==='widthR')s.width=Math.max(40,a.start.width+(e.clientX-a.sx));
-  else s.width=Math.max(40,a.start.width-(e.clientX-a.sx));
-  a.live=s;last.set(a.el,{...s});apply(a.el,s);sync(s)
-}
+function sync(s){const map=[['#x3','#x4',s.x],['#y3','#y4',s.y],['#sc3','#scale4',s.scale],['#rot3','#rot4',s.rotate],['#w3','#width4',s.width]];for(const [a,b,v] of map){const e=pick(a,b);if(e)e.value=(b==='#scale4'||a==='#sc3')?Number(v).toFixed(3):Math.round(v)}}
+function commit(s){sync(s);const v4=q('#x4');if(v4){v4.dispatchEvent(new Event('input',{bubbles:true}));return}const old=q('#x3');if(old)old.dispatchEvent(new Event('change',{bubbles:true}))}
+function start(e,h){const el=sel();if(!el)return;const mode=h.classList.contains('rmove3')?'move':h.classList.contains('rscale3')?'scale':h.classList.contains('rrot3')?'rotate':h.classList.contains('rwl3')?'widthL':'widthR';e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const r=el.getBoundingClientRect(),remembered=last.get(el),state=remembered?{...remembered}:{x:field('#x3','#x4',0),y:field('#y3','#y4',0),scale:field('#sc3','#scale4',1),rotate:field('#rot3','#rot4',0),width:field('#w3','#width4',r.width)||r.width};sync(state);const cx=r.left+r.width/2,cy=r.top+r.height/2;active={el,h,mode,pid:e.pointerId,sx:e.clientX,sy:e.clientY,start:state,cx,cy,dist:Math.max(10,Math.hypot(e.clientX-cx,e.clientY-cy)),angle:Math.atan2(e.clientY-cy,e.clientX-cx)};try{h.setPointerCapture(e.pointerId)}catch{}}
+function move(e){const a=active;if(!a||e.pointerId!==a.pid)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();let s={...a.start};if(a.mode==='move'){s.x=a.start.x+(e.clientX-a.sx);s.y=a.start.y+(e.clientY-a.sy)}else if(a.mode==='scale'){const d=Math.max(10,Math.hypot(e.clientX-a.cx,e.clientY-a.cy));s.scale=Math.max(.2,Math.min(4,a.start.scale*d/a.dist))}else if(a.mode==='rotate'){const an=Math.atan2(e.clientY-a.cy,e.clientX-a.cx);s.rotate=a.start.rotate+(an-a.angle)*180/Math.PI;if(e.shiftKey)s.rotate=Math.round(s.rotate/15)*15}else if(a.mode==='widthR')s.width=Math.max(40,a.start.width+(e.clientX-a.sx));else s.width=Math.max(40,a.start.width-(e.clientX-a.sx));a.live=s;last.set(a.el,{...s});apply(a.el,s);sync(s)}
 function end(e){const a=active;if(!a||e.pointerId!==a.pid)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const s=a.live||a.start;last.set(a.el,{...s});try{a.h.releasePointerCapture(a.pid)}catch{}active=null;commit(s);setTimeout(()=>{const el=sel();if(el&&last.has(el)){const cur=last.get(el);apply(el,cur);sync(cur)}},0)}
-
-window.addEventListener('pointerdown',e=>{const h=e.target.closest?.('.rmove3,.rscale3,.rrot3,.rwl3,.rwr3');if(h)start(e,h)},true);
-window.addEventListener('pointermove',move,true);
-window.addEventListener('pointerup',end,true);
-window.addEventListener('pointercancel',end,true);
+window.addEventListener('pointerdown',e=>{const h=e.target.closest?.('.rmove3,.rscale3,.rrot3,.rwl3,.rwr3');if(h)start(e,h)},true);window.addEventListener('pointermove',move,true);window.addEventListener('pointerup',end,true);window.addEventListener('pointercancel',end,true);
