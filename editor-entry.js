@@ -6,6 +6,7 @@ if(mode==='direct'||mode==='1'){
    if(portfolio){
      await import('./portfolio-editor.js?v=1.0.1');
      await import('./portfolio-page-v4.js?v=4.0.0');
+     await import('./portfolio-chrome-v47.js?v=4.7.0');
    }else{
      await import('./editor-media-prefetch-v43.js?v=4.3.0');
      await import('./editor-prep-v34.js?v=3.4.0');
