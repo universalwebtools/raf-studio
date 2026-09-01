@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const app=initializeApp(firebaseConfig),db=getDatabase(app);
+const EDITOR_MODE=new URLSearchParams(location.search).get('editor')==='1';
 const defaults={
  twoWorldsTitle:'DWA ŚWIATY.\nJEDEN STYL.',twoWorldsDesc:'Osobne działy fotografii i filmu, wspólna estetyka RAF.studio.',
  photoTitle:'FOTOGRAFIA',photoDesc:'Śluby, sesje, eventy, produkt i wizerunek.',photoButton:'Wejdź →',
@@ -13,4 +14,5 @@ const defaults={
  showTwoWorlds:true,showAbout:true,showReviews:true,showBrands:true,showContact:true
 };
 function render(raw={}){const c={...defaults,...raw};document.querySelectorAll('[data-home-text]').forEach(el=>{const k=el.dataset.homeText;if(!(k in c))return;const v=String(c[k]??'');if(el.dataset.multiline==='1')el.innerHTML=v.replace(/\n/g,'<br>');else el.textContent=v});document.querySelectorAll('[data-home-section]').forEach(el=>{const k='show'+el.dataset.homeSection;el.style.display=c[k]===false?'none':''})}
-onValue(ref(db,`${WEBSITE_ROOT}/public/homeContent`),s=>render(s.val()||{}));render();
+render();
+if(!EDITOR_MODE)onValue(ref(db,`${WEBSITE_ROOT}/public/homeContent`),s=>render(s.val()||{}));
