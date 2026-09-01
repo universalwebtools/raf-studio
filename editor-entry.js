@@ -12,12 +12,14 @@ if(mode==='direct'||mode==='1'){
         await import('./portfolio-editor.js?v=1.0.1');
         await import('./portfolio-page-v4.js?v=4.0.0');
       }else{
+        await import('./editor-media-prefetch-v43.js?v=4.3.0');
         await import('./editor-prep-v34.js?v=3.4.0');
         await import('./direct-editor-v3.js?v=3.0.1');
         await import('./direct-drag-v34.js?v=3.5.0');
         await import('./direct-publish-v32.js?v=3.4.0');
         await import('./editor-ui-v4.js?v=4.0.0');
         await import('./editor-custom-v42.js?v=4.2.0');
+        await import('./typography-controller-v43.js?v=4.3.0');
       }
     }catch(err){
       console.error('RAF visual editor bootstrap error',err);
