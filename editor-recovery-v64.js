@@ -17,9 +17,9 @@ if(snap.exists()){
     for(const dev of ['desktop','tablet','mobile'])if(by[dev]&&Object.prototype.hasOwnProperty.call(by[dev],'text')){delete by[dev].text;changed=true}
   }
   if(d.builder.recoveredV64!=='2'){
-    const [pubSnap,histSnap]=await Promise.all([get(ref(db,`${root}/visualStyles`)),get(ref(db,'website/history'))]);
-    const pub=pubSnap.val()||{};
-    const histories=Object.values(histSnap.val()||{}).filter(x=>x?.data?.visualStyles).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(x=>x.data.visualStyles);
+    const pub=(await get(ref(db,`${root}/visualStyles`))).val()||{};
+    let histories=[];
+    try{const hs=await get(ref(db,'website/history'));histories=Object.values(hs.val()||{}).filter(x=>x?.data?.visualStyles).sort((a,b)=>(b.ts||0)-(a.ts||0)).map(x=>x.data.visualStyles)}catch(e){console.info('RAF v6.4: legacy history unavailable, using public styles only')}
     const sources=[pub,...histories];
     d.visualStyles||={};d.visualStyles.texts||={};d.visualStyles.sections||={};
     const resetTextFields=['moveX','moveY','scale','rotate','width','fontSize','lineHeight','letterSpacing'];
