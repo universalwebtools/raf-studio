@@ -1,4 +1,4 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='6.5.3',requested=params.get('ev')||LATEST;
+const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='6.6',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 let editorReleased=false;
 function releaseEditor(){if(editorReleased)return;editorReleased=true;document.documentElement.classList.add('raf-editor-ready');window.dispatchEvent(new CustomEvent('raf:editor-ready'))}
@@ -18,14 +18,14 @@ async function waitEditorSettled(){
  releaseEditor();
 }
 if(editorMode&&requested!==LATEST){
- const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','653');location.replace(u.toString());
+ const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','660');location.replace(u.toString());
 }else if(editorMode){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html');
  (async()=>{try{
    await import('./auth-gate.js?v=3.2.1');
-   if(['6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5','6.5.1','6.5.2','6.5.3'].includes(requested))await import('./image-webp-v60.js?v=6.5.3');
-   if(['6.4','6.5','6.5.1','6.5.2','6.5.3'].includes(requested)&&!portfolio)await import('./editor-recovery-v64.js?v=6.5.3');
-   if(!portfolio&&['6.5.2','6.5.3'].includes(requested))await import('./editor-baseline-sync-v652.js?v=6.5.3');
+   if(['6.0','6.1','6.2','6.2.1','6.3','6.3.1','6.4','6.5','6.5.1','6.5.2','6.5.3','6.6'].includes(requested))await import('./image-webp-v60.js?v=6.5.3');
+   if(['6.4','6.5','6.5.1','6.5.2','6.5.3','6.6'].includes(requested)&&!portfolio)await import('./editor-recovery-v64.js?v=6.5.3');
+   if(!portfolio&&['6.5.2','6.5.3','6.6'].includes(requested))await import('./editor-baseline-sync-v652.js?v=6.5.3');
    if(portfolio){
      await import('./portfolio-editor.js?v=6.2.0');
      await import('./portfolio-page-v4.js?v=4.0.0');
@@ -46,8 +46,9 @@ if(editorMode&&requested!==LATEST){
      await import('./editor-pro-v61.js?v=6.5.3');
      await import('./custom-sections-editor-v62.js?v=6.5.3');
      await import('./custom-section-delete-v653.js?v=6.5.3');
+     if(requested==='6.6')await import('./editor-free-transform-v66.js?v=6.6.0');
      await import('./editor-history-preview-v64.js?v=6.5.3');
-     await import('./editor-chrome-v61.js?v=6.5.3');
+     await import('./editor-chrome-v61.js?v=6.6.0');
    }
    await waitEditorSettled();
  }catch(err){
