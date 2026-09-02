@@ -1,7 +1,25 @@
 const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='6.5.3',requested=params.get('ev')||LATEST;
-if((mode==='direct'||mode==='1')&&requested!==LATEST){
+const editorMode=mode==='direct'||mode==='1';
+let editorReleased=false;
+function releaseEditor(){if(editorReleased)return;editorReleased=true;document.documentElement.classList.add('raf-editor-ready');window.dispatchEvent(new CustomEvent('raf:editor-ready'))}
+if(editorMode)setTimeout(releaseEditor,4800);
+async function waitEditorSettled(){
+ const started=performance.now();let last=performance.now(),obs;
+ try{obs=new MutationObserver(()=>{last=performance.now()});obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style','src','href']})}catch{}
+ while(performance.now()-started<3200){
+   const toolbar=document.querySelector('#rafTop3,.peTop');
+   const quiet=performance.now()-last>320;
+   if(toolbar&&quiet&&document.readyState!=='loading')break;
+   await new Promise(r=>setTimeout(r,70));
+ }
+ try{obs?.disconnect()}catch{}
+ await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+ await new Promise(r=>setTimeout(r,90));
+ releaseEditor();
+}
+if(editorMode&&requested!==LATEST){
  const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','653');location.replace(u.toString());
-}else if(mode==='direct'||mode==='1'){
+}else if(editorMode){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html');
  (async()=>{try{
    await import('./auth-gate.js?v=3.2.1');
@@ -31,5 +49,9 @@ if((mode==='direct'||mode==='1')&&requested!==LATEST){
      await import('./editor-history-preview-v64.js?v=6.5.3');
      await import('./editor-chrome-v61.js?v=6.5.3');
    }
- }catch(err){console.error('RAF visual editor bootstrap error',err);const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}})();
+   await waitEditorSettled();
+ }catch(err){
+   console.error('RAF visual editor bootstrap error',err);releaseEditor();
+   const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)
+ }})();
 }
