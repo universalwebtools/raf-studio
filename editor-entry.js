@@ -4,7 +4,7 @@ let editorReleased=false;
 function releaseEditor(){if(editorReleased)return;editorReleased=true;document.documentElement.classList.add('raf-editor-ready');window.dispatchEvent(new CustomEvent('raf:editor-ready'))}
 if(editorMode)setTimeout(releaseEditor,4800);
 async function waitEditorSettled(){const started=performance.now();let last=performance.now(),obs;try{obs=new MutationObserver(()=>{last=performance.now()});obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style','src','href']})}catch{}while(performance.now()-started<3200){const toolbar=document.querySelector('#rafTop3,.peTop'),quiet=performance.now()-last>320;if(toolbar&&quiet&&document.readyState!=='loading')break;await new Promise(r=>setTimeout(r,70))}try{obs?.disconnect()}catch{}await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));await new Promise(r=>setTimeout(r,90));releaseEditor()}
-if(editorMode&&requested!==LATEST){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','720');location.replace(u.toString())}
+if(editorMode&&requested!==LATEST){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','721');location.replace(u.toString())}
 else if(editorMode){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html');
  (async()=>{try{
@@ -28,13 +28,13 @@ else if(editorMode){
    await import('./custom-sections-editor-v62.js?v=6.5.3');
    await import('./custom-section-delete-v653.js?v=6.5.3');
    await import('./editor-v70-migrate.js?v=7.0.1');
-   await import('./template-runtime-v72.js?v=7.2.0');
-   await import('./template-runtime-guard-v72.js?v=7.2.0');
-   await import('./editor-core-v72.js?v=7.2.0');
-   await import('./editor-v70-layout-guard.js?v=7.2.0');
-   await import('./editor-templates-v72.js?v=7.2.0');
-   await import('./editor-history-v72.js?v=7.2.0');
-   await import('./editor-chrome-v61.js?v=7.2.0');
+   await import('./template-runtime-v72.js?v=7.2.1');
+   await import('./template-runtime-guard-v72.js?v=7.2.1');
+   await import('./editor-core-v72.js?v=7.2.1');
+   await import('./editor-v70-layout-guard.js?v=7.2.1');
+   await import('./editor-templates-v72.js?v=7.2.1');
+   await import('./editor-history-v72.js?v=7.2.1');
+   await import('./editor-chrome-v61.js?v=7.2.1');
   }
   await waitEditorSettled();
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}})();
