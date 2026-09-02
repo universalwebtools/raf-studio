@@ -1,5 +1,7 @@
-/* RAF.studio v6.2.1 — stable premium baseline */
-body.raf-v61{overflow-x:hidden}
+/* RAF.studio v6.5.5 — stable premium baseline + editor no-flash gate */
+/* Render-blocking gate: public pages are released by raf-public-ready, editor by raf-editor-ready. */
+body.raf-v61{opacity:0;visibility:hidden;overflow-x:hidden}
+html.raf-public-ready body.raf-v61,html.raf-editor-ready body.raf-v61{opacity:1;visibility:visible;transition:opacity .18s ease}
 body.raf-v61 .wrap{width:min(1180px,calc(100% - 40px));margin-inline:auto}
 body.raf-v61 .nav{min-height:74px}
 body.raf-v61 .navin{min-height:74px;display:flex!important;align-items:center!important;justify-content:space-between!important}
