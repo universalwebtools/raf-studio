@@ -1,4 +1,5 @@
 // RAF.studio — Blueprint guard + editor bindings v7.5
+import './blueprint-hero-v75.js?v=7.5.0';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 function css(){if($('#rafBlueprintGuard75'))return;const s=document.createElement('style');s.id='rafBlueprintGuard75';s.textContent=`
