@@ -11,6 +11,16 @@ const auth = getAuth(app);
 const db = getDatabase(app);
 const $ = s => document.querySelector(s);
 
+function injectEditorModes(){
+  const main=[...document.querySelectorAll('a[href="edytorstrony.html"]')];
+  main.forEach((a,i)=>{
+    if(a.dataset.mobileInjected)return;
+    a.dataset.mobileInjected='1';
+    if(i===0){a.textContent='🖥 EDYTUJ STRONĘ WIZUALNIE';const m=document.createElement('a');m.className='btn';m.href='mobile-editor.html';m.textContent='📱 EDYTUJ WERSJĘ TELEFONICZNĄ';m.style.cssText='display:block;text-align:center;margin:0 0 14px;border:1px solid #ffffff22';a.insertAdjacentElement('afterend',m)}
+    else{const m=document.createElement('a');m.className='pill';m.href='mobile-editor.html';m.textContent='📱 Edytuj telefon →';m.style.marginLeft='8px';a.insertAdjacentElement('afterend',m)}
+  });
+}
+
 function box(name, text, kind='warn') {
   return `<div class="statusBox ${kind}"><b><span class="statusDot"></span>${name}</b><span class="tiny">${text}</span></div>`;
 }
@@ -62,4 +72,6 @@ if (grid) {
   }).observe(grid, {childList:true, subtree:true, characterData:true});
 }
 
+injectEditorModes();
+setTimeout(injectEditorModes,600);
 setTimeout(renderFixedStatus, 250);
