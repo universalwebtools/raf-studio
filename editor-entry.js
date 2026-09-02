@@ -29,6 +29,7 @@ else if(editorMode){
    await import('./custom-section-delete-v653.js?v=6.5.3');
    await import('./editor-v70-migrate.js?v=7.0.1');
    await import('./template-blueprints-v75.js?v=7.5.0');
+   await import('./blueprint-guard-v75.js?v=7.5.0');
    await import('./editor-core-v72.js?v=7.5.0');
    await import('./editor-v70-layout-guard.js?v=7.5.0');
    await import('./editor-templates-v75.js?v=7.5.0');
