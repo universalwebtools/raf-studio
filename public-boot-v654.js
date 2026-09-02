@@ -1,4 +1,5 @@
-// RAF.studio v6.5.4 — public boot gate: never show stale/default layout before Firebase paint
+// RAF.studio — public boot gate + REAL TEMPLATES v7.4
+import './template-runtime-v74.js?v=7.4.0';
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')){
   let released=false;
@@ -10,6 +11,5 @@ if(!Q.has('editor')){
     window.dispatchEvent(new CustomEvent('raf:public-ready'));
   };
   window.rafReleasePublicBoot=release;
-  // Absolute safety: never leave the page hidden forever if network/Firebase fails.
   setTimeout(release,3200);
 }
