@@ -32,7 +32,7 @@ else if(editorMode){
    await import('./template-runtime-guard-v72.js?v=7.2.2');
    await import('./editor-core-v72.js?v=7.2.2');
    await import('./editor-v70-layout-guard.js?v=7.2.2');
-   await import('./editor-templates-v72.js?v=7.2.2');
+   await import('./editor-templates-v722.js?v=7.2.2');
    await import('./editor-history-v72.js?v=7.2.2');
    await import('./editor-chrome-v61.js?v=7.2.2');
   }
