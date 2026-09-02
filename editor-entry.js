@@ -10,7 +10,7 @@ else if(editorMode){
  (async()=>{try{
   await import('./auth-gate.js?v=3.2.1');
   await import('./image-webp-v60.js?v=6.5.3');
-  if(!portfolio){await import('./editor-recovery-v64.js?v=6.5.3');await import('./editor-baseline-sync-v652.js?v=6.5.3')}
+  if(!portfolio){await import('./editor-recovery-v64.js?v=6.5.3');await import('./editor-baseline-sync-v652.js?v=7.0.0')}
   if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=6.5.3')}
   else{
    await import('./editor-media-prefetch-v43.js?v=4.3.0');
