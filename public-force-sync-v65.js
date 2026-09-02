@@ -1,11 +1,11 @@
-// RAF.studio v6.5 — authoritative public renderer. Published Firebase data always wins.
+// RAF.studio v6.5.4 — authoritative public renderer + no-flash ready signal
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const Q=new URLSearchParams(location.search);if(Q.has('editor')){}else{
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop',num=(v,f=0)=>{const n=Number(v);return Number.isFinite(n)?n:f};
-let data={},timer=0;
+let data={},timer=0,firstPaintDone=false;
 const cfg=(by={})=>{const d=dev(),desk=by.desktop||{};if(d==='desktop')return desk;const c=by[d]||{};return c.inherit===false?c:{...desk,...c}};
 function tkey(el){return ['heroK','heroT','heroD'].includes(el.id)?el.id:(el.dataset.homeText||'')}
 function skey(el){return el.matches('header.hero')?'Hero':(el.dataset.rafSection||el.dataset.homeSection||'')}
@@ -16,6 +16,8 @@ function applySection(el,k){const c=cfg(data.visualStyles?.sections?.[k]||{});el
 function applyElement(el,k){const c=cfg(data.builder?.elements?.[k]||{});if(!c||!Object.keys(c).length)return;if(c.text!=null&&el.children.length===0)el.textContent=c.text;if(c.href!=null&&el instanceof HTMLAnchorElement)el.setAttribute('href',c.href);if(c.color)el.style.color=c.color;if(c.background)el.style.background=c.background;if(c.radius!=null)el.style.borderRadius=`${c.radius}px`;if(c.fontSize!=null)el.style.fontSize=`${c.fontSize}px`;if(c.paddingX!=null){el.style.paddingLeft=`${c.paddingX}px`;el.style.paddingRight=`${c.paddingX}px`}if(c.paddingY!=null){el.style.paddingTop=`${c.paddingY}px`;el.style.paddingBottom=`${c.paddingY}px`}if(c.zIndex!=null){el.style.position='relative';el.style.zIndex=String(c.zIndex)}if(c.hidden===true)el.style.display='none'}
 function repairNav(){const n=$('.navlinks');if(!n)return;const links=n.querySelectorAll(':scope>a');if(links.length>=5)return;n.innerHTML='<a data-raf-element="navPhoto" href="fotografia.html">Fotografia</a><a data-raf-element="navFilm" href="film.html">Film</a><a data-raf-element="navAbout" href="#omnie">O mnie</a><a data-raf-element="navContact" href="#kontakt">Kontakt</a><a class="keep pill" data-raf-element="navClient" data-gallery href="https://galeria.raf-studio.pl/">Strefa klienta</a><a class="keep pill" data-raf-element="navAdmin" href="admin.html">⚙ Admin</a>'}
 function render(){repairNav();$$('[data-home-text],#heroK,#heroT,#heroD').forEach(el=>applyText(el,tkey(el)));$$('[data-home-media]').forEach(el=>applyMedia(el,el.dataset.homeMedia||''));$$('[data-raf-section],header.hero').forEach(el=>applySection(el,skey(el)));$$('[data-raf-element]').forEach(el=>applyElement(el,el.dataset.rafElement||''));document.documentElement.dataset.rafPublishedAt=String(data.publishedAt||'')}
+async function waitVisibleMedia(){const imgs=$$('[data-home-media]').filter(x=>x.tagName==='IMG'&&x.src);if(!imgs.length)return;await Promise.race([Promise.all(imgs.map(img=>img.complete?Promise.resolve():new Promise(res=>{img.addEventListener('load',res,{once:true});img.addEventListener('error',res,{once:true})}))),new Promise(res=>setTimeout(res,1100))])}
+async function firstPaint(){if(firstPaintDone)return;firstPaintDone=true;render();await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));await waitVisibleMedia();render();window.rafReleasePublicBoot?.()}
 function schedule(){clearTimeout(timer);requestAnimationFrame(()=>requestAnimationFrame(render));timer=setTimeout(render,180);setTimeout(render,650)}
-onValue(ref(db,`${WEBSITE_ROOT}/public`),s=>{data=s.val()||{};schedule()});addEventListener('resize',schedule,{passive:true});
+onValue(ref(db,`${WEBSITE_ROOT}/public`),async s=>{data=s.val()||{};if(!firstPaintDone)await firstPaint();else schedule()});addEventListener('resize',schedule,{passive:true});
 }
