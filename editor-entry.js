@@ -28,6 +28,7 @@ else if(editorMode){
    await import('./editor-pro-v61.js?v=6.5.3');
    await import('./custom-sections-editor-v62.js?v=6.5.3');
    await import('./custom-section-delete-v653.js?v=6.5.3');
+   await import('./editor-v70-migrate.js?v=7.0.0');
    await import('./editor-core-v70.js?v=7.0.0');
    await import('./editor-history-preview-v64.js?v=7.0.0');
    await import('./editor-chrome-v61.js?v=7.0.0');
