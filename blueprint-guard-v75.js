@@ -1,11 +1,11 @@
-// RAF.studio — Blueprint guard + editor bindings v7.7.0 WYSIWYG
-import './blueprint-hero-v75.js?v=7.7.0';
-import './blueprint-longform-v751.js?v=7.7.0';
-import './template-engine-v752.js?v=7.7.0';
+// RAF.studio — Blueprint guard + editor bindings v7.7.1 WYSIWYG
+import './blueprint-hero-v75.js?v=7.7.1';
+import './blueprint-longform-v751.js?v=7.7.1';
+import './template-engine-v752.js?v=7.7.1';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 function css(){if($('#rafBlueprintGuard75'))return;const s=document.createElement('style');s.id='rafBlueprintGuard75';s.textContent=`
-body[data-tpl75] #rafMain>[data-raf-section]:not(.tpl75Section),body[data-tpl75] #rafOffer54,body[data-tpl75] #rafStats61{display:none!important}
+body[data-tpl75] #rafMain>[data-raf-section]:not(.tpl75Section):not([data-raf-widget-id]),body[data-tpl75] #rafOffer54,body[data-tpl75] #rafStats61{display:none!important}
 body[data-tpl75] header.hero{display:grid!important}
 body[data-e752] #rafMain,body[data-e752] .tpl751,body[data-e752] #rafOffer54,body[data-e752] #rafStats61{display:none!important}
 .portal{display:flex!important;align-items:flex-end!important;justify-content:flex-start!important}

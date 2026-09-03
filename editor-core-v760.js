@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v7.7.0
+// RAF.studio — unified visual core v7.7.1
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -18,6 +18,7 @@ let layout={desktop:{},tablet:{},mobile:{}};
 let clones=[];
 let sel=new Set();
 let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null;
+let lastTap=null,moveArm=null,suppressClickUntil=0;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
 function baseCfg(){return{x:0,y:0,width:null,height:null,rotate:0,z:0,hidden:false,locked:false,group:'',label:'',crop:null,src:''}}
@@ -26,7 +27,9 @@ function css(){
  const s=document.createElement('style');s.id='core760css';
  s.textContent=
  'body.raf-e3 .rbox3{display:none!important}'+
- 'body.raf-e3 [data-raf-v72-id]{cursor:move}'+
+ 'body.raf-e3 [data-raf-v72-id]{cursor:pointer}'+
+ 'body.raf-e3 [data-raf-v72-id].v760moveArmed{cursor:grab;outline:2px dashed #ff3aa6!important;outline-offset:4px}'+
+ 'body.raf-e3 [data-raf-v72-id].v760moving{cursor:grabbing!important}'+
  'body.raf-e3 [data-raf-v72-id].v72sel{outline:2px solid #22a8ff!important;outline-offset:3px}'+
  'body.raf-e3 [data-raf-v72-id].v72grp{box-shadow:0 0 0 1px #b54cff77 inset}'+
  'body.raf-e3 [data-raf-v72-id].v760locked{cursor:not-allowed}'+
@@ -109,8 +112,11 @@ function cropApply(el,c){
 }
 function apply(el){
  const c=cfg(id(el),el);
- el.style.position='relative';
- el.style.left=(Number(c.x)||0)+'px';el.style.top=(Number(c.y)||0)+'px';
+ if(el.matches('.rw-floating-button')){
+  el.style.position='fixed';el.style.removeProperty('left');el.style.removeProperty('top');el.style.translate=(Number(c.x)||0)+'px '+(Number(c.y)||0)+'px'
+ }else{
+  el.style.position='relative';el.style.left=(Number(c.x)||0)+'px';el.style.top=(Number(c.y)||0)+'px';el.style.removeProperty('translate')
+ }
  if(c.width>0){el.style.boxSizing='border-box';el.style.width=c.width+'px';el.style.maxWidth=c.width+'px'}else if(c.width===null){el.style.removeProperty('width');el.style.removeProperty('max-width')}
  if(c.height>0){el.style.boxSizing='border-box';el.style.height=c.height+'px'}else if(c.height===null)el.style.removeProperty('height');
  el.style.rotate=(Number(c.rotate)||0)+'deg';
@@ -300,7 +306,7 @@ function align(m){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- d.innerHTML='<small>V7.7 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div><div style="font-size:9px;color:#777;margin-top:8px">Uchwyty: rogi, boki i obrót • Shift = proporcje • Alt = od środka<br>Linie + magnes • Alt podczas ruchu = bez magnesu</div>';
+ d.innerHTML='<small>V7.7.1 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div><div style="font-size:9px;color:#777;margin-top:8px">Ruch: kliknij 2× i przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0});
  p.classList.add('raf-panel-open62');p.style.display='block'
 }
@@ -341,12 +347,37 @@ function list(){
  return out
 }
 
+function disarmMove(){
+ if(moveArm?.el)moveArm.el.classList.remove('v760moveArmed');
+ moveArm=null
+}
+function armMove(el){
+ disarmMove();moveArm={el,until:performance.now()+2400};el.classList.add('v760moveArmed');
+ const s=$('#rafStatus3');if(s)s.textContent='✥ Element gotowy do przesunięcia — przeciągnij go';
+ setTimeout(()=>{if(moveArm?.el===el&&performance.now()>=moveArm.until)disarmMove()},2450)
+}
+function pendingMove(e,el){
+ const items=[...sel].filter(x=>!cfg(id(x),x).locked).map(x=>({el:x,k:id(x),x:Number(cfg(id(x),x).x)||0,y:Number(cfg(id(x),x).y)||0}));
+ if(!items.length)return;
+ drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items,startBox:bounds(),targets:snapTargets(),sourceEl:el};
+ el.classList.add('v760moving');e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
+}
+
 window.addEventListener('pointerdown',e=>{
  if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();const el=cand(e);
- if(e.shiftKey){marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel)};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
- if(el){if(!sel.has(el))select(el,false);drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items:[...sel].filter(x=>!cfg(id(x),x).locked).map(x=>({el:x,k:id(x),x:Number(cfg(id(x),x).x)||0,y:Number(cfg(id(x),x).y)||0})),startBox:bounds(),targets:snapTargets()};return}
- if(e.target.closest('a,button,img,video,iframe'))return;clear();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:null,moved:false,base:new Set()};e.preventDefault()
+ if(e.altKey||e.shiftKey){lastTap=null;disarmMove();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel),modifier:true};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
+ if(el){
+  const now=performance.now(),second=lastTap?.el===el&&now-lastTap.at<=380;if(moveArm&&moveArm.el!==el)disarmMove();const armed=moveArm?.el===el&&now<moveArm.until;
+  if(!sel.has(el))select(el,false);
+  if(second||armed){lastTap=null;disarmMove();pendingMove(e,el)}else lastTap={el,at:now};
+  return
+ }
+ lastTap=null;disarmMove();if(e.target.closest('a,button,img,video,iframe'))return;clear();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:null,moved:false,base:new Set(),modifier:false};e.preventDefault()
+},true);
+window.addEventListener('dblclick',e=>{
+ if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
+ const el=cand(e);if(!el||e.target.closest(TEXT))return;armMove(el);e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('pointermove',e=>{
  if(marq&&e.pointerId===marq.pid){
@@ -356,17 +387,18 @@ window.addEventListener('pointermove',e=>{
  if(!drag||e.pointerId!==drag.pid)return;
  if(drag.mode==='pending'){if(Math.hypot(e.clientX-drag.sx,e.clientY-drag.sy)<4)return;commit();drag.mode='move'}
  if(drag.mode==='move'){
-  let dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(!e.altKey&&drag.startBox){const s=snapMove(drag.startBox,dx,dy,drag.targets||[]);dx+=s.dx;dy+=s.dy;guideShow(s)}else guideHide();
+  let dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(!(e.ctrlKey||e.metaKey)&&drag.startBox){const s=snapMove(drag.startBox,dx,dy,drag.targets||[]);dx+=s.dx;dy+=s.dy;guideShow(s)}else guideHide();
   drag.items.forEach(i=>{const c=ownCfg(i.k,i.el);c.x=i.x+dx;c.y=i.y+dy;apply(i.el)});boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
  }else if(drag.mode==='resize'){guideHide();resizeLive(e);boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
  else if(drag.mode==='rotate'){const c=ownCfg(drag.k,drag.el),a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);c.rotate=drag.start+(a-drag.angle)*180/Math.PI;if(e.shiftKey)c.rotate=Math.round(c.rotate/15)*15;apply(drag.el);boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
 },true);
 function finishPointer(e){
- if(marq&&e.pointerId===marq.pid){if(!marq.moved&&marq.startEl){if(sel.has(marq.startEl)){sel.delete(marq.startEl);marq.startEl.classList.remove('v72sel')}else add(marq.startEl)}$('#v72marq')?.remove();marq=null;panel();boxUpdate();guideHide();emit();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
- if(drag&&e.pointerId===drag.pid){if(['move','resize','rotate'].includes(drag.mode))save();drag=null;panel();boxUpdate();guideHide();emit()}
+ if(marq&&e.pointerId===marq.pid){if(!marq.moved&&marq.startEl){if(sel.has(marq.startEl)){sel.delete(marq.startEl);marq.startEl.classList.remove('v72sel')}else add(marq.startEl)}suppressClickUntil=performance.now()+450;$('#v72marq')?.remove();marq=null;panel();boxUpdate();guideHide();emit();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
+ if(drag&&e.pointerId===drag.pid){drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','rotate'].includes(drag.mode))save();drag=null;panel();boxUpdate();guideHide();emit()}
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
+window.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'){e.preventDefault();e.shiftKey?ungroup():group();return}
