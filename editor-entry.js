@@ -32,7 +32,7 @@ else if(editorMode){
    await import('./blueprint-guard-v75.js?v=7.5.2');
    await import('./editor-core-v72.js?v=7.5.2');
    await import('./editor-v70-layout-guard.js?v=7.5.2');
-   await import('./editor-templates-v752.js?v=7.5.2');
+   await import('./editor-templates-v75.js?v=7.5.1');
    await import('./editor-history-v72.js?v=7.5.2');
    await import('./editor-chrome-v73.js?v=7.5.2');
   }
