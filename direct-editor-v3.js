@@ -9,7 +9,7 @@ const storage = getStorage(app);
 const $ = (s,r=document)=>r.querySelector(s);
 const $$ = (s,r=document)=>[...r.querySelectorAll(s)];
 const cp = x => JSON.parse(JSON.stringify(x));
-const device = ()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
+const device = ()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const baseText = ()=>({moveX:0,moveY:0,scale:1,rotate:0,width:null,fontSize:null,color:null,textAlign:null,zIndex:5,hidden:false,animation:'',inherit:true});
 const baseMedia = ()=>({x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,radius:0,inherit:true});
 let draft=null, selected=null, overlay=null, drag=null, dirty=false, grid=true, clipboard=null, preview=false, library=[];

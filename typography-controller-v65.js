@@ -5,7 +5,7 @@ import {getStorage,ref as sRef,uploadBytesResumable,getDownloadURL} from 'https:
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),storage=getStorage(app);
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
+const dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const n=(v,f=0)=>{v=Number(v);return Number.isFinite(v)?v:f};
 const keyOf=el=>['heroK','heroT','heroD'].includes(el?.id)?el.id:(el?.dataset?.homeText||'');
 const builtins=['Inter','Arial','Helvetica','Gill Sans MT','Segoe UI','Verdana','Trebuchet MS','Tahoma','Georgia','Times New Roman','Courier New','Impact','system-ui'];

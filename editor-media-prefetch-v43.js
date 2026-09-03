@@ -4,7 +4,7 @@ import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
 const keys=['heroMedia','photoPortal','filmPortal','aboutPortrait'];
-const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
+const dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 function cfgFor(cfg={},d=dev()){const desk=cfg.desktop||{};return d==='desktop'?{x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,radius:0,...desk}:{x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,radius:0,...desk,...(cfg[d]||{})}}
 function preload(src){return new Promise(resolve=>{if(!src)return resolve(false);const i=new Image();i.onload=()=>resolve(true);i.onerror=()=>resolve(false);i.src=src})}
 for(const k of keys){const el=document.querySelector(`[data-home-media="${k}"]`);if(el)el.style.opacity='0'}

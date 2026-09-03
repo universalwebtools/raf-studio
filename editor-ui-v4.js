@@ -5,7 +5,7 @@ import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const app=getApps().length?getApp():initializeApp(firebaseConfig), db=getDatabase(app);
 const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const cp=x=>JSON.parse(JSON.stringify(x));
-const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
+const dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const LOGO_W='https://galeria.raf-studio.pl/logo-white.png', LOGO_B='https://galeria.raf-studio.pl/logo-black.png';
 let draft=null,lastSel=null,muting=false;

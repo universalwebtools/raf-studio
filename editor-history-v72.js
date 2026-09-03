@@ -3,7 +3,7 @@ import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js'
 import {getDatabase,ref,get,set,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {merge61,render61} from './public-pro-v61.js?v=7.2.0';
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],P={main:'website/public/editorDraft',extras:'website/public/editorExtrasDraft',pro:'website/public/proV6Draft'},KEY='rafHistory72';
-let current=null,undo=[],redo=[],live={main:null,extras:null,pro:null},ready=false,busy=false,timer=null,lastGlobalAt=0,preview=false;const cp=x=>structuredClone(x??null),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
+let current=null,undo=[],redo=[],live={main:null,extras:null,pro:null},ready=false,busy=false,timer=null,lastGlobalAt=0,preview=false;const cp=x=>structuredClone(x??null),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 function cleanMain(x){x=cp(x)||{};if(x.builder)delete x.builder.freeLayoutV7;return x}
 function cleanState(s){return{main:cleanMain(s.main),extras:cp(s.extras),pro:cp(s.pro)}}
 function load(){try{const x=JSON.parse(sessionStorage.getItem(KEY)||'{}');undo=Array.isArray(x.undo)?x.undo:[];redo=Array.isArray(x.redo)?x.redo:[]}catch{}}
