@@ -1,4 +1,4 @@
-// RAF.studio — shared widget catalogue and renderer v7.7.2
+// RAF.studio — shared widget catalogue and renderer v8.0.0
 export const WIDGET_CATALOG_770=[
  {type:'photo-carousel',icon:'▣',name:'Karuzela zdjęć',description:'Zdjęcia ze strzałkami, kropkami i automatycznym przesuwaniem.'},
  {type:'logo-carousel',icon:'◈',name:'Karuzela logotypów',description:'Płynnie przesuwające się logotypy klientów i partnerów.'},
@@ -13,7 +13,8 @@ export const WIDGET_CATALOG_770=[
  {type:'cta',icon:'→',name:'Call to Action',description:'Mocna sekcja prowadząca do kontaktu, rezerwacji lub zakupu.'},
  {type:'floating-button',icon:'●',name:'Przycisk pływający',description:'Telefon, WhatsApp, kontakt albo przycisk „Wróć na górę”.'},
  {type:'social',icon:'@',name:'Ikony mediów społecznościowych',description:'Odnośniki do Instagrama, Facebooka, TikToka i YouTube.'},
- {type:'download',icon:'↓',name:'Pliki do pobrania',description:'Katalog, cennik, oferta albo instrukcja w PDF.'}
+ {type:'download',icon:'↓',name:'Pliki do pobrania',description:'Katalog, cennik, oferta albo instrukcja w PDF.'},
+ {type:'privacy-center',icon:'◉',name:'Prywatność i cookies',description:'Profesjonalne centrum zgód, pełna polityka i ustawienia cookies.'}
 ];
 
 const ASSETS=['assets/photo-wedding.png','assets/photo-session.png','assets/photo-product.png'];
@@ -41,6 +42,7 @@ export function makeWidget770(type){
  if(type==='floating-button')return{...x,title:'',subtitle:'',paddingTop:0,paddingBottom:0,label:'Kontakt',symbol:'✉',link:'#kontakt',position:'right',shape:'pill'};
  if(type==='social')return{...x,title:'ZNAJDŹ MNIE ONLINE.',profiles:[{name:'Instagram',url:'#'},{name:'Facebook',url:'#'},{name:'YouTube',url:'#'},{name:'TikTok',url:'#'}],style:'circle'};
  if(type==='download')return{...x,title:'MATERIAŁY DO POBRANIA.',subtitle:'Pobierz aktualną ofertę RAF.studio.',fileUrl:'',fileName:'Oferta RAF.studio.pdf',description:'PDF • aktualna oferta i zakres usług',button:'Pobierz plik'};
+ if(type==='privacy-center')return{...x,title:'TWOJA PRYWATNOŚĆ.',subtitle:'Pełna kontrola zgód i jasne informacje o danych.',controller:'RAF.studio',privacyEmail:'',policyDate:'3 września 2026',retention:'Zapytania przechowujemy tylko tak długo, jak jest to potrzebne do obsługi kontaktu i realizacji obowiązków prawnych.',button:'Ustawienia cookies'};
  return x
 }
 
@@ -63,9 +65,10 @@ function renderCta(w){return`<div class="rwCta ${w.style==='outline'?'outline':'
 function renderFloating(w){return`<a class="rwFloating ${w.position==='left'?'left':''} ${w.shape==='circle'?'circle':''}" href="${esc(href(w.link,'#kontakt'))}"><b>${esc(w.symbol||'✉')}</b><span>${esc(w.label||'Kontakt')}</span></a>`}
 function renderSocial(w){const short=n=>({Instagram:'IG',Facebook:'f',YouTube:'YT',TikTok:'TT',LinkedIn:'in'}[n]||String(n||'?').slice(0,2));return`${head(w)}<div class="rwSocial ${w.style==='square'?'square':''}">${(w.profiles||[]).map(x=>`<a href="${esc(href(x.url))}" target="_blank" rel="noopener"><b>${esc(short(x.name))}</b><span>${esc(x.name)}</span></a>`).join('')}</div>`}
 function renderDownload(w){return`${head(w)}<a class="rwDownload" href="${esc(href(w.fileUrl,''))}" ${w.fileUrl?'target="_blank" rel="noopener"':''}><span class="rwFileIcon">PDF</span><span><b>${esc(w.fileName||'Plik do pobrania')}</b><small>${esc(w.description||'')}</small></span><strong>${esc(w.button||'Pobierz')} ↓</strong></a>`}
+function renderPrivacy(w){return`${head(w)}<div class="rwPrivacy" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:30px;padding:clamp(22px,4vw,38px);border:1px solid #ffffff22;border-radius:18px;background:#ffffff06"><div><small style="letter-spacing:.14em;opacity:.65">ADMINISTRATOR DANYCH</small><h3 style="font-size:clamp(28px,4vw,48px);margin:10px 0">${esc(w.controller||'RAF.studio')}</h3><p style="line-height:1.65;opacity:.75">${esc(w.retention||'Dane są przetwarzane wyłącznie w zakresie potrzebnym do obsługi kontaktu.')}</p>${w.privacyEmail?`<a href="mailto:${esc(w.privacyEmail)}">${esc(w.privacyEmail)}</a>`:''}</div><div style="display:grid;align-content:center;justify-items:start;gap:14px"><button class="rwBtn" type="button" data-privacy-settings>${esc(w.button||'Ustawienia cookies')}</button><a href="/polityka-prywatnosci/" style="color:inherit;text-decoration:underline">Pełna polityka prywatności →</a><small style="opacity:.6">Aktualizacja: ${esc(w.policyDate||'')}</small></div></div>`}
 
 export function renderWidget770(w){
- const renders={'photo-carousel':renderPhotoCarousel,'logo-carousel':renderLogoCarousel,gallery:renderGallery,testimonials:renderTestimonials,pricing:renderPricing,counter:renderCounter,'contact-form':renderContact,map:renderMap,video:renderVideo,'hero-slider':renderHero,cta:renderCta,'floating-button':renderFloating,social:renderSocial,download:renderDownload},fn=renders[w.type];if(!fn)return null;
+ const renders={'photo-carousel':renderPhotoCarousel,'logo-carousel':renderLogoCarousel,gallery:renderGallery,testimonials:renderTestimonials,pricing:renderPricing,counter:renderCounter,'contact-form':renderContact,map:renderMap,video:renderVideo,'hero-slider':renderHero,cta:renderCta,'floating-button':renderFloating,social:renderSocial,download:renderDownload,'privacy-center':renderPrivacy},fn=renders[w.type];if(!fn)return null;
  const floating=w.type==='floating-button',root=document.createElement(floating?'div':'section');root.className='rw770 rw-'+w.type+(floating&&w.position==='left'?' left':'');root.dataset.rafWidgetId=w.id;root.dataset.rafV7Id='widget:'+w.id;root.dataset.rafSection='Widget:'+w.id;root.style.cssText=style(w);root.innerHTML=`${floating?'':'<div class="rwWrap">'}${fn(w)}${floating?'':'</div>'}`;return root
 }
 

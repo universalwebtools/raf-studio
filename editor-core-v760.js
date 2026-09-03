@@ -8,7 +8,7 @@ const $$=(s,r=document)=>[...r.querySelectorAll(s)];
 const cp=x=>structuredClone(x??{});
 const queryDevice=()=>new URLSearchParams(location.search).get('device');
 const dev=()=>queryDevice()|| (innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
-const TEXT='[data-home-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
+const TEXT='[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
 const CAND=TEXT+',[data-raf-free],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
 const ROOT='website/public/editorDraft/builder';
 const SNAP_DISTANCE=7;
@@ -75,6 +75,7 @@ function id(el){
  if(cloneRoot&&cloneRoot!==el)k=clonePart(el,cloneRoot);
  else if(el.dataset.rafV76Clone)k='clone:'+el.dataset.rafV76Clone;
  else if(el.dataset.rafV7Id)k=el.dataset.rafV7Id;
+ else if(el.dataset.siteText)k='tx:'+el.dataset.siteText;
  else if(['heroK','heroT','heroD'].includes(el.id))k='tx:'+el.id;
  else if(el.dataset.homeText)k='tx:'+el.dataset.homeText;
  else if(el.dataset.custom62Id&&el.dataset.custom62)k='cs:'+el.dataset.custom62Id+':'+el.dataset.custom62;

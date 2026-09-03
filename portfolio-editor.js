@@ -3,7 +3,7 @@ import { getDatabase,ref,get,set } from "https://www.gstatic.com/firebasejs/12.2
 import { getStorage,ref as sRef,listAll,getDownloadURL,uploadBytesResumable } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
 import { firebaseConfig,WEBSITE_ROOT } from "./firebase-config.js";
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),storage=getStorage(app),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],clone=x=>structuredClone(x);
-const isFilm=location.pathname.toLowerCase().includes('film.html'),type=isFilm?'film':'photo',key=isFilm?'films':'photos';
+const isFilm=/\/film(?:\.html|\/)?$/i.test(location.pathname),type=isFilm?'film':'photo',key=isFilm?'films':'photos';
 let items=[],selectedId=null,editDevice='desktop',dirty=false,library=[],saveTimer=null,undo=[],redo=[];
 const defaultsCfg=d=>({span:d==='mobile'?12:6,ratio:isFilm?'16/9':'4/3',x:50,y:50});
 function esc(s=''){return String(s).replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
