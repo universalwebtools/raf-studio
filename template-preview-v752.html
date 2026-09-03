@@ -1,1 +1,37 @@
-<!doctype html><html lang="pl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAF template live preview</title><style>*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080808}#stage{position:fixed;inset:0;overflow:hidden;background:#080808}#inner{position:absolute;left:0;top:0;width:1440px;height:9000px;border:0;transform-origin:0 0;background:#050505}</style></head><body><div id="stage"><iframe id="inner"></iframe></div><script>const q=new URLSearchParams(location.search),id=q.get('preset')||'cinema',f=document.getElementById('inner'),stage=document.getElementById('stage');f.src='index.html?tplPreview='+encodeURIComponent(id)+'&_templateBuild=753';function fit(){try{const d=f.contentDocument;if(!d)return;const h=Math.max(1200,d.documentElement.scrollHeight,d.body?.scrollHeight||0),w=1440;f.style.height=h+'px';const s=Math.min(stage.clientWidth/w,stage.clientHeight/h);f.style.transform='scale('+s+')';f.style.left=Math.max(0,(stage.clientWidth-w*s)/2)+'px';f.style.top='0px'}catch(e){}}f.addEventListener('load',()=>{setTimeout(fit,250);setTimeout(fit,900);setTimeout(fit,1800)});window.addEventListener('resize',fit);setInterval(fit,2200);</script></body></html>
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RAF template live preview</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#080808}
+#stage{position:fixed;inset:0;overflow:hidden;background:#080808}
+#inner{position:absolute;left:0;top:0;width:1440px;height:1600px;border:0;transform-origin:0 0;background:#050505}
+</style>
+</head>
+<body>
+<div id="stage"><iframe id="inner" title="Podgląd szablonu"></iframe></div>
+<script>
+const q=new URLSearchParams(location.search);
+const id=q.get('preset')||'cinema';
+const frame=document.getElementById('inner');
+const stage=document.getElementById('stage');
+frame.src='index.html?tplPreview='+encodeURIComponent(id)+'&_templateBuild=754';
+function fit(){
+  const desktopWidth=1440;
+  const scale=stage.clientWidth/desktopWidth;
+  const visibleDesktopHeight=Math.ceil(stage.clientHeight/Math.max(scale,.01));
+  frame.style.width=desktopWidth+'px';
+  frame.style.height=Math.max(1600,visibleDesktopHeight+300)+'px';
+  frame.style.transform='scale('+scale+')';
+  frame.style.left='0';
+  frame.style.top='0';
+}
+fit();
+frame.addEventListener('load',()=>{fit();setTimeout(fit,250);setTimeout(fit,900)});
+window.addEventListener('resize',fit);
+</script>
+</body>
+</html>
