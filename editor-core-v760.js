@@ -360,7 +360,7 @@ function pendingMove(e,el){
  const items=[...sel].filter(x=>!cfg(id(x),x).locked).map(x=>({el:x,k:id(x),x:Number(cfg(id(x),x).x)||0,y:Number(cfg(id(x),x).y)||0}));
  if(!items.length)return;
  drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items,startBox:bounds(),targets:snapTargets(),sourceEl:el};
- el.classList.add('v760moving');e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
+ el.classList.add('v760moving')
 }
 
 window.addEventListener('pointerdown',e=>{
@@ -394,11 +394,12 @@ window.addEventListener('pointermove',e=>{
 },true);
 function finishPointer(e){
  if(marq&&e.pointerId===marq.pid){if(!marq.moved&&marq.startEl){if(sel.has(marq.startEl)){sel.delete(marq.startEl);marq.startEl.classList.remove('v72sel')}else add(marq.startEl)}suppressClickUntil=performance.now()+450;$('#v72marq')?.remove();marq=null;panel();boxUpdate();guideHide();emit();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
- if(drag&&e.pointerId===drag.pid){drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','rotate'].includes(drag.mode))save();drag=null;panel();boxUpdate();guideHide();emit()}
+ if(drag&&e.pointerId===drag.pid){const ready=drag.mode==='pending'&&drag.sourceEl&&!drag.sourceEl.matches(TEXT)?drag.sourceEl:null;drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','rotate'].includes(drag.mode))save();drag=null;if(ready)armMove(ready);panel();boxUpdate();guideHide();emit()}
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
 window.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'){e.preventDefault();e.shiftKey?ungroup():group();return}
