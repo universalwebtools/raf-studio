@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v7.6.0
+// RAF.studio — unified visual core v7.7.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -147,7 +147,7 @@ function renderClones(){
 }
 function decorate(){
  css();
- $$(CAND).forEach(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#v72box,#v760layers,#v760menu,#v760history'))return;id(el);apply(el)});
+ $$(CAND).forEach(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return;id(el);apply(el)});
  renderClones();
  if(migrationDirty){migrationDirty=false;save()}
 }
@@ -300,13 +300,13 @@ function align(m){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- d.innerHTML='<small>V7.6 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div><div style="font-size:9px;color:#777;margin-top:8px">Uchwyty: rogi, boki i obrót • Shift = proporcje • Alt = od środka<br>Linie + magnes • Alt podczas ruchu = bez magnesu</div>';
+ d.innerHTML='<small>V7.7 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div><div style="font-size:9px;color:#777;margin-top:8px">Uchwyty: rogi, boki i obrót • Shift = proporcje • Alt = od środka<br>Linie + magnes • Alt podczas ruchu = bez magnesu</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0});
  p.classList.add('raf-panel-open62');p.style.display='block'
 }
 function cand(e){return e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
 function hits(l,t,r,b){
- const a=$$(CAND).filter(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#v72box,#v760layers,#v760menu,#v760history'))return false;const q=el.getBoundingClientRect();return q.width&&q.height&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b});
+ const a=$$(CAND).filter(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return false;const q=el.getBoundingClientRect();return q.width&&q.height&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b});
  return a.filter(el=>!a.some(o=>o!==el&&el.contains(o)))
 }
 
@@ -337,12 +337,12 @@ function resetTransform(){patchSelected({x:0,y:0,width:null,height:null,rotate:0
 function rename(label){patchSelected({label:String(label||'').slice(0,80)})}
 function list(){
  decorate();const out=[],seen=new Set();
- for(const el of $$('[data-raf-v72-id]')){const k=id(el);if(seen.has(k)||el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#v72box,#v760layers,#v760menu,#v760history'))continue;seen.add(k);const c=cfg(k,el),section=el.closest('[data-raf-section],header.hero'),sectionId=section?id(section):'page';out.push({id:k,el,cfg:c,sectionId,tag:el.tagName.toLowerCase(),label:c.label||el.getAttribute('aria-label')||el.alt||el.textContent?.trim().replace(/\s+/g,' ').slice(0,46)||k})}
+ for(const el of $$('[data-raf-v72-id]')){const k=id(el);if(seen.has(k)||el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))continue;seen.add(k);const c=cfg(k,el),section=el.closest('[data-raf-section],header.hero'),sectionId=section?id(section):'page';out.push({id:k,el,cfg:c,sectionId,tag:el.tagName.toLowerCase(),label:c.label||el.getAttribute('aria-label')||el.alt||el.textContent?.trim().replace(/\s+/g,' ').slice(0,46)||k})}
  return out
 }
 
 window.addEventListener('pointerdown',e=>{
- if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
+ if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();const el=cand(e);
  if(e.shiftKey){marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel)};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
  if(el){if(!sel.has(el))select(el,false);drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items:[...sel].filter(x=>!cfg(id(x),x).locked).map(x=>({el:x,k:id(x),x:Number(cfg(id(x),x).x)||0,y:Number(cfg(id(x),x).y)||0})),startBox:bounds(),targets:snapTargets()};return}

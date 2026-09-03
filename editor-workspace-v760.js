@@ -1,4 +1,4 @@
-// RAF.studio — layers, clipboard, responsive controls and image crop UI v7.6.0
+// RAF.studio — layers, clipboard, responsive controls and image crop UI v7.7.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getStorage,ref as sRef,uploadBytesResumable,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js';
@@ -70,7 +70,7 @@ function runAction(c){
  if(!core)return;
  if(c==='copy'){core.copy();status('✓ Skopiowano element')}
  if(c==='paste'){core.paste();status('✓ Wklejono element')}
- if(c==='duplicate'){core.duplicate();status('✓ Utworzono duplikat')}
+ if(c==='duplicate'){const wid=single()?.closest?.('[data-raf-widget-id]')?.dataset.rafWidgetId;if(wid&&window.rafWidgets770?.duplicate)window.rafWidgets770.duplicate(wid);else core.duplicate();status('✓ Utworzono duplikat')}
  if(c==='copyStyle'){core.copyStyle();status('✓ Skopiowano wygląd')}
  if(c==='pasteStyle'){core.pasteStyle();status('✓ Wklejono wygląd')}
  if(c==='front')core.front();if(c==='back')core.back();if(c==='hide')core.toggleHidden();if(c==='lock')core.toggleLocked();if(c==='reset')core.resetTransform();
@@ -80,7 +80,7 @@ function runAction(c){
 function single(){return core?.selected()?.length===1?core.selected()[0]:null}
 function inspectorHtml(el){
  const c=core.cfgFor(el),r=el.getBoundingClientRect(),w=Math.round(Number(c.width)||r.width),h=Math.round(Number(c.height)||r.height),isImg=el instanceof HTMLImageElement,crop={x:50,y:50,zoom:1,fit:'cover',...(c.crop||{})};
- let html='<div class="v760title"><small>POZYCJA I ROZMIAR • 7.6</small><span>'+esc(core.id(el))+'</span></div><div class="v760grid"><label>X<input id="v760x" type="number" value="'+Math.round(Number(c.x)||0)+'"></label><label>Y<input id="v760y" type="number" value="'+Math.round(Number(c.y)||0)+'"></label><label>Szerokość<input id="v760w" type="number" min="24" value="'+w+'"></label><label>Wysokość<input id="v760h" type="number" min="24" value="'+h+'"></label><label>Obrót °<input id="v760rot" type="number" value="'+Math.round(Number(c.rotate)||0)+'"></label><label style="display:flex;align-items:center;gap:6px;padding-top:17px"><input id="v760ratio" type="checkbox" style="width:auto" checked> Proporcje</label></div><div class="v760actions"><button data-v760="duplicate">Duplikuj</button><button data-v760="front">Na górę</button><button data-v760="back">Na dół</button><button data-v760="hide">'+(c.hidden?'Pokaż':'Ukryj')+'</button><button data-v760="lock">'+(c.locked?'Odblokuj':'Zablokuj')+'</button><button data-v760="reset">Reset</button></div>';
+ let html='<div class="v760title"><small>POZYCJA I ROZMIAR • 7.7</small><span>'+esc(core.id(el))+'</span></div><div class="v760grid"><label>X<input id="v760x" type="number" value="'+Math.round(Number(c.x)||0)+'"></label><label>Y<input id="v760y" type="number" value="'+Math.round(Number(c.y)||0)+'"></label><label>Szerokość<input id="v760w" type="number" min="24" value="'+w+'"></label><label>Wysokość<input id="v760h" type="number" min="24" value="'+h+'"></label><label>Obrót °<input id="v760rot" type="number" value="'+Math.round(Number(c.rotate)||0)+'"></label><label style="display:flex;align-items:center;gap:6px;padding-top:17px"><input id="v760ratio" type="checkbox" style="width:auto" checked> Proporcje</label></div><div class="v760actions"><button data-v760="duplicate">Duplikuj</button><button data-v760="front">Na górę</button><button data-v760="back">Na dół</button><button data-v760="hide">'+(c.hidden?'Pokaż':'Ukryj')+'</button><button data-v760="lock">'+(c.locked?'Odblokuj':'Zablokuj')+'</button><button data-v760="reset">Reset</button></div>';
  if(isImg)html+='<div class="v760crop"><div style="display:flex;justify-content:space-between;align-items:center"><b>KADROWANIE ZDJĘCIA</b><button id="v760cropDrag">'+(cropMode?'✓ Zakończ':'✥ Kadruj myszką')+'</button></div><label>Dopasowanie<select id="v760fit"><option value="cover">Wypełnij / cover</option><option value="contain">Pokaż całe / contain</option></select></label><div class="v760rangeLine"><span>X</span><input id="v760cropX" type="range" min="0" max="100" value="'+crop.x+'"><output id="v760cropXo">'+Math.round(crop.x)+'%</output></div><div class="v760rangeLine"><span>Y</span><input id="v760cropY" type="range" min="0" max="100" value="'+crop.y+'"><output id="v760cropYo">'+Math.round(crop.y)+'%</output></div><div class="v760rangeLine"><span>Zoom</span><input id="v760zoom" type="range" min="0.5" max="4" step=".01" value="'+crop.zoom+'"><output id="v760zo">'+Number(crop.zoom).toFixed(2)+'×</output></div><div class="v760actions"><button id="v760replace">Zamień zdjęcie</button><button id="v760cropReset">Reset kadru</button></div><input id="v760file" type="file" accept="image/*" hidden><div id="v760upload" style="font-size:9px;color:#888;margin-top:5px"></div></div>';
  return html
 }
@@ -123,14 +123,14 @@ function cropMove(e){if(!cropDrag||e.pointerId!==cropDrag.pid)return;e.preventDe
 function cropEnd(e){if(!cropDrag||e.pointerId!==cropDrag.pid)return;cropDrag=null;core.save();scheduleInspector(false)}
 
 function installEvents(){
- document.addEventListener('contextmenu',e=>{if(e.target.closest('#rafTop3,#rafPanel3,#v760layers,#v760menu,#v760history'))return;const el=e.target.closest('[data-raf-v72-id]');if(!el)return;e.preventDefault();if(!core.selected().includes(el))core.selectElement(el);showMenu(e.clientX,e.clientY)},true);
+ document.addEventListener('contextmenu',e=>{if(e.target.closest('#rafTop3,#rafPanel3,#v760layers,#v760menu,#v760history,#widgetsModal770'))return;const el=e.target.closest('[data-raf-v72-id]');if(!el)return;e.preventDefault();if(!core.selected().includes(el))core.selectElement(el);showMenu(e.clientX,e.clientY)},true);
  document.addEventListener('pointerdown',e=>{if(!e.target.closest('#v760menu'))hideMenu();cropStart(e)},true);
  document.addEventListener('pointermove',cropMove,true);document.addEventListener('pointerup',cropEnd,true);document.addEventListener('pointercancel',cropEnd,true);addEventListener('scroll',hideMenu,{passive:true});
  document.addEventListener('keydown',e=>{if(e.target.closest?.('input,textarea,select,[contenteditable="true"]')||!(e.ctrlKey||e.metaKey)||e.altKey)return;const k=e.key.toLowerCase();if(!['c','v','d'].includes(k))return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(k==='c'&&e.shiftKey)runAction('copyStyle');else if(k==='v'&&e.shiftKey)runAction('pasteStyle');else if(k==='c')runAction('copy');else if(k==='v')runAction('paste');else runAction('duplicate')},true);
  window.addEventListener('raf:v760-selection',()=>{scheduleInspector(true);scheduleLayers()});window.addEventListener('raf:v760-change',()=>{scheduleInspector(false);scheduleLayers()});window.addEventListener('raf:v760-layers',scheduleLayers)
 }
 async function init(){
- css();for(let i=0;i<100&&!window.rafCore760;i++)await new Promise(r=>setTimeout(r,50));core=window.rafCore760;if(!core)throw new Error('Brak rdzenia edytora 7.6');
+ css();for(let i=0;i<100&&!window.rafCore760;i++)await new Promise(r=>setTimeout(r,50));core=window.rafCore760;if(!core)throw new Error('Brak rdzenia edytora 7.7');
  let n=0,t=setInterval(()=>{if(topUI()||++n>120)clearInterval(t)},50);layerPanel();contextMenu();installEvents();new MutationObserver(()=>{if(!augmenting)scheduleInspector(false)}).observe($('#rafPanel3')||document.body,{childList:true,subtree:true});core.refresh();scheduleInspector(true)
 }
-init().catch(e=>console.error('RAF workspace 7.6',e));
+init().catch(e=>console.error('RAF workspace 7.7',e));

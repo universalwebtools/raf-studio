@@ -1,4 +1,4 @@
-// RAF.studio — public transform, clone and crop runtime v7.6.0
+// RAF.studio — public transform, clone and crop runtime v7.7.0
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
