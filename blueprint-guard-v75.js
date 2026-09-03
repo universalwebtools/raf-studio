@@ -1,7 +1,7 @@
-// RAF.studio — Blueprint guard + editor bindings v7.5.5 WYSIWYG
-import './blueprint-hero-v75.js?v=7.5.5';
-import './blueprint-longform-v751.js?v=7.5.5';
-import './template-engine-v752.js?v=7.5.5';
+// RAF.studio — Blueprint guard + editor bindings v7.5.6 WYSIWYG
+import './blueprint-hero-v75.js?v=7.5.6';
+import './blueprint-longform-v751.js?v=7.5.6';
+import './template-engine-v752.js?v=7.5.6';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 function css(){if($('#rafBlueprintGuard75'))return;const s=document.createElement('style');s.id='rafBlueprintGuard75';s.textContent=`
