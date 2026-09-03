@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v7.7.1
+// RAF.studio — unified visual core v7.7.2
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -16,9 +16,10 @@ const MIN_SIZE=24;
 
 let layout={desktop:{},tablet:{},mobile:{}};
 let clones=[];
+let flowOrders=[];
 let sel=new Set();
 let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null;
-let lastTap=null,moveArm=null,suppressClickUntil=0;
+let lastTap=null,moveArm=null,suppressClickUntil=0,suppressNextClick=false;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
 function baseCfg(){return{x:0,y:0,width:null,height:null,rotate:0,z:0,hidden:false,locked:false,group:'',label:'',crop:null,src:''}}
@@ -37,6 +38,7 @@ function css(){
  '#v72box.multi{border-color:#ad45eb}'+
  '#v72move,#v72rotate,.v760handle{position:absolute;pointer-events:auto;touch-action:none;user-select:none}'+
  '#v72move{left:4px;top:-31px;background:#168ee6;color:#fff;border-radius:7px;padding:5px 9px;font:700 11px system-ui;cursor:move;white-space:nowrap}'+
+ '#v72flow{position:absolute;right:3px;top:-32px;display:flex;gap:4px;pointer-events:auto;white-space:nowrap}#v72flow button{border:1px solid #22a8ff;background:#0b1720;color:#fff;border-radius:7px;padding:5px 8px;font:800 9px system-ui;cursor:pointer}#v72flow button:disabled{opacity:.35;cursor:not-allowed}'+
  '#v72box.multi #v72move{background:#9835d5}'+
  '#v72rotate{left:50%;top:-48px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;border:2px solid #22a8ff;cursor:grab}'+
  '#v72rotate:after{content:"";position:absolute;width:1px;height:16px;background:#22a8ff;left:50%;top:14px}'+
@@ -235,9 +237,10 @@ function guideShow(s){
 function boxEnsure(){
  if(overlay?.isConnected)return overlay;
  overlay=document.createElement('div');overlay.id='v72box';
- overlay.innerHTML='<div id="v72move">✥ PRZESUŃ</div><div id="v72rotate" title="Obrót"></div>'+['nw','n','ne','e','se','s','sw','w'].map(d=>'<div class="v760handle" data-dir="'+d+'"></div>').join('');
+ overlay.innerHTML='<div id="v72move">✥ PRZESUŃ</div><div id="v72flow"><button id="v72flowUp" title="Zamień miejscami z poprzednim elementem">↑ WYŻEJ</button><button id="v72flowDown" title="Zamień miejscami z następnym elementem">↓ NIŻEJ</button></div><div id="v72rotate" title="Obrót"></div>'+['nw','n','ne','e','se','s','sw','w'].map(d=>'<div class="v760handle" data-dir="'+d+'"></div>').join('');
  document.body.appendChild(overlay);
  $('#v72move').onpointerdown=beginMove;$('#v72rotate').onpointerdown=beginRotate;
+ $('#v72flowUp').onclick=e=>{e.preventDefault();flowStep(-1)};$('#v72flowDown').onclick=e=>{e.preventDefault();flowStep(1)};
  $$('.v760handle',overlay).forEach(h=>h.onpointerdown=beginResize);
  return overlay
 }
@@ -248,16 +251,17 @@ function boxUpdate(){
  Object.assign(o.style,{left:b.left+scrollX+'px',top:b.top+scrollY+'px',width:b.width+'px',height:b.height+'px'});
  $('#v72move').textContent=sel.size>1?'✥ PRZESUŃ '+sel.size+' ELEMENTY':'✥ PRZESUŃ';
  $$('.v760handle,#v72rotate',o).forEach(x=>x.style.display=sel.size===1?'block':'none')
+ const fs=flowState();$('#v72flow').style.display=sel.size===1?'flex':'none';$('#v72flowUp').disabled=!fs?.canUp;$('#v72flowDown').disabled=!fs?.canDown
 }
-function stateShot(){return{layout:cp(layout),clones:cp(clones)}}
-function restoreState(x){layout=cp(x.layout||{});clones=cp(x.clones||[]);applyAll();save()}
+function stateShot(){return{layout:cp(layout),clones:cp(clones),flowOrders:cp(flowOrders)}}
+function restoreState(x){layout=cp(x.layout||{});clones=cp(x.clones||[]);flowOrders=cp(x.flowOrders||[]);applyAll();save()}
 function commit(){undo.push(stateShot());if(undo.length>80)undo.shift();redo=[];lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at:lastAt}}))}
 function save(){
- clearTimeout(saveTimer);const l=cp(layout),c=cp(clones);
- saveTimer=setTimeout(()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c)]).then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
+ clearTimeout(saveTimer);const l=cp(layout),c=cp(clones),f=cp(flowOrders);
+ saveTimer=setTimeout(()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c),set(ref(db,ROOT+'/flowOrderV772'),f)]).then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
  const s=$('#rafStatus3');if(s)s.textContent='● Zmiany robocze';emit('change')
 }
-function applyAll(){decorate();boxUpdate();panel();emit('change')}
+function applyAll(){decorate();applyFlowOrders();boxUpdate();panel();emit('change')}
 function undoNow(){if(!undo.length)return false;redo.push(stateShot());restoreState(undo.pop());lastAt=Date.now();return true}
 function redoNow(){if(!redo.length)return false;undo.push(stateShot());restoreState(redo.pop());lastAt=Date.now();return true}
 
@@ -303,11 +307,40 @@ function align(m){
  sel.forEach(el=>{const r=el.getBoundingClientRect(),v=cfg(id(el),el),c=ownCfg(id(el),el);if(v.locked)return;c.x=Number(v.x)||0;c.y=Number(v.y)||0;if(m==='left')c.x+=b.left-r.left;if(m==='center')c.x+=(b.left+b.width/2)-(r.left+r.width/2);if(m==='right')c.x+=b.right-r.right;if(m==='top')c.y+=b.top-r.top;if(m==='middle')c.y+=(b.top+b.height/2)-(r.top+r.height/2);if(m==='bottom')c.y+=b.bottom-r.bottom;apply(el)});
  save();boxUpdate();panel()
 }
+function flowParentKey(parent){
+ if(parent.id==='rafTemplate752')return'root:template752';if(parent.id==='rafMain')return'root:main';
+ const section=parent.closest('[data-raf-section],header.hero'),sectionKey=section?id(section):'page';if(parent===section)return'parent:'+sectionKey;
+ const parts=[];let n=parent;while(n&&n!==section&&parts.length<5){const p=n.parentElement;if(!p)break;const same=[...p.children].filter(x=>x.tagName===n.tagName),cls=[...n.classList].filter(x=>!/^v(72|760)/.test(x)&&!/(selected|rsel)/i.test(x)).slice(0,2).join('.');parts.unshift(n.tagName.toLowerCase()+(cls?'.'+cls:'')+(same.length>1?':'+same.indexOf(n):''));n=p}
+ return'parent:'+sectionKey+'>'+parts.join('>')
+}
+function flowChildren(parent){return[...parent.children].filter(x=>x.matches?.(CAND)&&!x.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))}
+function flowState(){
+ if(sel.size!==1)return null;const el=[...sel][0],parent=el.parentElement;if(!parent)return null;const nodes=flowChildren(parent),i=nodes.indexOf(el);if(i<0)return null;
+ return{el,parent,nodes,index:i,canUp:i>0,canDown:i<nodes.length-1,key:flowParentKey(parent)}
+}
+function rememberFlow(parent,key){
+ const items=flowChildren(parent).map(id);if(items.length<2)return;const old=flowOrders.find(x=>x.parent===key);if(old)old.items=items;else flowOrders.push({parent:key,items})
+}
+function applyFlowOrders(){
+ if(!flowOrders.length)return;
+ for(const row of flowOrders){
+  const ordered=(row.items||[]).map(findById).filter(Boolean),parent=ordered[0]?.parentElement;if(!parent||flowParentKey(parent)!==row.parent)continue;
+  const children=[...parent.children],positions=[];children.forEach((x,i)=>{if(ordered.includes(x)&&x.parentElement===parent)positions.push(i)});if(positions.length<2)continue;
+  const desired=ordered.filter(x=>x.parentElement===parent),current=positions.map(i=>children[i]);if(current.every((x,i)=>x===desired[i]))continue;
+  const final=[...children];positions.forEach((pos,i)=>{if(desired[i])final[pos]=desired[i]});final.forEach(x=>parent.appendChild(x))
+ }
+}
+function flowStep(direction){
+ const s=flowState();if(!s||(direction<0&&!s.canUp)||(direction>0&&!s.canDown))return;commit();
+ const other=s.nodes[s.index+direction];if(direction<0)s.parent.insertBefore(s.el,other);else s.parent.insertBefore(other,s.el);
+ rememberFlow(s.parent,s.key);save();boxUpdate();panel();s.el.scrollIntoView({behavior:'smooth',block:'center'});const status=$('#rafStatus3');if(status)status.textContent=direction<0?'✓ Element przesunięty o jeden poziom wyżej':'✓ Element przesunięty o jeden poziom niżej'
+}
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- d.innerHTML='<small>V7.7.1 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div><div style="font-size:9px;color:#777;margin-top:8px">Ruch: kliknij 2× i przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
+ const fs=flowState();d.innerHTML='<small>V7.7.2 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div style="font-size:9px;color:#777;margin-top:8px">Pojedyncze kliknięcie niczego nie zaznacza • szybki dwuklik aktywuje ramkę<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0});
+ if($('#v72panelUp'))$('#v72panelUp').onclick=()=>flowStep(-1);if($('#v72panelDown'))$('#v72panelDown').onclick=()=>flowStep(1);
  p.classList.add('raf-panel-open62');p.style.display='block'
 }
 function cand(e){return e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
@@ -351,6 +384,9 @@ function disarmMove(){
  if(moveArm?.el)moveArm.el.classList.remove('v760moveArmed');
  moveArm=null
 }
+function clearLegacySelection(){
+ $$('.rsel,.sel55,.pro61-selected,.custom62-selected,.weSelected').forEach(x=>x.classList.remove('rsel','sel55','pro61-selected','custom62-selected','weSelected'))
+}
 function armMove(el){
  disarmMove();moveArm={el,until:performance.now()+2400};el.classList.add('v760moveArmed');
  const s=$('#rafStatus3');if(s)s.textContent='✥ Element gotowy do przesunięcia — przeciągnij go';
@@ -369,15 +405,15 @@ window.addEventListener('pointerdown',e=>{
  if(e.altKey||e.shiftKey){lastTap=null;disarmMove();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel),modifier:true};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
  if(el){
   const now=performance.now(),second=lastTap?.el===el&&now-lastTap.at<=380;if(moveArm&&moveArm.el!==el)disarmMove();const armed=moveArm?.el===el&&now<moveArm.until;
-  if(!sel.has(el))select(el,false);
-  if(second||armed){lastTap=null;disarmMove();pendingMove(e,el)}else lastTap={el,at:now};
+  if(second||armed){suppressClickUntil=0;suppressNextClick=false;lastTap=null;disarmMove();if(!sel.has(el))select(el,false);pendingMove(e,el)}else{if(!sel.has(el)){clear();clearLegacySelection()}lastTap={el,at:now};suppressClickUntil=now+520;suppressNextClick=true}
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
   return
  }
- lastTap=null;disarmMove();if(e.target.closest('a,button,img,video,iframe'))return;clear();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:null,moved:false,base:new Set(),modifier:false};e.preventDefault()
+ lastTap=null;disarmMove();if(e.target.closest('a,button,img,video,iframe'))return;clear();clearLegacySelection();suppressClickUntil=performance.now()+520;suppressNextClick=true;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('dblclick',e=>{
  if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
- const el=cand(e);if(!el||e.target.closest(TEXT))return;armMove(el);e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
+ const el=cand(e);if(!el)return;if(!sel.has(el))select(el,false);armMove(el);if(e.target.closest(TEXT))return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('pointermove',e=>{
  if(marq&&e.pointerId===marq.pid){
@@ -398,7 +434,7 @@ function finishPointer(e){
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
-window.addEventListener('click',e=>{if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',e=>{if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
 window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
@@ -408,17 +444,17 @@ document.addEventListener('keydown',e=>{
  if(e.key==='ArrowLeft'){e.preventDefault();nudge(-s,0)}if(e.key==='ArrowRight'){e.preventDefault();nudge(s,0)}if(e.key==='ArrowUp'){e.preventDefault();nudge(0,-s)}if(e.key==='ArrowDown'){e.preventDefault();nudge(0,s)}
 },true);
 addEventListener('scroll',boxUpdate,{passive:true});addEventListener('resize',()=>{decorate();boxUpdate()},{passive:true});
-new MutationObserver(()=>{clearTimeout(decorTimer);decorTimer=setTimeout(()=>{decorate();boxUpdate();emit('layers')},100)}).observe(document.body,{subtree:true,childList:true});
-window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.freeLayoutV7){layout=cp(n.freeLayoutV7);clones=cp(n.clonesV76||[]);applyAll()}});
+new MutationObserver(()=>{clearTimeout(decorTimer);decorTimer=setTimeout(()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')},100)}).observe(document.body,{subtree:true,childList:true});
+window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.freeLayoutV7){layout=cp(n.freeLayoutV7);clones=cp(n.clonesV76||[]);flowOrders=cp(n.flowOrderV772||[]);applyAll();applyFlowOrders()}});
 
 (async()=>{
- const [d,p,dc,pc]=await Promise.all([get(ref(db,ROOT+'/freeLayoutV7')),get(ref(db,'website/public/builder/freeLayoutV7')),get(ref(db,ROOT+'/clonesV76')),get(ref(db,'website/public/builder/clonesV76'))]);
- layout=cp(d.exists()?d.val():(p.val()||{desktop:{},tablet:{},mobile:{}}));clones=cp(dc.exists()?dc.val():(pc.val()||[]));decorate();
+ const [d,p,dc,pc,df,pf]=await Promise.all([get(ref(db,ROOT+'/freeLayoutV7')),get(ref(db,'website/public/builder/freeLayoutV7')),get(ref(db,ROOT+'/clonesV76')),get(ref(db,'website/public/builder/clonesV76')),get(ref(db,ROOT+'/flowOrderV772')),get(ref(db,'website/public/builder/flowOrderV772'))]);
+ layout=cp(d.exists()?d.val():(p.val()||{desktop:{},tablet:{},mobile:{}}));clones=cp(dc.exists()?dc.val():(pc.val()||[]));flowOrders=cp(df.exists()?df.val():(pf.val()||[]));decorate();applyFlowOrders();
  window.rafCore760={
   undo:undoNow,redo:redoNow,canUndo:()=>undo.length>0,canRedo:()=>redo.length>0,lastAt:()=>lastAt,applyLayout:x=>{layout=cp(x||{});applyAll()},
   selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
   id,cfgFor:el=>cfg(id(el),el),list,save,checkpoint:commit,patchSelected,patchOne,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
-  toggleLocked,toggleHidden,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,device:dev,refresh:()=>{decorate();boxUpdate();emit('layers')}
+  toggleLocked,toggleHidden,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,flowUp:()=>flowStep(-1),flowDown:()=>flowStep(1),device:dev,refresh:()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')}
  };
  window.rafCore72=window.rafCore760;
  window.dispatchEvent(new CustomEvent('raf:v760-ready'))

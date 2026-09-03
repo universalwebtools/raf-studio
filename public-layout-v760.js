@@ -1,4 +1,4 @@
-// RAF.studio — public transform, clone and crop runtime v7.7.1
+// RAF.studio — public transform, clone, crop and flow-order runtime v7.7.2
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
@@ -10,7 +10,7 @@ if(!Q.has('editor')){
  const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
  const TEXT='[data-home-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
  const CAND=TEXT+',[data-raf-free],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
- let layout={},clones=[],timer=null,rendering=false;
+ let layout={},clones=[],flowOrders=[],timer=null,rendering=false;
 
  function pathKey(el){
   const a=[];let n=el;
@@ -62,9 +62,18 @@ if(!Q.has('editor')){
   if(rendering)return;rendering=true;
   try{for(const d of clones){if($('[data-raf-v76-clone="'+CSS.escape(d.id)+'"]'))continue;const source=findById(d.sourceId);if(!source?.parentElement||!d.html)continue;const t=document.createElement('template');t.innerHTML=d.html.trim();const node=t.content.firstElementChild;if(!node)continue;cleanClone(node,d.id);source.insertAdjacentElement('afterend',node);idFor(node);applyOne(node)}}finally{rendering=false}
  }
- function apply(){ $$(CAND).forEach(applyOne);renderClones();$$(CAND).forEach(applyOne) }
+ function flowParentKey(parent){
+  if(parent.id==='rafTemplate752')return'root:template752';if(parent.id==='rafMain')return'root:main';
+  const section=parent.closest('[data-raf-section],header.hero'),sectionKey=section?idFor(section):'page';if(parent===section)return'parent:'+sectionKey;
+  const parts=[];let n=parent;while(n&&n!==section&&parts.length<5){const p=n.parentElement;if(!p)break;const same=[...p.children].filter(x=>x.tagName===n.tagName),cls=[...n.classList].filter(x=>!/^v(72|760)/.test(x)&&!/(selected|rsel)/i.test(x)).slice(0,2).join('.');parts.unshift(n.tagName.toLowerCase()+(cls?'.'+cls:'')+(same.length>1?':'+same.indexOf(n):''));n=p}
+  return'parent:'+sectionKey+'>'+parts.join('>')
+ }
+ function applyFlowOrders(){
+  for(const row of flowOrders){const ordered=(row.items||[]).map(findById).filter(Boolean),parent=ordered[0]?.parentElement;if(!parent||flowParentKey(parent)!==row.parent)continue;const children=[...parent.children],positions=[];children.forEach((x,i)=>{if(ordered.includes(x)&&x.parentElement===parent)positions.push(i)});if(positions.length<2)continue;const desired=ordered.filter(x=>x.parentElement===parent),current=positions.map(i=>children[i]);if(current.every((x,i)=>x===desired[i]))continue;const final=[...children];positions.forEach((pos,i)=>{if(desired[i])final[pos]=desired[i]});final.forEach(x=>parent.appendChild(x))}
+ }
+ function apply(){ $$(CAND).forEach(applyOne);renderClones();$$(CAND).forEach(applyOne);applyFlowOrders() }
  function schedule(){clearTimeout(timer);requestAnimationFrame(apply);timer=setTimeout(apply,140);setTimeout(apply,500)}
- onValue(ref(db,WEBSITE_ROOT+'/public/builder'),s=>{const b=s.val()||{};layout=b.freeLayoutV7||{};clones=Array.isArray(b.clonesV76)?b.clonesV76:[];schedule()});
+ onValue(ref(db,WEBSITE_ROOT+'/public/builder'),s=>{const b=s.val()||{};layout=b.freeLayoutV7||{};clones=Array.isArray(b.clonesV76)?b.clonesV76:[];flowOrders=Array.isArray(b.flowOrderV772)?b.flowOrderV772:[];schedule()});
  onValue(ref(db,WEBSITE_ROOT+'/public/homeMedia'),schedule);
  new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});addEventListener('resize',schedule,{passive:true})
 }
