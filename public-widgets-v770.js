@@ -1,9 +1,9 @@
-// RAF.studio — public widget runtime v8.2.1
+// RAF.studio — public widget runtime v8.2.2
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
-import './site-v800.js?v=8.2.1';
-import {normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=8.2.1';
+import './site-v800.js?v=8.2.2';
+import {normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=8.2.2';
 
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')&&!Q.has('tplPreview')){

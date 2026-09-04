@@ -1,5 +1,5 @@
-// RAF.studio — editor/public parity watchdog v8.2.1
-import {TEMPLATES752} from './template-engine-v752.js?v=8.2.1';
+// RAF.studio — editor/public parity watchdog v8.2.2
+import {TEMPLATES752} from './template-engine-v752.js?v=8.2.2';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 if(EDITOR){
   const style=document.createElement('style');

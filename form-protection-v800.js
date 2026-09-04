@@ -1,4 +1,4 @@
-// RAF.studio client-side anti-bot layer v8.2.1
+// RAF.studio client-side anti-bot layer v8.2.2
 const OFF=new URLSearchParams(location.search).has('editor')||new URLSearchParams(location.search).has('tplPreview');
 if(!OFF){
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));

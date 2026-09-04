@@ -1,4 +1,4 @@
-// RAF.studio — unified template engine v8.2.1 (editor = public = preview)
+// RAF.studio — unified template engine v8.2.2 (editor = public = preview)
 import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
