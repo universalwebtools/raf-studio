@@ -1,5 +1,5 @@
 // RAF.studio — public boot gate + REAL TEMPLATES v8.1
-import './template-runtime-v74.js?v=8.2.0';
+import './template-runtime-v74.js?v=8.2.1';
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')&&!Q.has('tplPreview')){
   let released=false;

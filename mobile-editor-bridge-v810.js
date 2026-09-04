@@ -1,4 +1,4 @@
-// RAF.studio — external responsive editor controls v8.2.0
+// RAF.studio — external responsive editor controls v8.2.1
 // `frame` is already declared by mobile-editor.html. A second global `const frame`
 // stopped this entire bridge with a SyntaxError, leaving both editor windows inside
 // the phone mockup. Keep a distinct name so the bridge always starts.

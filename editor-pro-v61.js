@@ -2,7 +2,7 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase,ref,get,set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getStorage,ref as storageRef,uploadBytesResumable,getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.2.0';
+import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.2.1';
 const db=getDatabase(getApp()),storage=getStorage(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],cp=x=>structuredClone(x),esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let data=cp(PRO61_DEFAULTS),undo=[],redo=[],saveTimer=null,lastSource='pro';
 function normalizeVideoUrl(raw=''){let u=String(raw).trim().replace(/^["']|["']$/g,'');try{const x=new URL(u,location.origin);if(/(^|\.)youtube\.com$/i.test(x.hostname)&&x.pathname.startsWith('/shorts/'))u=`https://www.youtube.com/watch?v=${x.pathname.split('/')[2]||''}`;else if(/(^|\.)youtube\.com$/i.test(x.hostname)&&x.pathname==='/embed/'&&x.pathname.split('/')[2])u=`https://www.youtube.com/watch?v=${x.pathname.split('/')[2]}`;else u=x.origin===location.origin&&raw.trim().startsWith('/')?x.pathname+x.search:u}catch{}return u}

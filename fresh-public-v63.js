@@ -4,7 +4,7 @@ import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const q=new URLSearchParams(location.search);
 if(!q.has('editor')&&!q.has('tplPreview')){
-  import('./public-force-sync-v65.js?v=8.2.0').catch(console.error);
+  import('./public-force-sync-v65.js?v=8.2.1').catch(console.error);
   const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
   let first=true,initial='';
   try{
