@@ -29,7 +29,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
   else if(el.dataset.custom62Id&&el.dataset.custom62)id='cs:'+el.dataset.custom62Id+':'+el.dataset.custom62;
   else if(el.dataset.homeMedia)id='media:'+el.dataset.homeMedia;
   else if(el.dataset.rafElement)id='el:'+el.dataset.rafElement;
-  else if(el.matches('header.hero'))id='section:Hero';
+  else if(el.matches('header.hero'))id=document.body.dataset.e752?'section:LegacyHero':'section:Hero';
   else if(el.dataset.rafSection)id='section:'+el.dataset.rafSection;
   else if(el.classList.contains('actions'))id='group:heroActions';
   else if(el.classList.contains('contactActions'))id='group:contactActions';

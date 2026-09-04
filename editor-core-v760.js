@@ -81,7 +81,7 @@ function id(el){
  else if(el.dataset.custom62Id&&el.dataset.custom62)k='cs:'+el.dataset.custom62Id+':'+el.dataset.custom62;
  else if(el.dataset.homeMedia)k='media:'+el.dataset.homeMedia;
  else if(el.dataset.rafElement)k='el:'+el.dataset.rafElement;
- else if(el.matches('header.hero'))k='section:Hero';
+ else if(el.matches('header.hero'))k=document.body.dataset.e752?'section:LegacyHero':'section:Hero';
  else if(el.dataset.rafSection)k='section:'+el.dataset.rafSection;
  else if(el.classList.contains('actions'))k='group:heroActions';
  else if(el.classList.contains('contactActions'))k='group:contactActions';

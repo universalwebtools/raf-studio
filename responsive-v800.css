@@ -1,4 +1,4 @@
-/* RAF.studio universal responsive layer v8.1.0 */
+/* RAF.studio universal responsive layer v8.2.0 */
 html{overflow-x:hidden}body{overflow-x:clip;min-width:0}img,video,iframe,svg{max-width:100%}.wrap{width:min(1180px,calc(100% - clamp(24px,5vw,64px)))}
 .navin,.sectionHead,.contactBox{min-width:0}.navlinks{flex-wrap:wrap}.portfolioGrid,.split,.facts{min-width:0}.portfolioCard,.portal,.card{min-width:0;max-width:100%}
 .rafFooterPrivacy800{flex-wrap:wrap}.footer{gap:18px;flex-wrap:wrap}
