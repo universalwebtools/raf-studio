@@ -1,4 +1,4 @@
-import './site-v800.js?v=8.1.0';
+import './site-v800.js?v=8.1.0-r2';
 const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.1.0',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 let editorReleased=false;
@@ -33,7 +33,7 @@ else if(editorMode){
    await import('./editor-parity-v752.js?v=8.1.0');
    await import('./editor-core-v760.js?v=8.1.0');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
-   await import('./editor-templates-v752.js?v=8.1.0');
+   await import('./editor-templates-v752.js?v=8.1.0-r2');
    await import('./editor-history-v72.js?v=7.7.2');
    await import('./editor-chrome-v73.js?v=8.1.0');
    await import('./editor-workspace-v760.js?v=7.7.2');
