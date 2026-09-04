@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const app=initializeApp(firebaseConfig),db=getDatabase(app);
-const EDITOR_MODE=new URLSearchParams(location.search).has('editor');
+const CONTENT_QUERY=new URLSearchParams(location.search),EDITOR_MODE=CONTENT_QUERY.has('editor')||CONTENT_QUERY.has('tplPreview');
 const defaults={
  twoWorldsTitle:'DWA ŚWIATY.\nJEDEN STYL.',twoWorldsDesc:'Osobne działy fotografii i filmu, wspólna estetyka RAF.studio.',
  photoTitle:'FOTOGRAFIA',photoDesc:'Śluby, sesje, eventy, produkt i wizerunek.',photoButton:'Wejdź →',

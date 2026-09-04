@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
-const EDITOR_MODE=new URLSearchParams(location.search).has('editor');
+const BUILDER_QUERY=new URLSearchParams(location.search),EDITOR_MODE=BUILDER_QUERY.has('editor')||BUILDER_QUERY.has('tplPreview');
 const app=initializeApp(firebaseConfig),db=getDatabase(app);const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';let current={};
 function cfgFor(byDev={},d=dev()){const desk=byDev.desktop||{};if(d==='desktop')return desk;const c=byDev[d]||{};return c.inherit===false?c:{...desk,...c}}
 function applyElementStyle(el,c={}){if(!el)return;el.style.background=c.background||'';el.style.color=c.color||'';el.style.borderColor=c.borderColor||'';el.style.borderStyle=c.borderColor?'solid':'';el.style.borderWidth=c.borderColor?'1px':'';el.style.borderRadius=c.radius!=null?`${c.radius}px`:'';el.style.paddingLeft=c.paddingX!=null?`${c.paddingX}px`:'';el.style.paddingRight=c.paddingX!=null?`${c.paddingX}px`:'';el.style.paddingTop=c.paddingY!=null?`${c.paddingY}px`:'';el.style.paddingBottom=c.paddingY!=null?`${c.paddingY}px`:'';el.style.fontSize=c.fontSize!=null?`${c.fontSize}px`:'';el.style.opacity=c.opacity!=null?String(c.opacity):'';el.style.zIndex=c.zIndex!=null?String(c.zIndex):'';el.style.position=c.zIndex!=null?'relative':'';el.style.display=c.hidden===true?'none':'';el.dataset.rafAnimation=c.animation||'';el.style.setProperty('--raf-anim-duration',`${c.animationDuration||700}ms`)}

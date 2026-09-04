@@ -2,7 +2,7 @@
 import { initializeApp,getApps,getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase,ref,onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig,WEBSITE_ROOT } from './firebase-config.js';
-const Q=new URLSearchParams(location.search);if(!Q.has('editor')){
+const Q=new URLSearchParams(location.search);if(!Q.has('editor')&&!Q.has('tplPreview')){
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
 let layout={},timer=null,v7Active=false;
 const textSel='[data-home-text],#heroK,#heroT,#heroD';

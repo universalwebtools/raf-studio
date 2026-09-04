@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebas
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 const app=initializeApp(firebaseConfig),db=getDatabase(app);let current={};
-const EDITOR_MODE=new URLSearchParams(location.search).has('editor');
+const VISUAL_QUERY=new URLSearchParams(location.search),EDITOR_MODE=VISUAL_QUERY.has('editor')||VISUAL_QUERY.has('tplPreview');
 const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
 function textKey(el){return ['heroK','heroT','heroD'].includes(el.id)?el.id:(el.dataset.homeText||'')}
 function sectionKey(el){return el.matches('header.hero')?'Hero':(el.dataset.homeSection||'')}

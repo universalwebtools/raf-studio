@@ -2,7 +2,7 @@
 import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
-const EDITOR=new URLSearchParams(location.search).has('editor');
+const TYPO_QUERY=new URLSearchParams(location.search),EDITOR=TYPO_QUERY.has('editor')||TYPO_QUERY.has('tplPreview');
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
 const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
 const cfg=(by={})=>{const d=dev(),desk=by.desktop||{};if(d==='desktop')return desk;const c=by[d]||{};return c.inherit===false?c:{...desk,...c}};

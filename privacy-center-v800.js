@@ -1,4 +1,4 @@
-// RAF.studio consent and privacy centre v8.0.0
+// RAF.studio consent and privacy centre v8.1.0
 const Q=new URLSearchParams(location.search),DISABLED=Q.has('editor')||Q.has('tplPreview'),KEY='rafConsentV800',VERSION='2026-09-03';
 if(!DISABLED){
  const read=()=>{try{const x=JSON.parse(localStorage.getItem(KEY)||'null');return x?.version===VERSION?x:null}catch{return null}};

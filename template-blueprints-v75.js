@@ -3,7 +3,7 @@ import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/1
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const EDITOR=new URLSearchParams(location.search).has('editor');
+const TEMPLATE_QUERY=new URLSearchParams(location.search),EDITOR=TEMPLATE_QUERY.has('editor'),PREVIEW=TEMPLATE_QUERY.has('tplPreview');
 const PIC=(id,role,w=1600,h=1000)=>`https://picsum.photos/seed/raf75-${id}-${role}/${w}/${h}`;
 export const BLUEPRINTS75={
  cinema:{name:'Cinema Director',font:'Arial',bg:'#050505',fg:'#fff',accent:'#e5483f',sections:['reel','statement','process','contactMinimal']},
@@ -54,4 +54,4 @@ function css(){if($('#tpl75css'))return;const s=document.createElement('style');
 function hideLegacy(){for(const el of $$('[data-raf-section],#rafOffer54,#rafStats61')){if(el.classList.contains('tpl75Section')||el.matches('header.hero'))continue;el.style.display='none'}}
 function render(raw){if(document.body.dataset.e752)return;const id=raw?.id,c=BLUEPRINTS75[id];if(!c)return;css();document.body.dataset.tpl75=id;document.documentElement.style.setProperty('--tpl75-bg',c.bg);document.documentElement.style.setProperty('--tpl75-fg',c.fg);document.documentElement.style.setProperty('--tpl75-ac',c.accent);document.documentElement.style.setProperty('--tpl75-font',c.font);$$('.tpl75Section').forEach(x=>x.remove());hideLegacy();const hero=$('header.hero');if(hero)hero.style.display='';const main=$('#rafMain');if(!main)return;c.sections.forEach((type,i)=>main.insertAdjacentHTML('beforeend',section(type,id,i)));const o=new MutationObserver(hideLegacy);o.observe(main,{childList:true});setTimeout(()=>o.disconnect(),2500)}
 const path=EDITOR?`${WEBSITE_ROOT}/public/editorDraft/builder/templateV75`:`${WEBSITE_ROOT}/public/builder/templateV75`;
-onValue(ref(db,path),s=>render(s.val()||{}));
+if(!PREVIEW)onValue(ref(db,path),s=>render(s.val()||{}));

@@ -4,7 +4,7 @@ import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 
 const Q=new URLSearchParams(location.search);
-if(!Q.has('editor')){
+if(!Q.has('editor')&&!Q.has('tplPreview')){
  const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
  const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';

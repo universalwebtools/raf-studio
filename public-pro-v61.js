@@ -2,7 +2,7 @@
 import { getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase,ref,onValue } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const EDITOR=new URLSearchParams(location.search).has('editor');
+const PRO_QUERY=new URLSearchParams(location.search),EDITOR=PRO_QUERY.has('editor')||PRO_QUERY.has('tplPreview');
 const esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 export const PRO61_DEFAULTS={global:{bg:'#050505',text:'#f5f5f5',muted:'#9b9b9b',accent:'#ffffff',radius:16,h1:92,h2:64,body:16},button:{style:'pill',bg:'#ffffff',text:'#080808',border:'#ffffff',radius:999,hover:'lift'},gradient:{enabled:false,from:'#000000',to:'#151515',angle:135},heroVideo:{enabled:false,url:'',opacity:72,mobileImage:true,fit:'cover',x:50,y:50,zoom:1,mute:true,loop:true},stats:{enabled:true,title:'W LICZBACH.',subtitle:'Kilka liczb o RAF.studio.',columns:4,paddingTop:80,paddingBottom:80,background:'',items:[{value:'150+',label:'realizacji'},{value:'80+',label:'klientów'},{value:'6+',label:'lat doświadczenia'},{value:'4K',label:'foto & video'}]},contactForm:{enabled:true,title:'NAPISZ DO MNIE',serviceOptions:'Fotografia|Film|Ślub|Event|Produkt|Inne'},scroll:{enabled:true,defaultAnimation:'fade-up',duration:700,stagger:100},timeline:{heroTitle:0,heroDesc:130,heroButtons:260},sectionOrder:['TwoWorlds','About','Offer','Stats','Reviews','Brands','Contact'],elementStyles:{},layoutBaseline:'6.1'};
 let data=structuredClone(PRO61_DEFAULTS),io=null;

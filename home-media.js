@@ -3,7 +3,7 @@ import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12
 import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
 
 const app=initializeApp(firebaseConfig),db=getDatabase(app);
-const EDITOR_MODE=new URLSearchParams(location.search).has('editor');
+const MEDIA_QUERY=new URLSearchParams(location.search),EDITOR_MODE=MEDIA_QUERY.has('editor')||MEDIA_QUERY.has('tplPreview');
 const defaults={heroMedia:{url:'assets/portal-film.png',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}},photoPortal:{url:'assets/portal-photo.png',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}},filmPortal:{url:'assets/portal-film.png',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}},aboutPortrait:{url:'assets/about-portrait.jpg',desktop:{x:50,y:50,zoom:1},tablet:{x:50,y:50,zoom:1},mobile:{x:50,y:50,zoom:1}}};
 let current={};
 const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';

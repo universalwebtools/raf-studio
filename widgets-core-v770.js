@@ -1,4 +1,4 @@
-// RAF.studio — shared widget catalogue and renderer v8.0.0
+// RAF.studio — shared widget catalogue and renderer v8.1.0
 export const WIDGET_CATALOG_770=[
  {type:'photo-carousel',icon:'▣',name:'Karuzela zdjęć',description:'Zdjęcia ze strzałkami, kropkami i automatycznym przesuwaniem.'},
  {type:'logo-carousel',icon:'◈',name:'Karuzela logotypów',description:'Płynnie przesuwające się logotypy klientów i partnerów.'},
