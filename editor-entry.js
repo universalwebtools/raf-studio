@@ -5,7 +5,7 @@ let editorReleased=false;
 function releaseEditor(){if(editorReleased)return;editorReleased=true;document.documentElement.classList.add('raf-editor-ready');window.dispatchEvent(new CustomEvent('raf:editor-ready'))}
 if(editorMode)setTimeout(releaseEditor,4800);
 async function waitEditorSettled(){const started=performance.now();let last=performance.now(),obs;try{obs=new MutationObserver(()=>{last=performance.now()});obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style','src','href']})}catch{}while(performance.now()-started<3800){const toolbar=document.querySelector('#rafTop3,.peTop'),quiet=performance.now()-last>420;if(toolbar&&quiet&&document.readyState!=='loading')break;await new Promise(r=>setTimeout(r,70))}try{obs?.disconnect()}catch{}await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));await new Promise(r=>setTimeout(r,120));releaseEditor()}
-if(editorMode&&requested!==LATEST){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','840');location.replace(u.toString())}
+if(editorMode&&requested!==LATEST){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild','8401');location.replace(u.toString())}
 else if(editorMode){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html')||path.endsWith('/fotografia/')||path.endsWith('/film/');
  (async()=>{try{
@@ -24,7 +24,7 @@ else if(editorMode){
    await import('./motion-preview-fix-v44.js?v=4.4.0');
    await import('./editor-motion-fix-v45.js?v=4.5.0');
    await import('./editor-sections-v55.js?v=5.5.0');
-   await import('./editor-pro-v61.js?v=8.4.0');
+   await import('./editor-pro-v61.js?v=8.4.0-r2');
    await import('./custom-sections-editor-v62.js?v=6.5.3');
    await import('./custom-section-delete-v653.js?v=6.5.3');
    await import('./editor-v70-migrate.js?v=7.0.1');
