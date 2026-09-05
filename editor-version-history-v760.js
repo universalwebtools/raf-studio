@@ -1,4 +1,4 @@
-// RAF.studio — durable version history and rollback v8.3.0
+// RAF.studio — durable version history and rollback v8.4.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set,remove} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
@@ -22,7 +22,7 @@ async function readPublished(){
 async function prune(){const all=await read(HISTORY),rows=Object.entries(all).sort((a,b)=>(b[1]?.meta?.createdAt||0)-(a[1]?.meta?.createdAt||0));await Promise.all(rows.slice(LIMIT).map(([k])=>remove(ref(db,HISTORY+'/'+k))))}
 async function capture(type='manual',label='Ręczny punkt przywracania',{source='draft',quiet=false}={}){
  await allowed();const data=source==='published'?await readPublished():await readDraft(),now=Date.now(),key=String(now)+'_'+Math.random().toString(36).slice(2,6);
- const snap={meta:{createdAt:now,type,label:String(label||'Wersja').slice(0,100),source,editorVersion:'8.3.0'},data:cp(data)};
+ const snap={meta:{createdAt:now,type,label:String(label||'Wersja').slice(0,100),source,editorVersion:'8.4.0'},data:cp(data)};
  await set(ref(db,HISTORY+'/'+key),snap);await prune();lastAutomatic=type==='automatic'?now:lastAutomatic;if(!quiet){status('✓ Zapisano punkt przywracania');await load();open(key)}return{key,snapshot:snap}
 }
 function niceDate(ts){try{return new Intl.DateTimeFormat('pl-PL',{dateStyle:'short',timeStyle:'short'}).format(new Date(ts))}catch{return new Date(ts).toLocaleString()}}
