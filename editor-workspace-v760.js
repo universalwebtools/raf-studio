@@ -1,4 +1,4 @@
-// RAF.studio — layers, responsive controls, crop and full typography UI v8.5.0
+// RAF.studio — layers, responsive controls, crop and full typography UI v8.5.1
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getStorage,ref as sRef,uploadBytesResumable,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js';
@@ -97,7 +97,8 @@ function scheduleInspector(force=false){clearTimeout(inspectorTimer);inspectorTi
 function syncInspector(el){
  const box=$('#v760common');if(!box||box.dataset.id!==core.id(el))return false;const c=core.cfgFor(el),r=el.getBoundingClientRect();
  const vals={v760x:Math.round(Number(c.x)||0),v760y:Math.round(Number(c.y)||0),v760w:Math.round(Number(c.width)||r.width),v760h:Math.round(Number(c.height)||r.height),v760rot:Math.round(Number(c.rotate)||0)};
- for(const [id,v] of Object.entries(vals)){const x=$('#'+id,box);if(x&&document.activeElement!==x)x.value=v}return true
+ for(const [id,v] of Object.entries(vals)){const x=$('#'+id,box);if(x&&document.activeElement!==x)x.value=v}
+ const text=$('#v760text',box),value=String(c.text??el.innerText??el.textContent??'');if(text&&document.activeElement!==text&&text.value!==value)text.value=value;return true
 }
 function renderInspector(force=false){
  if(!core||augmenting)return;const el=single(),p=$('#rafPanel3');if(!el||!p){$('#v760common')?.remove();return}

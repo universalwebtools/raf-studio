@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v8.5.0
+// RAF.studio — unified visual core v8.5.1
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -18,7 +18,7 @@ let layout={desktop:{},tablet:{},mobile:{}};
 let clones=[];
 let flowOrders=[];
 let sel=new Set();
-let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null;
+let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null,inlineEdit=null;
 let lastTap=null,moveArm=null,suppressClickUntil=0,suppressNextClick=false;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
@@ -33,6 +33,7 @@ function css(){
  'body.raf-e3 [data-raf-v72-id].v760moveArmed{cursor:grab;outline:2px dashed #ff3aa6!important;outline-offset:4px}'+
  'body.raf-e3 [data-raf-v72-id].v760moving{cursor:grabbing!important}'+
  'body.raf-e3 [data-raf-v72-id].v72sel{outline:2px solid #22a8ff!important;outline-offset:3px}'+
+ 'body.raf-e3 [data-v760-inline-edit="1"]{cursor:text!important;user-select:text!important;-webkit-user-select:text!important;caret-color:#22a8ff;outline:2px solid #fff!important;outline-offset:4px}'+
  'body.raf-e3 [data-raf-v72-id].v72grp{box-shadow:0 0 0 1px #b54cff77 inset}'+
  'body.raf-e3 [data-raf-v72-id].v760locked{cursor:not-allowed}'+
  '#v72box{position:absolute;z-index:1000013;border:2px solid #22a8ff;box-sizing:border-box;pointer-events:none}'+
@@ -258,7 +259,7 @@ function boxEnsure(){
  document.body.appendChild(overlay);
  $('#v72move').onpointerdown=beginMove;$('#v72rotate').onpointerdown=beginRotate;
  $('#v72flowUp').onclick=e=>{e.preventDefault();flowStep(-1)};$('#v72flowDown').onclick=e=>{e.preventDefault();flowStep(1)};
- $('#v72flowEdit').onclick=e=>{e.preventDefault();window.dispatchEvent(new CustomEvent('raf:v760-edit'))};
+ $('#v72flowEdit').onclick=e=>{e.preventDefault();requestEdit()};
  $('#v72flowHide').onclick=e=>{e.preventDefault();toggleHidden()};
  $('#v72flowDelete').onclick=e=>{e.preventDefault();deleteSelected()};
  $$('.v760handle',overlay).forEach(h=>h.onpointerdown=beginResize);
@@ -266,7 +267,7 @@ function boxEnsure(){
 }
 function boxUpdate(){
  const b=bounds();
- if(!b||document.body.classList.contains('raf-preview64')){overlay?.remove();overlay=null;return}
+ if(!b||document.body.classList.contains('raf-preview64')||inlineEdit?.el?.isConnected){overlay?.remove();overlay=null;return}
  const o=boxEnsure();o.classList.toggle('multi',sel.size>1);
  Object.assign(o.style,{left:b.left+scrollX+'px',top:b.top+scrollY+'px',width:b.width+'px',height:b.height+'px'});
  $('#v72move').textContent=sel.size>1?'✥ PRZESUŃ '+sel.size+' ELEMENTY':'✥ PRZESUŃ';
@@ -358,10 +359,10 @@ function flowStep(direction){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- const fs=flowState();d.innerHTML='<small>V8.3 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Usuwanie przenosi element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • szybki dwuklik aktywuje ramkę<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
+ const fs=flowState();d.innerHTML='<small>V8.5 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • dwuklik aktywuje element<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0});
  if($('#v72panelUp'))$('#v72panelUp').onclick=()=>flowStep(-1);if($('#v72panelDown'))$('#v72panelDown').onclick=()=>flowStep(1);
- $('#v72panelEdit').onclick=()=>window.dispatchEvent(new CustomEvent('raf:v760-edit'));$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
+ $('#v72panelEdit').onclick=requestEdit;$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
  p.classList.add('raf-panel-open62');p.style.display='block'
 }
 function cand(e){return e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
@@ -415,6 +416,33 @@ function disarmMove(){
 function clearLegacySelection(){
  $$('.rsel,.sel55,.pro61-selected,.custom62-selected,.weSelected').forEach(x=>x.classList.remove('rsel','sel55','pro61-selected','custom62-selected','weSelected'))
 }
+function editableText(el){return!!el?.matches?.('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')}
+function inlineValue(el){return String(el?.innerText??el?.textContent??'').replace(/\r/g,'')}
+function insertPlainText(value){
+ const selection=getSelection();if(!selection?.rangeCount)return;
+ selection.deleteFromDocument();const node=document.createTextNode(value),range=selection.getRangeAt(0);range.insertNode(node);range.setStartAfter(node);range.collapse(true);selection.removeAllRanges();selection.addRange(range)
+}
+function finishInlineEdit(cancel=false){
+ const edit=inlineEdit;if(!edit)return;inlineEdit=null;const {el,k,original,onInput,onBlur,onKey,onPaste}=edit;
+ el.removeEventListener('input',onInput);el.removeEventListener('blur',onBlur);el.removeEventListener('keydown',onKey);el.removeEventListener('paste',onPaste);
+ const value=cancel?original:inlineValue(el),c=ownCfg(k,el);c.text=value;el.textContent=value;el.removeAttribute('contenteditable');delete el.dataset.v760InlineEdit;
+ save();boxUpdate();panel();emit('selection');const s=$('#rafStatus3');if(s)s.textContent=cancel?'↶ Anulowano edycję tekstu':'✓ Tekst zapisany'
+}
+function beginInlineEdit(el){
+ if(!editableText(el)||cfg(id(el),el).locked)return false;
+ if(inlineEdit?.el===el){el.focus({preventScroll:true});return true}
+ if(inlineEdit)finishInlineEdit(false);if(!sel.has(el))select(el,false);disarmMove();commit();
+ const k=id(el),original=String(cfg(k,el).text??inlineValue(el));
+ const onInput=()=>{ownCfg(k,el).text=inlineValue(el);save()};
+ const onBlur=()=>finishInlineEdit(false);
+ const onKey=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();finishInlineEdit(true);el.blur()}else if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){e.preventDefault();finishInlineEdit(false);el.blur()}};
+ const onPaste=e=>{e.preventDefault();insertPlainText(e.clipboardData?.getData('text/plain')||'');onInput()};
+ inlineEdit={el,k,original,onInput,onBlur,onKey,onPaste};el.dataset.v760InlineEdit='1';el.setAttribute('contenteditable','true');el.spellcheck=true;
+ el.addEventListener('input',onInput);el.addEventListener('blur',onBlur);el.addEventListener('keydown',onKey);el.addEventListener('paste',onPaste);boxUpdate();
+ requestAnimationFrame(()=>{el.focus({preventScroll:true});const selection=getSelection(),range=document.createRange();range.selectNodeContents(el);range.collapse(false);selection.removeAllRanges();selection.addRange(range)});
+ const s=$('#rafStatus3');if(s)s.textContent='✎ Edycja na stronie — zaznaczaj, wpisuj i usuwaj tekst • Esc anuluje';window.dispatchEvent(new CustomEvent('raf:v760-inline-start',{detail:{id:k,element:el}}));return true
+}
+function requestEdit(){const el=sel.size===1?[...sel][0]:null;if(el&&beginInlineEdit(el))return;window.dispatchEvent(new CustomEvent('raf:v760-edit'))}
 function armMove(el){
  disarmMove();moveArm={el,until:performance.now()+2400};el.classList.add('v760moveArmed');
  const s=$('#rafStatus3');if(s)s.textContent='✥ Element gotowy do przesunięcia — przeciągnij go';
@@ -440,8 +468,9 @@ window.addEventListener('pointerdown',e=>{
  lastTap=null;disarmMove();if(e.target.closest('a,button,img,video,iframe'))return;clear();clearLegacySelection();suppressClickUntil=performance.now()+520;suppressNextClick=true;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('dblclick',e=>{
+ if(e.target.closest('[data-v760-inline-edit="1"]')){e.stopPropagation();e.stopImmediatePropagation();return}
  if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
- const el=cand(e);if(!el)return;if(!sel.has(el))select(el,false);armMove(el);if(e.target.closest(TEXT))return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
+ const el=cand(e);if(!el)return;if(!sel.has(el))select(el,false);if(editableText(el)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();beginInlineEdit(el);return}armMove(el);e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('pointermove',e=>{
  if(marq&&e.pointerId===marq.pid){
@@ -462,7 +491,7 @@ function finishPointer(e){
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
-window.addEventListener('click',e=>{if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',e=>{if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
 window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
