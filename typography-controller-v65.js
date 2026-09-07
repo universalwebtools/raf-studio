@@ -33,5 +33,5 @@ $('#fontAdd65').onclick=()=>$('#fontFile65').click();$('#fontFile65').onchange=(
 $('#preview65').onclick=()=>{sync();el.style.animation='none';void el.offsetWidth;const map={fade:'raf45fade',slideUp:'raf45up',slideDown:'raf45down',slideLeft:'raf45left',slideRight:'raf45right',zoomIn:'raf45zin',zoomOut:'raf45zout',blurIn:'raf45blur',reveal:'raf45reveal',bounce:'raf45bounce',flipX:'raf45flipx',flipY:'raf45flipy',rotateIn:'raf45rotate',typewriter:'raf45type'};if(c.animation)el.style.animation=`${map[c.animation]||'raf45fade'} ${c.animationDuration||700}ms ease ${c.animationDelay||0}ms both`};
 }
 function selectedText(){const s=$('.rsel');return s&&s.matches('[data-home-text],#heroK,#heroT,#heroD')?s:null}
-async function enforce(){if(writing)return;const s=selectedText();if(!s)return;if(current!==s||!$('#rafPanel3 #size65'))await render(s)}
+async function enforce(){if(window.rafCore760)return;if(writing)return;const s=selectedText();if(!s)return;if(current!==s||!$('#rafPanel3 #size65'))await render(s)}
 css();await loadFonts();const mo=new MutationObserver(()=>queueMicrotask(enforce));mo.observe(document.body,{subtree:true,childList:true,attributes:true,attributeFilter:['class']});document.addEventListener('click',()=>setTimeout(enforce,0),true);setTimeout(enforce,300);

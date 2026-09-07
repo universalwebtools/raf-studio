@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v7.7.2
+// RAF.studio — unified visual core v8.5.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -22,7 +22,8 @@ let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null;
 let lastTap=null,moveArm=null,suppressClickUntil=0,suppressNextClick=false;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
-function baseCfg(){return{x:0,y:0,width:null,height:null,rotate:0,z:0,hidden:false,deleted:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null}}
+const TYPO_KEYS=['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','color','textAlign','textTransform','textDecoration','fontKerning'];
+function baseCfg(){return{x:0,y:0,width:null,height:null,rotate:0,z:0,hidden:false,deleted:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null,fontFamily:null,fontSize:null,fontWeight:null,fontStyle:null,lineHeight:null,letterSpacing:null,color:null,textAlign:null,textTransform:null,textDecoration:null,fontKerning:null}}
 function css(){
  if($('#core760css'))return;
  const s=document.createElement('style');s.id='core760css';
@@ -113,6 +114,18 @@ function cropApply(el,c){
  el.style.scale=String(Math.max(.1,Number(c.zoom)||1));
  if((Number(c.zoom)||1)>1&&el.parentElement)el.parentElement.style.overflow='hidden'
 }
+function applyTypography(el,c){
+ if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label'))return;
+ const controlled=new Set((el.dataset.v760Typography||'').split(' ').filter(Boolean));
+ const put=(key,css,value,priority='')=>{if(value!==null&&value!==undefined&&value!==''){el.style.setProperty(css,String(value),priority);controlled.add(key)}else if(controlled.has(key)){el.style.removeProperty(css);controlled.delete(key)}};
+ put('fontFamily','font-family',c.fontFamily?'"'+String(c.fontFamily).replace(/"/g,'')+'"':null);
+ put('fontSize','font-size',c.fontSize!=null?Number(c.fontSize)+'px':null,'important');
+ put('fontWeight','font-weight',c.fontWeight);put('fontStyle','font-style',c.fontStyle);
+ put('lineHeight','line-height',c.lineHeight,'important');put('letterSpacing','letter-spacing',c.letterSpacing!=null?Number(c.letterSpacing)+'px':null);
+ put('color','color',c.color);put('textAlign','text-align',c.textAlign);put('textTransform','text-transform',c.textTransform);
+ put('textDecoration','text-decoration',c.textDecoration);put('fontKerning','font-kerning',c.fontKerning);
+ el.dataset.v760Typography=[...controlled].join(' ')
+}
 function apply(el){
  const c=cfg(id(el),el);
  if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
@@ -125,6 +138,7 @@ function apply(el){
  if(c.width>0){el.style.boxSizing='border-box';el.style.width=c.width+'px';el.style.maxWidth=c.width+'px'}else if(c.width===null){el.style.removeProperty('width');el.style.removeProperty('max-width')}
  if(c.height>0){el.style.boxSizing='border-box';el.style.height=c.height+'px'}else if(c.height===null)el.style.removeProperty('height');
  el.style.rotate=(Number(c.rotate)||0)+'deg';
+ applyTypography(el,c);
  if(c.z)el.style.zIndex=String(c.z);
  if(c.src&&el instanceof HTMLImageElement)el.src=c.src;
  cropApply(el,c.crop);
@@ -376,6 +390,7 @@ function copyStyle(){if(sel.size!==1)return false;const el=[...sel][0],c=cp(cfg(
 function pasteStyle(){let s;try{s=JSON.parse(sessionStorage.getItem('rafStyleClipboard760')||'null')}catch{}if(!s||!sel.size)return false;commit();sel.forEach(el=>{Object.assign(ownCfg(id(el),el),cp(s));apply(el)});save();boxUpdate();return true}
 function patchSelected(patch,{commitNow=true}={}){if(!sel.size)return;if(commitNow)commit();sel.forEach(el=>{Object.assign(ownCfg(id(el),el),cp(patch));apply(el)});save();boxUpdate();panel();emit()}
 function patchOne(el,patch,{commitNow=true}={}){if(!el)return;if(commitNow)commit();Object.assign(ownCfg(id(el),el),cp(patch));apply(el);save();boxUpdate();emit('change')}
+function clearProps(el,keys,{commitNow=true}={}){if(!el)return;if(commitNow)commit();const own=ownCfg(id(el),el);for(const key of keys||[])delete own[key];apply(el);save();boxUpdate();emit('change')}
 function toggleLocked(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).locked;patchSelected({locked:on})}
 function toggleHidden(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).hidden;patchSelected({hidden:on})}
 function deleteSelected(){
@@ -467,7 +482,7 @@ window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.f
  window.rafCore760={
   undo:undoNow,redo:redoNow,canUndo:()=>undo.length>0,canRedo:()=>redo.length>0,lastAt:()=>lastAt,applyLayout:x=>{layout=cp(x||{});applyAll()},
   selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
-  id,cfgFor:el=>cfg(id(el),el),list,save,checkpoint:commit,patchSelected,patchOne,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
+  id,cfgFor:el=>cfg(id(el),el),list,save,checkpoint:commit,patchSelected,patchOne,clearProps,typographyKeys:TYPO_KEYS,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
   toggleLocked,toggleHidden,deleteSelected,restoreDeleted,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,flowUp:()=>flowStep(-1),flowDown:()=>flowStep(1),device:dev,refresh:()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')}
  };
  window.rafCore72=window.rafCore760;

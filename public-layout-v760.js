@@ -1,4 +1,4 @@
-// RAF.studio — public transform, clone, crop and flow-order runtime v7.7.2
+// RAF.studio — public transform, typography, clone, crop and flow-order runtime v8.5.0
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
@@ -8,7 +8,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
  const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
  const dev=()=>innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
- const TEXT='[data-home-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
+ const TEXT='[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
  const CAND=TEXT+',[data-raf-free],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
  let layout={},clones=[],flowOrders=[],timer=null,rendering=false;
 
@@ -24,6 +24,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
   if(cloneRoot&&cloneRoot!==el){const a=[];let n=el;while(n&&n!==cloneRoot){const p=n.parentElement;if(!p)break;const same=[...p.children].filter(x=>x.tagName===n.tagName);a.unshift(n.tagName.toLowerCase()+':'+same.indexOf(n));n=p}id='clonepart:'+cloneRoot.dataset.rafV76Clone+':'+a.join('>')}
   else if(el.dataset.rafV76Clone)id='clone:'+el.dataset.rafV76Clone;
   else if(el.dataset.rafV7Id)id=el.dataset.rafV7Id;
+  else if(el.dataset.siteText)id='tx:'+el.dataset.siteText;
   else if(['heroK','heroT','heroD'].includes(el.id))id='tx:'+el.id;
   else if(el.dataset.homeText)id='tx:'+el.dataset.homeText;
   else if(el.dataset.custom62Id&&el.dataset.custom62)id='cs:'+el.dataset.custom62Id+':'+el.dataset.custom62;
@@ -46,10 +47,23 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
   if(c.src)el.src=c.src;if(el.dataset.homeMedia)el.style.transform='none';el.style.objectFit=c.fit||'cover';el.style.objectPosition=(Number(c.x??50))+'% '+(Number(c.y??50))+'%';el.style.transformOrigin=(Number(c.x??50))+'% '+(Number(c.y??50))+'%';el.style.scale=String(Math.max(.1,Number(c.zoom)||1));
   if((Number(c.zoom)||1)>1&&el.parentElement)el.parentElement.style.overflow='hidden'
  }
+	 function applyTypography(el,c){
+	  if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label'))return;
+	  const controlled=new Set((el.dataset.v760Typography||'').split(' ').filter(Boolean));
+	  const put=(key,css,value,priority='')=>{if(value!==null&&value!==undefined&&value!==''){el.style.setProperty(css,String(value),priority);controlled.add(key)}else if(controlled.has(key)){el.style.removeProperty(css);controlled.delete(key)}};
+	  put('fontFamily','font-family',c.fontFamily?'"'+String(c.fontFamily).replace(/"/g,'')+'"':null);
+	  put('fontSize','font-size',c.fontSize!=null?Number(c.fontSize)+'px':null,'important');
+	  put('fontWeight','font-weight',c.fontWeight);put('fontStyle','font-style',c.fontStyle);
+	  put('lineHeight','line-height',c.lineHeight,'important');put('letterSpacing','letter-spacing',c.letterSpacing!=null?Number(c.letterSpacing)+'px':null);
+	  put('color','color',c.color);put('textAlign','text-align',c.textAlign);put('textTransform','text-transform',c.textTransform);
+	  put('textDecoration','text-decoration',c.textDecoration);put('fontKerning','font-kerning',c.fontKerning);
+	  el.dataset.v760Typography=[...controlled].join(' ')
+	 }
 	 function applyOne(el){
 	  const id=idFor(el),c=cfg(id);if(!id||!c||!Object.keys(c).length)return;
 	  if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
 	  if(c.href!=null&&el instanceof HTMLAnchorElement&&el.getAttribute('href')!==String(c.href))el.setAttribute('href',String(c.href));
+	  applyTypography(el,c);
 	  if(el.matches('.rw-floating-button')){el.style.position='fixed';el.style.removeProperty('left');el.style.removeProperty('top');el.style.translate=(Number(c.x)||0)+'px '+(Number(c.y)||0)+'px'}else{el.style.position='relative';el.style.left=(Number(c.x)||0)+'px';el.style.top=(Number(c.y)||0)+'px';el.style.removeProperty('translate')}
   if(c.width!=null&&Number(c.width)>0){el.dataset.v760PublicWidth='1';el.style.boxSizing='border-box';el.style.width=Number(c.width)+'px';el.style.maxWidth=Number(c.width)+'px'}else if(el.dataset.v760PublicWidth==='1'){el.style.removeProperty('width');el.style.removeProperty('max-width');el.dataset.v760PublicWidth='0'}
   if(c.height!=null&&Number(c.height)>0){el.dataset.v760PublicHeight='1';el.style.boxSizing='border-box';el.style.height=Number(c.height)+'px'}else if(el.dataset.v760PublicHeight==='1'){el.style.removeProperty('height');el.dataset.v760PublicHeight='0'}
