@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v8.5.1
+// RAF.studio — unified visual core v8.5.2
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -267,7 +267,7 @@ function boxEnsure(){
 }
 function boxUpdate(){
  const b=bounds();
- if(!b||document.body.classList.contains('raf-preview64')||inlineEdit?.el?.isConnected){overlay?.remove();overlay=null;return}
+ if(!b||document.body.classList.contains('raf-preview64')){overlay?.remove();overlay=null;return}
  const o=boxEnsure();o.classList.toggle('multi',sel.size>1);
  Object.assign(o.style,{left:b.left+scrollX+'px',top:b.top+scrollY+'px',width:b.width+'px',height:b.height+'px'});
  $('#v72move').textContent=sel.size>1?'✥ PRZESUŃ '+sel.size+' ELEMENTY':'✥ PRZESUŃ';
