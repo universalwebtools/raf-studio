@@ -101,7 +101,7 @@ async function bootCurrent(){
    await import('./custom-section-delete-v653.js?v=6.5.3');
    await import('./editor-v70-migrate.js?v=7.0.1');
    await import('./template-blueprints-v75.js?v=8.7.0');
-   await import('./blueprint-guard-v75.js?v=8.7.0');
+   await import('./blueprint-guard-v75.js?v=8.7.0-r2');
    await import('./editor-parity-v752.js?v=8.7.0');
    await import('./editor-core-v760.js?v=8.7.0');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
