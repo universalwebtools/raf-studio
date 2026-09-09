@@ -1,7 +1,7 @@
 // RAF.studio — 100 template picker v8.7.0 — wide previews + search + filters
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {TEMPLATES752,TEMPLATE_IDS752} from './template-engine-v752.js?v=8.7.0';
+import {TEMPLATES752,TEMPLATE_IDS752} from './template-engine-v752.js?v=8.7.0-r2';
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ROOT='website/public';
 const PIC=(id,r,w=1800,h=1100)=>`https://picsum.photos/seed/raf752-${id}-${r}/${w}/${h}`,VID='https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
 function media(url){return{url,desktop:{x:50,y:50,zoom:1,inherit:false},tablet:{inherit:true},mobile:{inherit:true}}}
