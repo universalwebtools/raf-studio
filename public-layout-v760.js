@@ -1,4 +1,4 @@
-// RAF.studio — public transform, typography, clone, crop and flow-order runtime v8.5.2
+// RAF.studio — public transform, typography, clone, crop and flow-order runtime v8.6.0
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
@@ -48,7 +48,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
   if((Number(c.zoom)||1)>1&&el.parentElement)el.parentElement.style.overflow='hidden'
  }
 	 function applyTypography(el,c){
-	  if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label'))return;
+	  if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em'))return;
 	  const controlled=new Set((el.dataset.v760Typography||'').split(' ').filter(Boolean));
 	  const put=(key,css,value,priority='')=>{if(value!==null&&value!==undefined&&value!==''){el.style.setProperty(css,String(value),priority);controlled.add(key)}else if(controlled.has(key)){el.style.removeProperty(css);controlled.delete(key)}};
 	  put('fontFamily','font-family',c.fontFamily?'"'+String(c.fontFamily).replace(/"/g,'')+'"':null);
@@ -61,7 +61,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
 	 }
 	 function applyOne(el){
 	  const id=idFor(el),c=cfg(id);if(!id||!c||!Object.keys(c).length)return;
-	  if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
+	  if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
 	  if(c.href!=null&&el instanceof HTMLAnchorElement&&el.getAttribute('href')!==String(c.href))el.setAttribute('href',String(c.href));
 	  applyTypography(el,c);
 	  if(el.matches('.rw-floating-button')){el.style.position='fixed';el.style.removeProperty('left');el.style.removeProperty('top');el.style.translate=(Number(c.x)||0)+'px '+(Number(c.y)||0)+'px'}else{el.style.position='relative';el.style.left=(Number(c.x)||0)+'px';el.style.top=(Number(c.y)||0)+'px';el.style.removeProperty('translate')}

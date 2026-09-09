@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v8.5.2
+// RAF.studio — unified visual core v8.6.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -116,7 +116,7 @@ function cropApply(el,c){
  if((Number(c.zoom)||1)>1&&el.parentElement)el.parentElement.style.overflow='hidden'
 }
 function applyTypography(el,c){
- if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label'))return;
+ if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em'))return;
  const controlled=new Set((el.dataset.v760Typography||'').split(' ').filter(Boolean));
  const put=(key,css,value,priority='')=>{if(value!==null&&value!==undefined&&value!==''){el.style.setProperty(css,String(value),priority);controlled.add(key)}else if(controlled.has(key)){el.style.removeProperty(css);controlled.delete(key)}};
  put('fontFamily','font-family',c.fontFamily?'"'+String(c.fontFamily).replace(/"/g,'')+'"':null);
@@ -129,7 +129,7 @@ function applyTypography(el,c){
 }
 function apply(el){
  const c=cfg(id(el),el);
- if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
+ if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
  if(c.href!=null&&el instanceof HTMLAnchorElement&&el.getAttribute('href')!==String(c.href))el.setAttribute('href',String(c.href));
  if(el.matches('.rw-floating-button')){
   el.style.position='fixed';el.style.removeProperty('left');el.style.removeProperty('top');el.style.translate=(Number(c.x)||0)+'px '+(Number(c.y)||0)+'px'
@@ -416,7 +416,7 @@ function disarmMove(){
 function clearLegacySelection(){
  $$('.rsel,.sel55,.pro61-selected,.custom62-selected,.weSelected').forEach(x=>x.classList.remove('rsel','sel55','pro61-selected','custom62-selected','weSelected'))
 }
-function editableText(el){return!!el?.matches?.('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')}
+function editableText(el){return!!el?.matches?.('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&!(el.dataset.rafWidgetAction&&el.children.length)}
 function inlineValue(el){return String(el?.innerText??el?.textContent??'').replace(/\r/g,'')}
 function insertPlainText(value){
  const selection=getSelection();if(!selection?.rangeCount)return;
@@ -426,7 +426,7 @@ function finishInlineEdit(cancel=false){
  const edit=inlineEdit;if(!edit)return;inlineEdit=null;const {el,k,original,onInput,onBlur,onKey,onPaste}=edit;
  el.removeEventListener('input',onInput);el.removeEventListener('blur',onBlur);el.removeEventListener('keydown',onKey);el.removeEventListener('paste',onPaste);
  const value=cancel?original:inlineValue(el),c=ownCfg(k,el);c.text=value;el.textContent=value;el.removeAttribute('contenteditable');delete el.dataset.v760InlineEdit;
- save();boxUpdate();panel();emit('selection');const s=$('#rafStatus3');if(s)s.textContent=cancel?'↶ Anulowano edycję tekstu':'✓ Tekst zapisany'
+ save();boxUpdate();panel();emit('selection');window.dispatchEvent(new CustomEvent('raf:v760-inline-end',{detail:{id:k,element:el,value,cancelled:cancel}}));const s=$('#rafStatus3');if(s)s.textContent=cancel?'↶ Anulowano edycję tekstu':'✓ Tekst zapisany'
 }
 function beginInlineEdit(el){
  if(!editableText(el)||cfg(id(el),el).locked)return false;

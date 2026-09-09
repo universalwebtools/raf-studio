@@ -1,0 +1,24 @@
+// RAF.studio — public custom-page runtime v8.6.0
+import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
+import {getDatabase,ref,get} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
+
+const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),auth=getAuth(app);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const safeHref=(value,fallback='#kontakt')=>{const s=String(value||'').trim();if(!s)return fallback;if(s.startsWith('/')||s.startsWith('#'))return s;try{const u=new URL(s,location.href);return['https:','http:','mailto:','tel:'].includes(u.protocol)?u.href:fallback}catch{return fallback}};
+const slug=decodeURIComponent(location.pathname).replace(/^\/+|\/+$/g,'').toLowerCase();
+const draft=new URLSearchParams(location.search).get('rafDraftPage')==='1';
+function waitAuth(ms=2200){if(auth.currentUser)return Promise.resolve(auth.currentUser);return new Promise(resolve=>{let done=false;const timer=setTimeout(()=>{if(!done){done=true;unsub();resolve(null)}},ms),unsub=onAuthStateChanged(auth,u=>{if(done)return;done=true;clearTimeout(timer);unsub();resolve(u)},()=>resolve(null))})}
+function paragraphs(text){return String(text||'').split(/\n\s*\n/).filter(Boolean).map(x=>'<p>'+esc(x).replace(/\n/g,'<br>')+'</p>').join('')}
+function questionnaire(p){return`<form class="cpForm" data-email="${esc(p.contactEmail||'')}"><div><label>Imię i nazwisko<input name="name" required></label><label>E-mail<input name="email" type="email" required></label></div><div><label>Telefon<input name="phone"></label><label>Rodzaj realizacji<input name="service"></label></div><label>Opowiedz o projekcie<textarea name="message" required></textarea></label><label class="cpConsent"><input type="checkbox" required> Zgadzam się na kontakt w sprawie tego zapytania i akceptuję politykę prywatności.</label><button type="submit">${esc(p.button||'Wyślij ankietę')}</button></form>`}
+function render(p){
+ document.title=(p.name||p.title||'Podstrona')+' — RAF.studio';document.querySelector('meta[name="description"]')?.setAttribute('content',String(p.intro||'').slice(0,160));
+ const bg=/^#[0-9a-f]{6}$/i.test(p.background||'')?p.background:'#090909',text=/^#[0-9a-f]{6}$/i.test(p.textColor||'')?p.textColor:'#ffffff',accent=/^#[0-9a-f]{6}$/i.test(p.accent||'')?p.accent:'#ffffff';
+ document.documentElement.style.cssText=`--cp-bg:${bg};--cp-text:${text};--cp-accent:${accent}`;
+ document.body.innerHTML=`<nav class="cpNav"><a href="/" class="cpBrand">RAF.STUDIO</a><div><a href="/fotografia/">Fotografia</a><a href="/film/">Film</a><a href="/#kontakt">Kontakt</a></div></nav><header class="cpHero ${p.heroImage?'hasImage':''}">${p.heroImage?`<img src="${esc(safeHref(p.heroImage,''))}" alt="">`:''}<div class="cpShade"></div><div class="cpWrap"><small>${esc(p.eyebrow||'RAF.STUDIO')}</small><h1>${esc(p.title||p.name||'Podstrona')}</h1><p>${esc(p.intro||'')}</p></div></header><main><section class="cpContent"><div class="cpWrap cpArticle">${paragraphs(p.body)}${p.kind==='questionnaire'?questionnaire(p):''}${p.kind!=='questionnaire'&&p.button?`<a class="cpButton" href="${esc(safeHref(p.link))}">${esc(p.button)}</a>`:''}</div></section></main><footer class="cpFooter"><span>© RAF.studio</span><span><a href="/polityka-prywatnosci/">Polityka prywatności</a> · <a href="/">Strona główna</a></span></footer>`;
+ const form=document.querySelector('.cpForm');if(form)form.onsubmit=e=>{e.preventDefault();const d=new FormData(form),mail=form.dataset.email||'',subject='Ankieta RAF.studio — '+(d.get('service')||p.name||slug),body=`Imię: ${d.get('name')}\nE-mail: ${d.get('email')}\nTelefon: ${d.get('phone')}\nRodzaj realizacji: ${d.get('service')}\n\n${d.get('message')}`;if(!mail){alert('Uzupełnij adres odbiorcy ankiety w edytorze podstrony.');return}location.href=`mailto:${encodeURIComponent(mail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`};
+ document.documentElement.classList.add('ready')
+}
+function notFound(){document.title='Nie znaleziono strony — RAF.studio';document.body.innerHTML='<main class="cpMissing"><div><small>404 / RAF.STUDIO</small><h1>TEJ STRONY JESZCZE NIE MA.</h1><p>Sprawdź adres albo wróć do strony głównej.</p><a class="cpButton" href="/">Wróć na stronę główną</a></div></main>';document.documentElement.classList.add('ready')}
+(async()=>{try{if(!slug){location.replace('/');return}let path=WEBSITE_ROOT+'/public/customPages/'+slug;if(draft&&await waitAuth())path=WEBSITE_ROOT+'/public/customPagesDraft/items/'+slug;const snap=await get(ref(db,path));snap.exists()?render(snap.val()):notFound()}catch(e){console.error(e);notFound()}})();
