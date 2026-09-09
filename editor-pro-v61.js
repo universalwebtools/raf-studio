@@ -1,8 +1,8 @@
-// RAF.studio — PRO editor v8.6.0
+// RAF.studio — PRO editor v8.6.1
 import { getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase,ref,get,set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getStorage,ref as storageRef,uploadBytesResumable,getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.6.0';
+import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.6.1';
 const db=getDatabase(getApp()),storage=getStorage(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],cp=x=>structuredClone(x),esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let data=cp(PRO61_DEFAULTS),undo=[],redo=[],saveTimer=null,lastSource='pro';
 function normalizeVideoUrl(raw=''){let u=String(raw).trim().replace(/^["']|["']$/g,'');try{const x=new URL(u,location.origin),host=x.hostname.toLowerCase();let id='';if(host==='youtu.be')id=x.pathname.split('/').filter(Boolean)[0]||'';else if(host.endsWith('youtube.com')||host.endsWith('youtube-nocookie.com'))id=x.searchParams.get('v')||x.pathname.match(/^\/(?:embed|shorts|live)\/([^/?#]+)/i)?.[1]||'';if(id)return`https://www.youtube.com/watch?v=${id}`;if(x.origin===location.origin&&raw.trim().startsWith('/'))u=x.pathname+x.search}catch{}return u}

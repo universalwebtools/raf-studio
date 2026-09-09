@@ -1,4 +1,4 @@
-// RAF.studio — layers, responsive controls, crop and full typography UI v8.6.0
+// RAF.studio — layers, responsive controls, crop and full typography UI v8.6.1
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getStorage,ref as sRef,uploadBytesResumable,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js';
