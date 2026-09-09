@@ -1,4 +1,4 @@
-// RAF.studio — custom subpage manager v8.6.2
+// RAF.studio — custom subpage manager v8.7.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 

@@ -1,9 +1,10 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.6.2',CURRENT_BUILD='8620',requested=params.get('ev')||LATEST;
+const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.7.0',CURRENT_BUILD='8700',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 
 // Immutable Git commits used by the real editor-version switcher. Loading an
 // archived entry module also pins all of its relative imports to that release.
 const RELEASES=Object.freeze({
+ '8.6.2':{sha:'5255cd7f5b31348dcb6b70be7bcd97cf88f1c9d2',build:'8620'},
  '8.6.1':{sha:'45c18b1382e281ce61a21eb1b1352b1e5cba66bb',build:'8610'},
  '8.6.0':{sha:'e3fd4b7db21e7b7ac7f6319f1ea9e664e920eeb4',build:'8600'},
  '8.5.2':{sha:'3eb97f8ac1c8b1644a86a098fe45aed19251edad',build:'8520'},
@@ -87,31 +88,31 @@ async function bootCurrent(){
   else{
    await import('./editor-media-prefetch-v43.js?v=4.3.0');
    await import('./editor-prep-v34.js?v=3.4.0');
-   await import('./direct-editor-v3.js?v=8.6.2');
-   await import('./editor-ui-v4.js?v=8.6.2');
+   await import('./direct-editor-v3.js?v=8.7.0');
+   await import('./editor-ui-v4.js?v=8.7.0');
    await import('./editor-custom-v42.js?v=4.2.0');
    await import('./typography-controller-v65.js?v=6.5.3');
-   await import('./editor-media-section-v65.js?v=8.6.2');
+   await import('./editor-media-section-v65.js?v=8.7.0');
    await import('./motion-preview-fix-v44.js?v=4.4.0');
    await import('./editor-motion-fix-v45.js?v=4.5.0');
    await import('./editor-sections-v55.js?v=5.5.0');
-   await import('./editor-pro-v61.js?v=8.6.2-r2');
+   await import('./editor-pro-v61.js?v=8.7.0-r2');
    await import('./custom-sections-editor-v62.js?v=6.5.3');
    await import('./custom-section-delete-v653.js?v=6.5.3');
    await import('./editor-v70-migrate.js?v=7.0.1');
-   await import('./template-blueprints-v75.js?v=8.6.2');
-   await import('./blueprint-guard-v75.js?v=8.6.2');
-   await import('./editor-parity-v752.js?v=8.6.2');
-   await import('./editor-core-v760.js?v=8.6.2');
+   await import('./template-blueprints-v75.js?v=8.7.0');
+   await import('./blueprint-guard-v75.js?v=8.7.0');
+   await import('./editor-parity-v752.js?v=8.7.0');
+   await import('./editor-core-v760.js?v=8.7.0');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
-   await import('./editor-templates-v752.js?v=8.6.2');
-   await import('./editor-history-v72.js?v=8.6.2');
-   await import('./editor-chrome-v73.js?v=8.6.2');
-   await import('./editor-workspace-v760.js?v=8.6.2');
-   await import('./editor-pages-v860.js?v=8.6.2');
-   await import('./editor-widgets-v770.js?v=8.6.2');
-   await import('./editor-version-history-v760.js?v=8.6.2');
-   await import('./direct-publish-v760.js?v=8.6.2');
+   await import('./editor-templates-v752.js?v=8.7.0');
+   await import('./editor-history-v72.js?v=8.7.0');
+   await import('./editor-chrome-v73.js?v=8.7.0');
+   await import('./editor-workspace-v760.js?v=8.7.0');
+   await import('./editor-pages-v860.js?v=8.7.0');
+   await import('./editor-widgets-v770.js?v=8.7.0');
+   await import('./editor-version-history-v760.js?v=8.7.0');
+   await import('./direct-publish-v760.js?v=8.7.0');
   }
   await waitEditorSettled()
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
@@ -119,6 +120,6 @@ async function bootCurrent(){
 
 (async()=>{
  if(editorMode&&requested!==LATEST){await bootArchived();return}
- await import('./site-v800.js?v=8.6.2');
+ await import('./site-v800.js?v=8.7.0');
  if(editorMode)await bootCurrent()
 })();

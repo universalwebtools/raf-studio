@@ -1,8 +1,8 @@
-// RAF.studio — PRO editor v8.6.2
+// RAF.studio — PRO editor v8.7.0
 import { getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getDatabase,ref,get,set } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
 import { getStorage,ref as storageRef,uploadBytesResumable,getDownloadURL } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js";
-import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.6.2';
+import { PRO61_DEFAULTS,merge61,render61 } from './public-pro-v61.js?v=8.7.0';
 const db=getDatabase(getApp()),storage=getStorage(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],cp=x=>structuredClone(x),esc=s=>String(s??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 let data=cp(PRO61_DEFAULTS),undo=[],redo=[],saveTimer=null,lastSource='pro';
 function ingest(raw={}){data={...cp(PRO61_DEFAULTS),...cp(raw||{})};for(const k of ['global','button','gradient','heroVideo','stats','contactForm','scroll','timeline'])data[k]={...PRO61_DEFAULTS[k],...(data[k]||{})};data.stats.items=Array.isArray(data.stats.items)?data.stats.items:cp(PRO61_DEFAULTS.stats.items);data.elementStyles=data.elementStyles||{}}
