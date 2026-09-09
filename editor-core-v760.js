@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v8.6.1
+// RAF.studio — unified visual core v8.6.2
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -275,16 +275,17 @@ function boxUpdate(){
  const fs=flowState();$('#v72flow').style.display='flex';$('#v72flowUp').style.display=sel.size===1?'':'none';$('#v72flowDown').style.display=sel.size===1?'':'none';$('#v72flowUp').disabled=!fs?.canUp;$('#v72flowDown').disabled=!fs?.canDown
 }
 function stateShot(){return{layout:cp(layout),clones:cp(clones),flowOrders:cp(flowOrders)}}
+function historyItem(value,fallbackAt=0){return value&&value.state&&typeof value==='object'?{state:value.state,at:Number(value.at)||fallbackAt}:{state:value,at:fallbackAt}}
 function restoreState(x){layout=cp(x.layout||{});clones=cp(x.clones||[]);flowOrders=cp(x.flowOrders||[]);applyAll();save()}
-function commit(){undo.push(stateShot());if(undo.length>80)undo.shift();redo=[];lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at:lastAt}}))}
+function commit(){const at=Date.now();undo.push({state:stateShot(),at});if(undo.length>80)undo.shift();redo=[];lastAt=at;window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at}}))}
 function save(){
  clearTimeout(saveTimer);const l=cp(layout),c=cp(clones),f=cp(flowOrders);
  saveTimer=setTimeout(()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c),set(ref(db,ROOT+'/flowOrderV772'),f)]).then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
  const s=$('#rafStatus3');if(s)s.textContent='● Zmiany robocze';emit('change')
 }
 function applyAll(){decorate();applyFlowOrders();boxUpdate();panel();emit('change')}
-function undoNow(){if(!undo.length)return false;redo.push(stateShot());restoreState(undo.pop());lastAt=Date.now();return true}
-function redoNow(){if(!redo.length)return false;undo.push(stateShot());restoreState(redo.pop());lastAt=Date.now();return true}
+function undoNow(){if(!undo.length)return false;const item=historyItem(undo.pop());redo.push({state:stateShot(),at:item.at});restoreState(item.state);lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core-undo',at:lastAt}}));return true}
+function redoNow(){if(!redo.length)return false;const item=historyItem(redo.pop());undo.push({state:stateShot(),at:item.at});restoreState(item.state);lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core-redo',at:lastAt}}));return true}
 
 function beginMove(e){
  if(!sel.size)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
@@ -509,7 +510,7 @@ window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.f
  const [d,p,dc,pc,df,pf]=await Promise.all([get(ref(db,ROOT+'/freeLayoutV7')),get(ref(db,'website/public/builder/freeLayoutV7')),get(ref(db,ROOT+'/clonesV76')),get(ref(db,'website/public/builder/clonesV76')),get(ref(db,ROOT+'/flowOrderV772')),get(ref(db,'website/public/builder/flowOrderV772'))]);
  layout=cp(d.exists()?d.val():(p.val()||{desktop:{},tablet:{},mobile:{}}));clones=cp(dc.exists()?dc.val():(pc.val()||[]));flowOrders=cp(df.exists()?df.val():(pf.val()||[]));decorate();applyFlowOrders();
  window.rafCore760={
-  undo:undoNow,redo:redoNow,canUndo:()=>undo.length>0,canRedo:()=>redo.length>0,lastAt:()=>lastAt,applyLayout:x=>{layout=cp(x||{});applyAll()},
+  undo:undoNow,redo:redoNow,canUndo:()=>undo.length>0,canRedo:()=>redo.length>0,lastAt:()=>lastAt,nextUndoAt:()=>historyItem(undo.at(-1)).at,nextRedoAt:()=>historyItem(redo.at(-1)).at,clearRedo:()=>{redo=[]},applyLayout:x=>{layout=cp(x||{});applyAll()},
   selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
   id,cfgFor:el=>cfg(id(el),el),list,save,checkpoint:commit,patchSelected,patchOne,clearProps,typographyKeys:TYPO_KEYS,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
   toggleLocked,toggleHidden,deleteSelected,restoreDeleted,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,flowUp:()=>flowStep(-1),flowDown:()=>flowStep(1),device:dev,refresh:()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')}

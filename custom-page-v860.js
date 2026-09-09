@@ -1,4 +1,4 @@
-// RAF.studio — public custom-page runtime v8.6.1
+// RAF.studio — public custom-page runtime v8.6.2
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';

@@ -1,4 +1,4 @@
-// RAF.studio — custom subpage manager v8.6.1
+// RAF.studio — custom subpage manager v8.6.2
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -34,5 +34,6 @@ function addButton(){const top=$('#rafTop3');if(!top)return false;if(!$('#pagesB
 
 let tries=0,t=setInterval(()=>{if(addButton()||++tries>120)clearInterval(t)},50);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal?.classList.contains('open'))close()});
+window.addEventListener('raf:history-pages',e=>{pages=normalize(unwrapDraft(e.detail||{}));if(current&&!pages[current])current=Object.keys(pages)[0]||'';if(modal?.classList.contains('open'))render();window.dispatchEvent(new CustomEvent('raf:pages860-updated'))});
 window.rafPages860={open,load,targets,list:()=>cp(pages),slugify};
 load().catch(()=>{});
