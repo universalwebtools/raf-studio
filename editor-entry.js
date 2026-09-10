@@ -23,7 +23,7 @@ const RELEASES=Object.freeze({
  '7.7.1':{sha:'c6cd00053dd3dca2fcb8c7a536f6a0be3d6cb2a2',build:'771'},
  '7.6.0':{sha:'039c569e701fb6ae0e5a89023e243cf4e677d478',build:'760'},
  '7.5.6':{sha:'174914e334fc9e9ee7b8a02b9eae032f236ed594',build:'756'},
- '7.5.5':{sha:'1d2db5be14bbd4fed11b46e3844d5e5f830c03fa',build:'755'},
+ '7.5.5':{sha:'1d2db5be14bd4fed11b46e3844d5e5f830c03fa',build:'755'},
  '7.5.4':{sha:'2f743500e5335f410c81efbfd58cc8df5fe6860b',build:'754'},
  '7.5.3':{sha:'30f8b06689ad5c39f0a2cab242857840b6be9fd8',build:'753'},
  '7.5.2':{sha:'440c0745c491de01d9794d25cedacab2fc6b9110',build:'752'},
@@ -108,7 +108,7 @@ async function bootCurrent(){
    await import('./editor-core-v760.js?v=8.7.2');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
    await import('./editor-templates-v752.js?v=8.7.1');
-   await import('./editor-history-v72.js?v=8.7.0');
+   await import('./editor-history-v72.js?v=8.7.3');
    await import('./editor-chrome-v73.js?v=8.7.1');
    await import('./editor-workspace-v760.js?v=8.7.2');
    await import('./editor-pages-v860.js?v=8.7.0');
