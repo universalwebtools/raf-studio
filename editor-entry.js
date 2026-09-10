@@ -106,6 +106,7 @@ async function bootCurrent(){
    await import('./blueprint-guard-v75.js?v=8.7.1');
    await import('./editor-parity-v752.js?v=8.7.1');
    await import('./editor-core-v760.js?v=8.7.2');
+   await import('./editor-meaningful-undo-v874.js?v=8.7.4');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
    await import('./editor-templates-v752.js?v=8.7.1');
    await import('./editor-history-v72.js?v=8.7.3');
