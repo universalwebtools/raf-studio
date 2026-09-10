@@ -1,9 +1,10 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.7.1',CURRENT_BUILD='8710',requested=params.get('ev')||LATEST;
+const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.7.2',CURRENT_BUILD='8720',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 
 // Immutable Git commits used by the real editor-version switcher. Loading an
 // archived entry module also pins all of its relative imports to that release.
 const RELEASES=Object.freeze({
+ '8.7.1':{sha:'16ba8829d250f30d1dae9b02912a088e4870449c',build:'8710'},
  '8.7.0':{sha:'00dd318368278344a04a8d67d3481a94ea0b08cf',build:'8700'},
  '8.6.2':{sha:'5255cd7f5b31348dcb6b70be7bcd97cf88f1c9d2',build:'8620'},
  '8.6.1':{sha:'45c18b1382e281ce61a21eb1b1352b1e5cba66bb',build:'8610'},
@@ -104,16 +105,16 @@ async function bootCurrent(){
    await import('./template-blueprints-v75.js?v=8.7.1');
    await import('./blueprint-guard-v75.js?v=8.7.1');
    await import('./editor-parity-v752.js?v=8.7.1');
-   await import('./editor-core-v760.js?v=8.7.0');
+   await import('./editor-core-v760.js?v=8.7.2');
    await import('./editor-v70-layout-guard.js?v=7.7.2');
    await import('./editor-templates-v752.js?v=8.7.1');
    await import('./editor-history-v72.js?v=8.7.0');
    await import('./editor-chrome-v73.js?v=8.7.1');
-   await import('./editor-workspace-v760.js?v=8.7.0');
+   await import('./editor-workspace-v760.js?v=8.7.2');
    await import('./editor-pages-v860.js?v=8.7.0');
    await import('./editor-widgets-v770.js?v=8.7.0');
    await import('./editor-version-history-v760.js?v=8.7.0');
-   await import('./direct-publish-v760.js?v=8.7.0');
+   await import('./direct-publish-v760.js?v=8.7.2');
   }
   await waitEditorSettled()
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
@@ -121,6 +122,6 @@ async function bootCurrent(){
 
 (async()=>{
  if(editorMode&&requested!==LATEST){await bootArchived();return}
- await import('./site-v800.js?v=8.7.1');
+ await import('./site-v800.js?v=8.7.2');
  if(editorMode)await bootCurrent()
 })();

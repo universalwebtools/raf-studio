@@ -1,4 +1,4 @@
-// RAF.studio — unified visual core v8.7.0
+// RAF.studio — unified visual core v8.7.2
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -23,7 +23,7 @@ let lastTap=null,moveArm=null,suppressClickUntil=0,suppressNextClick=false;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
 const TYPO_KEYS=['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','color','textAlign','textTransform','textDecoration','fontKerning'];
-function baseCfg(){return{x:0,y:0,width:null,height:null,rotate:0,z:0,hidden:false,deleted:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null,fontFamily:null,fontSize:null,fontWeight:null,fontStyle:null,lineHeight:null,letterSpacing:null,color:null,textAlign:null,textTransform:null,textDecoration:null,fontKerning:null}}
+function baseCfg(){return{x:0,y:0,width:null,height:null,scale:1,rotate:0,z:0,hidden:false,deleted:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null,fontFamily:null,fontSize:null,fontWeight:null,fontStyle:null,lineHeight:null,letterSpacing:null,color:null,textAlign:null,textTransform:null,textDecoration:null,fontKerning:null}}
 function css(){
  if($('#core760css'))return;
  const s=document.createElement('style');s.id='core760css';
@@ -42,6 +42,8 @@ function css(){
  '#v72move{left:4px;top:-31px;background:#168ee6;color:#fff;border-radius:7px;padding:5px 9px;font:700 11px system-ui;cursor:move;white-space:nowrap}'+
  '#v72flow{position:absolute;left:88px;right:auto;top:-32px;display:flex;gap:4px;pointer-events:auto;white-space:nowrap}#v72flow button{border:1px solid #22a8ff;background:#0b1720;color:#fff;border-radius:7px;padding:5px 8px;font:800 9px system-ui;cursor:pointer}#v72flow button:disabled{opacity:.35;cursor:not-allowed}#v72flow .v760danger{border-color:#ff4e68;color:#ff9bac;background:#210b11}'+
  '#v72box.multi #v72move{background:#9835d5}'+
+ '#v72box.multi .v760handle{border-color:#ad45eb;background:#fff;box-shadow:0 0 0 3px #ad45eb30}'+
+ '#v760scaleBadge{position:absolute;right:5px;top:-31px;display:none;padding:5px 8px;border-radius:7px;background:#9835d5;color:#fff;font:800 10px system-ui;white-space:nowrap;pointer-events:none}'+
  '#v72rotate{left:50%;top:-48px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#fff;border:2px solid #22a8ff;cursor:grab}'+
  '#v72rotate:after{content:"";position:absolute;width:1px;height:16px;background:#22a8ff;left:50%;top:14px}'+
  '.v760handle{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #22a8ff;margin:-7px}'+
@@ -105,15 +107,18 @@ function ownCfg(k,el){
  return layout[d][k]
 }
 function cfg(k,el){const d=dev(),own=ownCfg(k,el),desk=layout.desktop?.[k]||{};return d==='desktop'?{...baseCfg(),...own}:{...baseCfg(),...desk,...own}}
-function cropApply(el,c){
- if(!(el instanceof HTMLImageElement)||!c)return;
+function cropApply(el,c,layoutScale=1){
+ if(!(el instanceof HTMLImageElement))return false;
+ const ls=Math.max(.05,Number(layoutScale)||1);
+ if(!c){el.style.transformOrigin='center center';el.style.scale=String(ls);return true}
  if(c.src)el.src=c.src;
  if(el.dataset.homeMedia)el.style.transform='none';
  el.style.objectFit=c.fit||'cover';
  el.style.objectPosition=(Number(c.x??50))+'% '+(Number(c.y??50))+'%';
  el.style.transformOrigin=(Number(c.x??50))+'% '+(Number(c.y??50))+'%';
- el.style.scale=String(Math.max(.1,Number(c.zoom)||1));
+ el.style.scale=String(Math.max(.05,(Number(c.zoom)||1)*ls));
  if((Number(c.zoom)||1)>1&&el.parentElement)el.parentElement.style.overflow='hidden'
+ return true
 }
 function applyTypography(el,c){
  if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em'))return;
@@ -139,10 +144,10 @@ function apply(el){
  if(c.width>0){el.style.boxSizing='border-box';el.style.width=c.width+'px';el.style.maxWidth=c.width+'px'}else if(c.width===null){el.style.removeProperty('width');el.style.removeProperty('max-width')}
  if(c.height>0){el.style.boxSizing='border-box';el.style.height=c.height+'px'}else if(c.height===null)el.style.removeProperty('height');
  el.style.rotate=(Number(c.rotate)||0)+'deg';
+ const scaledMedia=cropApply(el,c.crop,c.scale);if(!scaledMedia){el.style.transformOrigin='center center';el.style.scale=String(Math.max(.05,Number(c.scale)||1))}
  applyTypography(el,c);
  if(c.z)el.style.zIndex=String(c.z);
  if(c.src&&el instanceof HTMLImageElement)el.src=c.src;
- cropApply(el,c.crop);
  if(c.hidden||c.deleted){el.dataset.v72hidden='1';el.style.display='none'}else if(el.dataset.v72hidden==='1'){el.style.removeProperty('display');el.dataset.v72hidden='0'}
  el.classList.toggle('v72grp',!!c.group);el.classList.toggle('v760locked',!!c.locked)
 }
@@ -255,7 +260,7 @@ function guideShow(s){
 function boxEnsure(){
  if(overlay?.isConnected)return overlay;
  overlay=document.createElement('div');overlay.id='v72box';
- overlay.innerHTML='<div id="v72move">✥ PRZESUŃ</div><div id="v72flow"><button id="v72flowUp" title="Zamień miejscami z poprzednim elementem">↑ WYŻEJ</button><button id="v72flowDown" title="Zamień miejscami z następnym elementem">↓ NIŻEJ</button><button id="v72flowEdit" title="Otwórz edycję zaznaczenia">✎ EDYTUJ</button><button id="v72flowHide" title="Ukryj bez usuwania">◌ UKRYJ</button><button id="v72flowDelete" class="v760danger" title="Przenieś do kosza (można cofnąć)">⌫ USUŃ</button></div><div id="v72rotate" title="Obrót"></div>'+['nw','n','ne','e','se','s','sw','w'].map(d=>'<div class="v760handle" data-dir="'+d+'"></div>').join('');
+ overlay.innerHTML='<div id="v72move">✥ PRZESUŃ</div><div id="v72flow"><button id="v72flowUp" title="Zamień miejscami z poprzednim elementem">↑ WYŻEJ</button><button id="v72flowDown" title="Zamień miejscami z następnym elementem">↓ NIŻEJ</button><button id="v72flowEdit" title="Otwórz edycję zaznaczenia">✎ EDYTUJ</button><button id="v72flowHide" title="Ukryj bez usuwania">◌ UKRYJ</button><button id="v72flowDelete" class="v760danger" title="Przenieś do kosza (można cofnąć)">⌫ USUŃ</button></div><div id="v760scaleBadge">100%</div><div id="v72rotate" title="Obrót"></div>'+['nw','n','ne','e','se','s','sw','w'].map(d=>'<div class="v760handle" data-dir="'+d+'" title="'+(d.length===2?'Skaluj cały zaznaczony zestaw':'Zmień rozmiar')+'"></div>').join('');
  document.body.appendChild(overlay);
  $('#v72move').onpointerdown=beginMove;$('#v72rotate').onpointerdown=beginRotate;
  $('#v72flowUp').onclick=e=>{e.preventDefault();flowStep(-1)};$('#v72flowDown').onclick=e=>{e.preventDefault();flowStep(1)};
@@ -271,7 +276,7 @@ function boxUpdate(){
  const o=boxEnsure();o.classList.toggle('multi',sel.size>1);
  Object.assign(o.style,{left:b.left+scrollX+'px',top:b.top+scrollY+'px',width:b.width+'px',height:b.height+'px'});
  $('#v72move').textContent=sel.size>1?'✥ PRZESUŃ '+sel.size+' ELEMENTY':'✥ PRZESUŃ';
- $$('.v760handle,#v72rotate',o).forEach(x=>x.style.display=sel.size===1?'block':'none')
+ $$('.v760handle',o).forEach(x=>x.style.display=sel.size===1||(sel.size>1&&x.dataset.dir.length===2)?'block':'none');$('#v72rotate').style.display=sel.size===1?'block':'none';if(drag?.mode!=='multi-resize')$('#v760scaleBadge').style.display='none'
  const fs=flowState();$('#v72flow').style.display='flex';$('#v72flowUp').style.display=sel.size===1?'':'none';$('#v72flowDown').style.display=sel.size===1?'':'none';$('#v72flowUp').disabled=!fs?.canUp;$('#v72flowDown').disabled=!fs?.canDown
 }
 function stateShot(){return{layout:cp(layout),clones:cp(clones),flowOrders:cp(flowOrders)}}
@@ -294,10 +299,18 @@ function beginMove(e){
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function beginResize(e){
- if(sel.size!==1)return;const el=[...sel][0],c=cfg(id(el),el);if(c.locked)return;
+ if(sel.size>1){beginMultiResize(e);return}if(sel.size!==1)return;const el=[...sel][0],c=cfg(id(el),el);if(c.locked)return;
  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
  const r=el.getBoundingClientRect(),w=el.offsetWidth||r.width,h=el.offsetHeight||r.height;
  drag={mode:'resize',dir:e.currentTarget.dataset.dir,pid:e.pointerId,sx:e.clientX,sy:e.clientY,el,k:id(el),x:Number(c.x)||0,y:Number(c.y)||0,w,h,ratio:w/Math.max(1,h),media:el.matches('img,video')};
+ try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
+}
+function beginMultiResize(e){
+ const dir=e.currentTarget.dataset.dir;if(dir.length!==2)return;const box=bounds();if(!box)return;
+ const items=[...sel].filter(el=>!cfg(id(el),el).locked).map(el=>{const c=cfg(id(el),el),r=el.getBoundingClientRect();return{el,k:id(el),x:Number(c.x)||0,y:Number(c.y)||0,scale:Number(c.scale)||1,cx:r.left+r.width/2,cy:r.top+r.height/2}});if(items.length<2)return;
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
+ const anchorX=dir.includes('w')?box.right:box.left,anchorY=dir.includes('n')?box.bottom:box.top,cornerX=dir.includes('w')?box.left:box.right,cornerY=dir.includes('n')?box.top:box.bottom,vx=cornerX-anchorX,vy=cornerY-anchorY;
+ drag={mode:'multi-resize',dir,pid:e.pointerId,box,items,anchorX,anchorY,vx,vy,lastScale:1};$('#v760scaleBadge').style.display='block';
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function beginRotate(e){
@@ -320,6 +333,11 @@ function resizeLive(e){
  let ox=dir.includes('w')?d.w-nw:0,oy=dir.includes('n')?d.h-nh:0;
  if(e.altKey){ox=(d.w-nw)/2;oy=(d.h-nh)/2}
  const c=ownCfg(d.k,d.el);c.x=d.x+ox;c.y=d.y+oy;c.width=Math.round(nw*100)/100;c.height=Math.round(nh*100)/100;apply(d.el)
+}
+function multiResizeLive(e){
+ const d=drag,px=e.clientX-d.anchorX,py=e.clientY-d.anchorY,den=Math.max(1,d.vx*d.vx+d.vy*d.vy);let scale=(px*d.vx+py*d.vy)/den;scale=Math.max(.1,Math.min(4,scale));if(e.shiftKey)scale=Math.max(.1,Math.round(scale*20)/20);d.lastScale=scale;
+ d.items.forEach(i=>{const c=ownCfg(i.k,i.el),targetCx=d.anchorX+(i.cx-d.anchorX)*scale,targetCy=d.anchorY+(i.cy-d.anchorY)*scale;c.x=i.x;c.y=i.y;c.scale=Math.round(i.scale*scale*10000)/10000;apply(i.el);const r=i.el.getBoundingClientRect();c.x=i.x+targetCx-(r.left+r.width/2);c.y=i.y+targetCy-(r.top+r.height/2);apply(i.el)});
+ const badge=$('#v760scaleBadge');if(badge){badge.textContent=Math.round(scale*100)+'%';badge.style.display='block'}
 }
 function group(){if(sel.size<2)return;commit();const g='g760_'+Date.now().toString(36);sel.forEach(x=>{ownCfg(id(x),x).group=g;apply(x)});save();panel()}
 function ungroup(){if(!sel.size)return;commit();sel.forEach(x=>{ownCfg(id(x),x).group='';apply(x)});save();panel()}
@@ -360,8 +378,8 @@ function flowStep(direction){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- const fs=flowState();d.innerHTML='<small>V8.5 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • dwuklik aktywuje element<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Uchwyty rozmiaru: Shift = proporcje • Alt = od środka</div>';
- p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0});
+ const fs=flowState();d.innerHTML='<small>V8.7.2 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • dwuklik aktywuje element<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
+ p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0,scale:1});
  if($('#v72panelUp'))$('#v72panelUp').onclick=()=>flowStep(-1);if($('#v72panelDown'))$('#v72panelDown').onclick=()=>flowStep(1);
  $('#v72panelEdit').onclick=requestEdit;$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
  p.classList.add('raf-panel-open62');p.style.display='block'
@@ -402,7 +420,7 @@ function deleteSelected(){
 }
 function restoreDeleted(el){if(!el)return false;commit();const c=ownCfg(id(el),el);c.deleted=false;c.hidden=false;apply(el);save();select(el,false);window.dispatchEvent(new CustomEvent('raf:v760-restored',{detail:{id:id(el)}}));return true}
 function zOrder(mode){if(!sel.size)return;const values=Object.values(layout[dev()]||{}).map(x=>Number(x.z)||0),max=Math.max(0,...values),min=Math.min(0,...values);patchSelected({z:mode==='front'?max+1:min-1})}
-function resetTransform(){patchSelected({x:0,y:0,width:null,height:null,rotate:0})}
+function resetTransform(){patchSelected({x:0,y:0,width:null,height:null,scale:1,rotate:0})}
 function rename(label){patchSelected({label:String(label||'').slice(0,80)})}
 function list(){
  decorate();const out=[],seen=new Set();
@@ -484,11 +502,12 @@ window.addEventListener('pointermove',e=>{
   let dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;if(!(e.ctrlKey||e.metaKey)&&drag.startBox){const s=snapMove(drag.startBox,dx,dy,drag.targets||[]);dx+=s.dx;dy+=s.dy;guideShow(s)}else guideHide();
   drag.items.forEach(i=>{const c=ownCfg(i.k,i.el);c.x=i.x+dx;c.y=i.y+dy;apply(i.el)});boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
  }else if(drag.mode==='resize'){guideHide();resizeLive(e);boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
+ else if(drag.mode==='multi-resize'){guideHide();multiResizeLive(e);boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
  else if(drag.mode==='rotate'){const c=ownCfg(drag.k,drag.el),a=Math.atan2(e.clientY-drag.cy,e.clientX-drag.cx);c.rotate=drag.start+(a-drag.angle)*180/Math.PI;if(e.shiftKey)c.rotate=Math.round(c.rotate/15)*15;apply(drag.el);boxUpdate();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
 },true);
 function finishPointer(e){
  if(marq&&e.pointerId===marq.pid){if(!marq.moved&&marq.startEl){if(sel.has(marq.startEl)){sel.delete(marq.startEl);marq.startEl.classList.remove('v72sel')}else add(marq.startEl)}suppressClickUntil=performance.now()+450;$('#v72marq')?.remove();marq=null;panel();boxUpdate();guideHide();emit();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
- if(drag&&e.pointerId===drag.pid){const ready=drag.mode==='pending'&&drag.sourceEl&&!drag.sourceEl.matches(TEXT)?drag.sourceEl:null;drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','rotate'].includes(drag.mode))save();drag=null;if(ready)armMove(ready);panel();boxUpdate();guideHide();emit()}
+ if(drag&&e.pointerId===drag.pid){const ready=drag.mode==='pending'&&drag.sourceEl&&!drag.sourceEl.matches(TEXT)?drag.sourceEl:null,scaled=drag.mode==='multi-resize',scale=drag.lastScale,count=drag.items?.length||0;drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','multi-resize','rotate'].includes(drag.mode))save();drag=null;if(ready)armMove(ready);panel();boxUpdate();guideHide();emit();if(scaled){const s=$('#rafStatus3');if(s)s.textContent='✓ '+count+' elementów przeskalowano do '+Math.round(scale*100)+'% • Ctrl+Z cofa całość'}}
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
