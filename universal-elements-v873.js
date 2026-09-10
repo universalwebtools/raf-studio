@@ -49,3 +49,50 @@
  window.addEventListener('raf:template752-rendered',schedule);window.addEventListener('raf:template752-repair',schedule);window.addEventListener('raf:v760-ready',schedule);
  window.rafUniversalElements873={refresh:run};
 })();
+
+// RAF.studio — text history reliability hotfix v8.7.5
+// The core stores only overrides. On the first text edit the previous state often
+// contains text:null, so restoring that state did not restore the DOM text at all.
+// Keep the exact pre-edit HTML as a baseline and restore it whenever undo returns
+// an element to text:null. This also preserves original <br> and inline markup.
+(function(){
+ if(!new URLSearchParams(location.search).has('editor'))return;
+ const TEXT_TAGS='h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em';
+ const baselineById=new Map(),baselineByEl=new WeakMap();
+ let core=null,installed=false;
+ function editable(el){return!!el?.matches?.(TEXT_TAGS)&&!el.querySelector?.('img,video,svg,iframe,input,textarea,select')&&!(el.dataset?.rafWidgetAction&&el.children.length)}
+ function remember(el,id){
+  if(!el||!editable(el)||!core)return;
+  let c;try{c=core.cfgFor?.(el)}catch{return}
+  if(c?.text!==null&&c?.text!==undefined)return;
+  const key=id||core.id?.(el)||'',snap={html:el.innerHTML,text:String(el.innerText??el.textContent??''),id:key};
+  baselineByEl.set(el,snap);if(key&&!baselineById.has(key))baselineById.set(key,snap)
+ }
+ function rememberAll(){if(!core?.list)return;try{for(const row of core.list()){if(row?.cfg?.text==null)remember(row.el,row.id)}}catch(e){console.warn('RAF text history baseline',e)}}
+ function restoreMissing(){
+  if(!core?.list)return;
+  try{for(const row of core.list()){
+   if(row?.cfg?.text!=null||!editable(row.el))continue;
+   const base=baselineByEl.get(row.el)||baselineById.get(row.id);if(!base)continue;
+   if(row.el.innerHTML!==base.html)row.el.innerHTML=base.html
+  }}catch(e){console.warn('RAF text history restore',e)}
+ }
+ function install(){
+  core=window.rafCore760||window.rafCore72;if(!core||installed)return false;installed=true;rememberAll();
+  const undo=core.undo?.bind(core),redo=core.redo?.bind(core),applyLayout=core.applyLayout?.bind(core),refresh=core.refresh?.bind(core);
+  if(undo)core.undo=function(){const ok=undo();if(ok)restoreMissing();return ok};
+  if(redo)core.redo=function(){const ok=redo();if(ok)restoreMissing();return ok};
+  if(applyLayout)core.applyLayout=function(x){const out=applyLayout(x);restoreMissing();return out};
+  if(refresh)core.refresh=function(){const out=refresh();rememberAll();restoreMissing();return out};
+  window.rafCore72=core;window.dispatchEvent(new CustomEvent('raf:text-history-875-ready'));return true
+ }
+ window.addEventListener('raf:v760-inline-start',e=>{core=core||window.rafCore760||window.rafCore72;remember(e.detail?.element,e.detail?.id)},true);
+ window.addEventListener('raf:template752-rendered',()=>setTimeout(()=>{core=core||window.rafCore760||window.rafCore72;rememberAll()},0));
+ document.addEventListener('focus',e=>{if(e.target?.id!=='v760text')return;core=core||window.rafCore760||window.rafCore72;const a=core?.selected?.();if(a?.length===1)remember(a[0],core.id?.(a[0]))},true);
+ document.addEventListener('input',e=>{if(e.target?.id!=='v760text')return;core=core||window.rafCore760||window.rafCore72;const a=core?.selected?.();if(a?.length===1)remember(a[0],core.id?.(a[0]))},true);
+ // If Ctrl+Z is pressed while the inspector textarea is focused, blur it first.
+ // The normal global history handler then runs on the same key event and the
+ // inspector is free to synchronize immediately to the reverted value.
+ window.addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||e.altKey||String(e.key).toLowerCase()!=='z')return;const a=document.activeElement;if(a?.id==='v760text')a.blur()},true);
+ if(!install()){window.addEventListener('raf:v760-ready',()=>install(),{once:true});let n=0,t=setInterval(()=>{if(install()||++n>120)clearInterval(t)},50)}
+})();
