@@ -5,3 +5,5 @@ Funkcje v3: synchronizacja ustawień przez Firebase, masowy upload ze wskaźniki
 
 ## Zapis online
 Panel admina nie wymusza teraz logowania. Bezpieczny zapis do Firebase działa, gdy w tej samej domenie istnieje aktywna sesja administratora Firebase (np. po zalogowaniu w panelu raf.studio.galeria). W przeciwnym razie panel zachowuje lokalny backup i pokazuje status zamiast fałszywego sukcesu.
+
+<!-- pages-redeploy v8.7.2 2026-09-10 -->
