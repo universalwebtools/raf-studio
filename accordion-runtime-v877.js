@@ -1,10 +1,10 @@
-// RAF.studio — FAQ fused component runtime v8.8.2
+// RAF.studio — FAQ fused component runtime v8.8.3
 // Arrow + separator line + question are ONE movable/scalable editor element.
 // The original <details> border/padding is transferred onto the movable question span,
 // so ALT multi-select, move and scale can never leave the FAQ separator behind.
 (function(){
  const q=new URLSearchParams(location.search),ev=q.get('ev')||'';
- if(q.has('editor')&&ev&&!['8.7.7','8.8.0','8.8.1','8.8.2'].includes(ev))return;
+ if(q.has('editor')&&ev&&!['8.7.7','8.8.0','8.8.1','8.8.2','8.8.3'].includes(ev))return;
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
  let queued=false,running=false;
  function css(){
