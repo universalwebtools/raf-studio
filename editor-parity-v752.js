@@ -8,7 +8,7 @@ if(EDITOR){
   style.id='rafParity752Css';
   style.textContent=`body.raf-e3{overflow-y:auto!important;overflow-x:hidden!important}body.raf-e3 #rafTemplate752{height:auto!important;max-height:none!important;overflow:visible!important}.weVideoUpload883{width:100%;margin:7px 0 4px!important;background:#147fbd!important;border-color:#55c7ff!important;color:#fff!important;font-weight:900!important}.weVideoHelp883{display:block;color:#78cfff;font-size:9px;line-height:1.35;margin:0 0 8px}`;
   if(!document.getElementById(style.id))document.head.appendChild(style);
-  let repairing=false,lastRepair=0,widgetOpening=false,augmentTimer=null,proTimer=null;
+  let repairing=false,lastRepair=0,widgetOpening=false,augmentTimer=null,proTimer=null,checkTimer=null;
 
   function stampVisibleVersion(){
     document.documentElement.dataset.rafEditorCurrent=VERSION;
@@ -64,20 +64,23 @@ if(EDITOR){
     widgetOpening=true;setTimeout(()=>{try{window.rafWidgets770.select(sw.id,false)}finally{widgetOpening=false;augmentWidgetPanel()}},0)
   }
   function check(){
-    stampVisibleVersion();const id=document.body.dataset.e752||'',root=document.getElementById('rafTemplate752');
+    clearTimeout(checkTimer);checkTimer=null;stampVisibleVersion();const id=document.body.dataset.e752||'',root=document.getElementById('rafTemplate752');
     if(id&&root){
       const expected=TEMPLATES752[id]?.seq?.length||0,actual=root.querySelectorAll(':scope > [data-e752-sec]').length,ok=expected>0&&actual===expected;
       document.body.dataset.rafParity752=ok?'ok':`${actual}/${expected}`;
       if(!ok&&!repairing&&Date.now()-lastRepair>=900){repairing=true;lastRepair=Date.now();window.dispatchEvent(new CustomEvent('raf:template752-repair',{detail:{id,actual,expected}}));setTimeout(()=>{repairing=false},180)}
     }
-    restoreWidgetPanel();augmentWidgetPanel();window.rafVideoPerformance884?.refresh?.()
+    restoreWidgetPanel();augmentWidgetPanel()
   }
-  window.addEventListener('raf:template752-rendered',()=>{requestAnimationFrame(check);reapplyPublicRuntime()});
+  function scheduleCheck(){clearTimeout(checkTimer);checkTimer=setTimeout(check,45)}
+  window.addEventListener('raf:template752-rendered',()=>{scheduleCheck();reapplyPublicRuntime()});
   window.addEventListener('raf:v760-selection',()=>{setTimeout(restoreWidgetPanel,0);setTimeout(augmentWidgetPanel,40)});
   window.addEventListener('raf:history-pro',reapplyPublicRuntime);
   window.addEventListener('raf:universal-elements-ready',reapplyPublicRuntime);
-  const observer=new MutationObserver(()=>{requestAnimationFrame(check);augmentWidgetPanel()});
-  observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-e752','class']});
+  const observer=new MutationObserver(scheduleCheck);
+  // Watching every class mutation made the editor run parity checks during many
+  // harmless hover/selection animations. Child changes + template id are enough.
+  observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-e752']});
   setTimeout(()=>{check();reapplyPublicRuntime()},300);setTimeout(check,950);setInterval(check,1800);
   window.rafParity884={check,reapply:reapplyPublicRuntime,widgetPanel:restoreWidgetPanel,stamp:stampVisibleVersion};
 }
