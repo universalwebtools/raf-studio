@@ -9,6 +9,13 @@
  const visible=el=>{const r=el.getBoundingClientRect();return r.bottom>-180&&r.top<innerHeight+180&&r.right>0&&r.left<innerWidth};
  const isAutoVideo=v=>v.dataset.rafAuto884==='1'||v.autoplay||v.hasAttribute('autoplay');
  const isVideoFrame=f=>/(youtube(?:-nocookie)?\.com|youtu\.be|player\.vimeo\.com)/i.test(f.src||f.dataset.rafFrameSrc884||'');
+ function heroFallbackOff(el){
+  const media=el.closest?.('.heroMedia');if(!media)return;
+  if(media.classList.contains('raf-video-active61')){media.dataset.rafVideoActive884='1';media.classList.remove('raf-video-active61')}
+ }
+ function heroFallbackOn(el){
+  const media=el.closest?.('.heroMedia');if(media?.dataset.rafVideoActive884==='1'){media.classList.add('raf-video-active61');delete media.dataset.rafVideoActive884}
+ }
  function markVideo(v){
   if(!(v instanceof HTMLVideoElement))return;
   if(v.autoplay||v.hasAttribute('autoplay'))v.dataset.rafAuto884='1';
@@ -19,13 +26,13 @@
   try{v.pause()}catch{}
   if(!v.dataset.rafSrc884&&v.getAttribute('src'))v.dataset.rafSrc884=v.getAttribute('src');
   if(v.getAttribute('src')){v.removeAttribute('src');try{v.load()}catch{}}
-  v.autoplay=false;v.removeAttribute('autoplay');v.preload='metadata';v.dataset.rafEditorSuspended884='1';
+  v.autoplay=false;v.removeAttribute('autoplay');v.preload='metadata';v.dataset.rafEditorSuspended884='1';heroFallbackOff(v);
  }
  function resumeVideo(v,allowPlay=true){
   markVideo(v);
   if(v.dataset.rafEditorSuspended884==='1'){
    const src=v.dataset.rafSrc884;if(src&&!v.getAttribute('src')){v.setAttribute('src',src);try{v.load()}catch{}}
-   delete v.dataset.rafEditorSuspended884;
+   delete v.dataset.rafEditorSuspended884;heroFallbackOn(v);
   }
   if(v.dataset.rafAuto884==='1'&&allowPlay&&document.visibilityState==='visible'&&visible(v))v.play().catch(()=>{});
  }
@@ -38,17 +45,17 @@
  function suspendFrame(f){
   markFrame(f);const original=f.dataset.rafFrameSrc884;if(!original)return;
   try{const u=new URL(original,location.href);u.searchParams.set('autoplay','0');const safe=u.toString();if(f.src!==safe)f.src=safe}catch{}
-  f.dataset.rafEditorSuspended884='1';
+  f.dataset.rafEditorSuspended884='1';heroFallbackOff(f);
  }
  function resumeFrame(f){
-  markFrame(f);if(f.dataset.rafEditorSuspended884==='1'&&f.dataset.rafFrameSrc884&&visible(f)){if(f.src!==f.dataset.rafFrameSrc884)f.src=f.dataset.rafFrameSrc884;delete f.dataset.rafEditorSuspended884}
+  markFrame(f);if(f.dataset.rafEditorSuspended884==='1'&&f.dataset.rafFrameSrc884&&visible(f)){if(f.src!==f.dataset.rafFrameSrc884)f.src=f.dataset.rafFrameSrc884;delete f.dataset.rafEditorSuspended884;heroFallbackOn(f)}
  }
  function prepare(root=document){
   const videos=root instanceof HTMLVideoElement?[root]:[...root.querySelectorAll?.('video')||[]];
   const frames=root instanceof HTMLIFrameElement?[root]:[...root.querySelectorAll?.('iframe')||[]];
   const edit=EDITOR&&!inPreview();
   for(const v of videos){markVideo(v);if(edit)suspendVideo(v);else{resumeVideo(v,false);if(io&&isAutoVideo(v))io.observe(v)}}
-  for(const f of frames){markFrame(f);if(edit)suspendFrame(f);else if(inPreview())resumeFrame(f)}
+  for(const f of frames){markFrame(f);if(edit)suspendFrame(f);else{if(frameIo&&f.dataset.rafFrameSrc884)frameIo.observe(f);if(inPreview())resumeFrame(f)}}
  }
  function sync(){
   raf=0;const edit=EDITOR&&!inPreview();
