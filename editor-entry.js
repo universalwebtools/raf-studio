@@ -39,90 +39,30 @@ const RELEASES=Object.freeze({
 });
 
 const buildFor=version=>version===LATEST?CURRENT_BUILD:(RELEASES[version]?.build||CURRENT_BUILD);
-function goEditorVersion(version,replace=false){
- const target=version===LATEST||RELEASES[version]?version:LATEST,u=new URL(location.href);
- u.searchParams.set('editor','direct');u.searchParams.set('ev',target);u.searchParams.set('_editorBuild',buildFor(target));
- location[replace?'replace':'assign'](u.toString())
-}
-window.rafEditorBuildFor=buildFor;
-window.rafGoEditorVersion=goEditorVersion;
-window.rafEditorReleases=Object.freeze([LATEST,...Object.keys(RELEASES)]);
+function goEditorVersion(version,replace=false){const target=version===LATEST||RELEASES[version]?version:LATEST,u=new URL(location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',target);u.searchParams.set('_editorBuild',buildFor(target));location[replace?'replace':'assign'](u.toString())}
+window.rafEditorBuildFor=buildFor;window.rafGoEditorVersion=goEditorVersion;window.rafEditorReleases=Object.freeze([LATEST,...Object.keys(RELEASES)]);
 
 let editorReleased=false;
 function releaseEditor(){if(editorReleased)return;editorReleased=true;document.documentElement.classList.add('raf-editor-ready');window.dispatchEvent(new CustomEvent('raf:editor-ready'))}
 if(editorMode)setTimeout(releaseEditor,4800);
 async function waitEditorSettled(){const started=performance.now();let last=performance.now(),obs;try{obs=new MutationObserver(()=>{last=performance.now()});obs.observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['class','style','src','href']})}catch{}while(performance.now()-started<3800){const toolbar=document.querySelector('#rafTop3,.peTop'),quiet=performance.now()-last>420;if(toolbar&&quiet&&document.readyState!=='loading')break;await new Promise(r=>setTimeout(r,70))}try{obs?.disconnect()}catch{}await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));await new Promise(r=>setTimeout(r,120));releaseEditor()}
 
-function wireArchivedNavigation(){
- let tries=0,lastSelect=null;
- const timer=setInterval(()=>{
-  tries++;
-  const select=document.querySelector('#editorVersion770 select,[id^="editorVersion"] select'),page=document.querySelector('#pageSelect4'),status=document.querySelector('#rafStatus3');
-  if(select&&select!==lastSelect){lastSelect=select;select.value=requested;select.title='Uruchomiona archiwalna wersja edytora '+requested;select.onchange=()=>goEditorVersion(select.value)}
-  if(page&&!page.dataset.rafArchiveNav){page.dataset.rafArchiveNav='1';page.onchange=e=>{const u=new URL(e.target.value,location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',requested);u.searchParams.set('_editorBuild',buildFor(requested));location.href=u.toString()}}
-  if(status&&!/Zmiany|Opublik|Błąd|Cofanie|Ponawianie|Synchron|Usuw|Szablon/i.test(status.textContent)){status.textContent='◷ Archiwalny edytor '+requested+' — wybierz '+LATEST+', aby wrócić'}
-  if(tries>300)clearInterval(timer)
- },100)
-}
-
-function archiveFailure(error){
- releaseEditor();console.error('RAF archived editor bootstrap error',error);
- const box=document.createElement('div');box.id='rafArchiveError';box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:24px;font:15px/1.5 system-ui;border:1px solid #333;border-radius:16px;box-shadow:0 20px 80px #000';
- box.innerHTML='<h2 style="margin:0 0 10px">Nie udało się uruchomić wersji '+requested+'</h2><p style="color:#bbb">Archiwalne pliki tej wersji nie zostały pobrane. Projekt nie został zmieniony.</p><button id="rafArchiveRetry" style="padding:10px 14px;margin-right:8px">Spróbuj ponownie</button><button id="rafArchiveLatest" style="padding:10px 14px">Wróć do '+LATEST+'</button>';
- document.body.appendChild(box);box.querySelector('#rafArchiveRetry').onclick=()=>location.reload();box.querySelector('#rafArchiveLatest').onclick=()=>goEditorVersion(LATEST)
-}
-
-async function bootArchived(){
- const release=RELEASES[requested];if(!release){goEditorVersion(LATEST,true);return}
- document.documentElement.dataset.rafEditorArchive=requested;wireArchivedNavigation();
- try{await import('https://cdn.jsdelivr.net/gh/universalwebtools/raf-studio@'+release.sha+'/editor-entry.js?rafArchive='+encodeURIComponent(requested))}
- catch(error){archiveFailure(error)}
-}
+function wireArchivedNavigation(){let tries=0,lastSelect=null;const timer=setInterval(()=>{tries++;const select=document.querySelector('#editorVersion770 select,[id^="editorVersion"] select'),page=document.querySelector('#pageSelect4'),status=document.querySelector('#rafStatus3');if(select&&select!==lastSelect){lastSelect=select;select.value=requested;select.title='Uruchomiona archiwalna wersja edytora '+requested;select.onchange=()=>goEditorVersion(select.value)}if(page&&!page.dataset.rafArchiveNav){page.dataset.rafArchiveNav='1';page.onchange=e=>{const u=new URL(e.target.value,location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',requested);u.searchParams.set('_editorBuild',buildFor(requested));location.href=u.toString()}}if(status&&!/Zmiany|Opublik|Błąd|Cofanie|Ponawianie|Synchron|Usuw|Szablon/i.test(status.textContent)){status.textContent='◷ Archiwalny edytor '+requested+' — wybierz '+LATEST+', aby wrócić'}if(tries>300)clearInterval(timer)},100)}
+function archiveFailure(error){releaseEditor();console.error('RAF archived editor bootstrap error',error);const box=document.createElement('div');box.id='rafArchiveError';box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:24px;font:15px/1.5 system-ui;border:1px solid #333;border-radius:16px;box-shadow:0 20px 80px #000';box.innerHTML='<h2 style="margin:0 0 10px">Nie udało się uruchomić wersji '+requested+'</h2><p style="color:#bbb">Archiwalne pliki tej wersji nie zostały pobrane. Projekt nie został zmieniony.</p><button id="rafArchiveRetry" style="padding:10px 14px;margin-right:8px">Spróbuj ponownie</button><button id="rafArchiveLatest" style="padding:10px 14px">Wróć do '+LATEST+'</button>';document.body.appendChild(box);box.querySelector('#rafArchiveRetry').onclick=()=>location.reload();box.querySelector('#rafArchiveLatest').onclick=()=>goEditorVersion(LATEST)}
+async function bootArchived(){const release=RELEASES[requested];if(!release){goEditorVersion(LATEST,true);return}document.documentElement.dataset.rafEditorArchive=requested;wireArchivedNavigation();try{await import('https://cdn.jsdelivr.net/gh/universalwebtools/raf-studio@'+release.sha+'/editor-entry.js?rafArchive='+encodeURIComponent(requested))}catch(error){archiveFailure(error)}}
 
 async function bootCurrent(){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html')||path.endsWith('/fotografia/')||path.endsWith('/film/');
  try{
-  await import('./auth-gate.js?v=3.2.1');
-  await import('./image-webp-v60.js?v=6.5.3');
+  await import('./auth-gate.js?v=3.2.1');await import('./image-webp-v60.js?v=6.5.3');
   if(!portfolio){await import('./editor-recovery-v64.js?v=6.5.3');await import('./editor-baseline-sync-v652.js?v=7.7.2')}
   if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=7.7.2')}
   else{
-   await import('./editor-media-prefetch-v43.js?v=4.3.0');
-   await import('./editor-prep-v34.js?v=3.4.0');
-   await import('./direct-editor-v3.js?v=8.7.0');
-   await import('./editor-ui-v4.js?v=8.7.0');
-   await import('./editor-custom-v42.js?v=4.2.0');
-   await import('./typography-controller-v65.js?v=6.5.3');
-   await import('./editor-media-section-v65.js?v=8.7.0');
-   await import('./motion-preview-fix-v44.js?v=4.4.0');
-   await import('./editor-motion-fix-v45.js?v=4.5.0');
-   await import('./editor-sections-v55.js?v=5.5.0');
-   await import('./editor-pro-v61.js?v=8.7.0-r2');
-   await import('./custom-sections-editor-v62.js?v=6.5.3');
-   await import('./custom-section-delete-v653.js?v=6.5.3');
-   await import('./editor-v70-migrate.js?v=7.0.1');
-   await import('./template-blueprints-v75.js?v=8.7.1');
-   await import('./blueprint-guard-v75.js?v=8.7.1');
-   await import('./editor-parity-v752.js?v=8.7.1');
-   await import('./editor-core-v760.js?v=8.7.2');
-   await import('./editor-meaningful-undo-v874.js?v=8.7.4');
-   await import('./editor-accordion-v877.js?v=8.7.7');
-   await import('./editor-v70-layout-guard.js?v=7.7.2');
-   await import('./editor-templates-v752.js?v=8.7.1');
-   await import('./editor-history-v72.js?v=8.7.3');
-   await import('./editor-chrome-v73.js?v=8.7.1');
-   await import('./editor-workspace-v760.js?v=8.7.2');
-   await import('./editor-pages-v860.js?v=8.7.0');
-   await import('./editor-widgets-v770.js?v=8.7.0');
-   await import('./editor-version-history-v760.js?v=8.7.0');
-   await import('./direct-publish-v760.js?v=8.7.2');
+   await import('./editor-media-prefetch-v43.js?v=4.3.0');await import('./editor-prep-v34.js?v=3.4.0');await import('./direct-editor-v3.js?v=8.7.0');await import('./editor-ui-v4.js?v=8.7.0');await import('./editor-custom-v42.js?v=4.2.0');await import('./typography-controller-v65.js?v=6.5.3');await import('./editor-media-section-v65.js?v=8.7.0');await import('./motion-preview-fix-v44.js?v=4.4.0');await import('./editor-motion-fix-v45.js?v=4.5.0');await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.7.0-r2');await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');await import('./editor-parity-v752.js?v=8.7.1');
+   await import('./editor-core-v760.js?v=8.7.2');await import('./editor-meaningful-undo-v874.js?v=8.7.4');await import('./editor-safe-controls-v876.js?v=8.7.6');await import('./editor-accordion-v877.js?v=8.7.7');
+   await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');await import('./editor-history-v72.js?v=8.7.3');await import('./editor-chrome-v73.js?v=8.7.1');await import('./editor-workspace-v760.js?v=8.7.2');await import('./editor-pages-v860.js?v=8.7.0');await import('./editor-widgets-v770.js?v=8.7.0');await import('./editor-version-history-v760.js?v=8.7.0');await import('./direct-publish-v760.js?v=8.7.2')
   }
   await waitEditorSettled()
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
 }
-
-(async()=>{
- if(editorMode&&requested!==LATEST){await bootArchived();return}
- await import('./site-v800.js?v=8.7.2');
- if(editorMode)await bootCurrent()
-})();
+(async()=>{if(editorMode&&requested!==LATEST){await bootArchived();return}await import('./site-v800.js?v=8.7.2');if(editorMode)await bootCurrent()})();
