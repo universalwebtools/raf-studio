@@ -1,8 +1,8 @@
-// RAF.studio — Smart Groups + Breadcrumbs v8.8.1
+// RAF.studio — Smart Groups + Breadcrumbs v8.8.2
 // Explicit merge/split controls, selection breadcrumbs and alignment inside
 // an existing group without moving the surrounding section/container.
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const VERSION='8.8.1';
+const VERSION='8.8.2';
 let core=null,queued=false;
 
 function status(t){const e=$('#rafStatus3');if(e)e.textContent=t}
@@ -60,9 +60,9 @@ function alignInside(mode){
 
 function versionLabels(){
  const q=new URLSearchParams(location.search);if((q.get('ev')||VERSION)!==VERSION)return;
- const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select){let o=[...select.options].find(x=>x.value===VERSION);if(!o){o=document.createElement('option');o.value=VERSION;o.textContent='8.8.1 — FAQ SCALONE + SMART GROUPS';select.insertBefore(o,select.firstChild)}select.value=VERSION}
- for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V8.8.1 CORE');
- try{if(parent&&parent!==window){const b=parent.document.querySelector('.bar b');if(b&&/RESPONSIVE/i.test(b.textContent||''))b.textContent='RAF.studio — RESPONSIVE 8.8.1'}}catch{}
+ const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select){let o=[...select.options].find(x=>x.value===VERSION);if(!o){o=document.createElement('option');o.value=VERSION;o.textContent='8.8.2 — FAQ COMPONENTS + SMART GROUPS';select.insertBefore(o,select.firstChild)}select.value=VERSION}
+ for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V8.8.2 CORE');
+ try{if(parent&&parent!==window){const b=parent.document.querySelector('.bar b');if(b&&/RESPONSIVE/i.test(b.textContent||''))b.textContent='RAF.studio — RESPONSIVE 8.8.2'}}catch{}
 }
 function wireLegacyButtons(items){const g=$('#v72g'),ug=$('#v72ug');if(g){g.textContent='🔗 SCAL ZAZNACZONE';g.disabled=items.length<2;g.onclick=mergeSelected}if(ug){ug.textContent='⛓ ROZDZIEL GRUPĘ';ug.disabled=!items.some(groupId);ug.onclick=splitGroup}}
 function render(){
