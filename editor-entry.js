@@ -68,8 +68,13 @@ async function bootCurrent(){
   await waitEditorSettled()
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
 }
+const explicitArchive=params.get('archive')==='1';
+if(editorMode&&requested!==LATEST&&!explicitArchive){
+ const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild',CURRENT_BUILD);u.searchParams.delete('archive');history.replaceState(null,'',u.toString())
+}
 (async()=>{
- if(editorMode&&requested!==LATEST&&params.get('archive')!=='1'){goEditorVersion(LATEST,true);return}
- if(editorMode&&requested!==LATEST){await bootArchived();return}
- await import('./site-v800.js?v=8.7.2');if(editorMode)await bootCurrent()
+ if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}
+ await import('./site-v800.js?v=8.7.2');
+ if(!editorMode)await import('./accordion-runtime-v877.js?v=8.8.2');
+ if(editorMode)await bootCurrent()
 })();
