@@ -1,4 +1,4 @@
-// RAF.studio — FAQ editor glue v8.8.2
+// RAF.studio — FAQ editor glue v8.8.3
 // The separator line and disclosure arrow live on the same movable question element.
 (function(){
  if(!new URLSearchParams(location.search).has('editor'))return;
