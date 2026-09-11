@@ -17,9 +17,9 @@ if(EDITOR){
   }
   function selectedWidget(){
     const core=window.rafCore760||window.rafCore72,a=core?.selected?.()||[];
-    if(a.length!==1)return null;const el=a[0];
-    if(!el?.dataset?.rafWidgetId)return null;
-    return {id:el.dataset.rafWidgetId,el};
+    if(a.length!==1)return null;const el=a[0],root=el?.closest?.('[data-raf-widget-id]')||(el?.dataset?.rafWidgetId?el:null);
+    if(!root?.dataset?.rafWidgetId)return null;
+    return {id:root.dataset.rafWidgetId,el:root,selected:el};
   }
   function widgetData(id){return window.rafWidgets770?.list?.().find?.(x=>x.id===id)||null}
   function augmentWidgetPanel(){
