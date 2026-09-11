@@ -1,9 +1,10 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.8.0',CURRENT_BUILD='8800',requested=params.get('ev')||LATEST;
+const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.8.1',CURRENT_BUILD='8810',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 
 // Immutable Git commits used by the real editor-version switcher. Loading an
 // archived entry module also pins all of its relative imports to that release.
 const RELEASES=Object.freeze({
+ '8.8.0':{sha:'39bd00c682d8b5efb664c3775229dd283a353215',build:'8800'},
  '8.7.7':{sha:'41ac540c5e64e4df2349badaa192be84b422594b',build:'8770'},
  '8.7.6':{sha:'e8cba90c85f3651019a408de3a6cd22fcc390c30',build:'8760'},
  '8.7.2':{sha:'2d4bd1cf311f384f1b25c478c9b89069d6b4e88b',build:'8720'},
@@ -60,7 +61,7 @@ async function bootCurrent(){
   if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=7.7.2')}
   else{
    await import('./editor-media-prefetch-v43.js?v=4.3.0');await import('./editor-prep-v34.js?v=3.4.0');await import('./direct-editor-v3.js?v=8.7.0');await import('./editor-ui-v4.js?v=8.7.0');await import('./editor-custom-v42.js?v=4.2.0');await import('./typography-controller-v65.js?v=6.5.3');await import('./editor-media-section-v65.js?v=8.7.0');await import('./motion-preview-fix-v44.js?v=4.4.0');await import('./editor-motion-fix-v45.js?v=4.5.0');await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.7.0-r2');await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');await import('./editor-parity-v752.js?v=8.7.1');
-   await import('./editor-core-v760.js?v=8.7.2');await import('./editor-meaningful-undo-v874.js?v=8.7.4');await import('./editor-safe-controls-v876.js?v=8.7.6');await import('./editor-accordion-v877.js?v=8.7.7');await import('./editor-groups-v880.js?v=8.8.0');
+   await import('./editor-core-v760.js?v=8.7.2');await import('./editor-meaningful-undo-v874.js?v=8.7.4');await import('./editor-safe-controls-v876.js?v=8.7.6');await import('./accordion-runtime-v877.js?v=8.8.1');await import('./editor-accordion-v877.js?v=8.8.1');await import('./editor-groups-v880.js?v=8.8.1');
    await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');await import('./editor-history-v72.js?v=8.7.3');await import('./editor-chrome-v73.js?v=8.7.1');await import('./editor-workspace-v760.js?v=8.7.2');await import('./editor-pages-v860.js?v=8.7.0');await import('./editor-widgets-v770.js?v=8.7.0');await import('./editor-version-history-v760.js?v=8.7.0');await import('./direct-publish-v760.js?v=8.7.2')
   }
   await waitEditorSettled()
