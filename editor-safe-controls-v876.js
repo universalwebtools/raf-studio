@@ -10,6 +10,10 @@
  const M=10;
  let core=null,scaleDrag=null,tick=0;
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+ function stamp(){
+  const small=$('#v72panel small');if(small&&/V8\.7\.2 CORE/i.test(small.textContent))small.textContent=small.textContent.replace(/V8\.7\.2 CORE/i,'V8.7.6 CORE');
+  document.documentElement.dataset.rafEditorCurrent='8.7.6'
+ }
  function css(){
   if($('#rafSafe876Css'))return;
   const s=document.createElement('style');s.id='rafSafe876Css';s.textContent=`
@@ -54,7 +58,7 @@ body.raf-safe-controls876 #v72rotate{display:none!important}
   return M
  }
  function position(){
-  css();core=core||window.rafCore760||window.rafCore72;
+  stamp();css();core=core||window.rafCore760||window.rafCore72;
   const items=selected(),box=$('#v72box');if(!core||!items.length||!box){resetNative();return}
   const b=bounds(items);if(!needsSafe(b)){resetNative();return}
   document.body.classList.add('raf-safe-controls876');
