@@ -1,11 +1,9 @@
-// RAF.studio — FAQ fused disclosure runtime v8.8.0 r2
+// RAF.studio — FAQ fused disclosure runtime v8.8.1
 // The disclosure arrow must be part of the exact movable question text element.
 // Never leave the browser-native <summary> marker behind when the question moves.
 (function(){
  const q=new URLSearchParams(location.search),ev=q.get('ev')||'';
- // Current editor + the release where FAQ fusion was introduced. Older archives
- // keep their own immutable behavior through their archived code.
- if(q.has('editor')&&ev&&!['8.7.7','8.8.0'].includes(ev))return;
+ if(q.has('editor')&&ev&&!['8.7.7','8.8.0','8.8.1'].includes(ev))return;
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
  let queued=false,running=false;
  function css(){
@@ -36,8 +34,6 @@ details[open]>summary.rafFaq877>.rafFaqText877::before{transform:rotate(90deg)!i
   }
   if(!text)return;
   text.classList.add('rafFaqText877');
-  // This span is the real movable RAF element. The arrow is its ::before, so
-  // x/y/scale applied by the editor can never separate the two.
   text.dataset.rafFree='1';
   summary.dataset.rafFaqFused='1';
  }
@@ -46,7 +42,6 @@ details[open]>summary.rafFaq877>.rafFaqText877::before{transform:rotate(90deg)!i
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
  new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true});
  for(const ev of ['raf:universal-elements-ready','raf:template752-rendered','raf:v760-ready','raf:v760-change','raf:v760-selection'])window.addEventListener(ev,schedule);
- // A short repair loop catches templates rendered asynchronously from Firebase.
  let n=0,t=setInterval(()=>{run();if(++n>40)clearInterval(t)},250);
  window.rafFaqRuntime877={refresh:run};
 })();
