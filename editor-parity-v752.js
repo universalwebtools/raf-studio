@@ -1,9 +1,9 @@
-// RAF.studio — editor/public parity + widget media bridge v8.8.5
+// RAF.studio — editor/public parity + widget media bridge v8.8.6
 import {TEMPLATES752} from './template-engine-v752.js?v=8.7.1';
 import {render61} from './public-pro-v61.js?v=8.7.0';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 if(EDITOR){
-  const VERSION='8.8.5';
+  const VERSION='8.8.6';
   const style=document.createElement('style');
   style.id='rafParity752Css';
   style.textContent=`body.raf-e3{overflow-y:auto!important;overflow-x:hidden!important}body.raf-e3 #rafTemplate752{height:auto!important;max-height:none!important;overflow:visible!important}.weVideoUpload883{width:100%;margin:7px 0 4px!important;background:#147fbd!important;border-color:#55c7ff!important;color:#fff!important;font-weight:900!important}.weVideoHelp883{display:block;color:#78cfff;font-size:9px;line-height:1.35;margin:0 0 8px}`;
@@ -14,7 +14,7 @@ if(EDITOR){
     document.documentElement.dataset.rafEditorCurrent=VERSION;
     document.querySelectorAll('.v760title small').forEach(el=>{if(/^EDYCJA ELEMENTU/i.test(el.textContent||''))el.textContent='EDYCJA ELEMENTU • '+VERSION});
     document.querySelectorAll('#v72panel small,#rafPanel3 small').forEach(el=>{if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V'+VERSION+' CORE')});
-    const st=document.getElementById('rafStatus3');if(st&&/Edytor 8\.[0-9.]+/i.test(st.textContent||'')&&!/Zmiany|Opublik|Błąd|Cofanie|Ponawianie|Synchron|Usuw|Szablon/i.test(st.textContent||''))st.textContent='✓ Edytor '+VERSION+' • DIRECT VIDEO CROP + VIDEO ECO';
+    const st=document.getElementById('rafStatus3');if(st&&/Edytor 8\.[0-9.]+/i.test(st.textContent||'')&&!/Zmiany|Opublik|Błąd|Cofanie|Ponawianie|Synchron|Usuw|Szablon/i.test(st.textContent||''))st.textContent='✓ Edytor '+VERSION+' • SELECTABLE HERO VIDEO + DIRECT CROP';
   }
   function reapplyPublicRuntime(){
     clearTimeout(proTimer);
@@ -23,6 +23,7 @@ if(EDITOR){
         render61();
         window.rafCore760?.refresh?.();
         window.rafVideoPerformance884?.refresh?.();
+        window.rafHeroDirectCrop886?.refresh?.();
         stampVisibleVersion();
       }catch(e){console.warn('RAF parity runtime',e)}
     },160);
@@ -78,5 +79,5 @@ if(EDITOR){
   const observer=new MutationObserver(scheduleCheck);
   observer.observe(document.documentElement,{subtree:true,childList:true,attributes:true,attributeFilter:['data-e752']});
   setTimeout(()=>{check();reapplyPublicRuntime()},300);setTimeout(check,950);setInterval(check,1800);
-  window.rafParity885={check,reapply:reapplyPublicRuntime,widgetPanel:restoreWidgetPanel,stamp:stampVisibleVersion};
+  window.rafParity886={check,reapply:reapplyPublicRuntime,widgetPanel:restoreWidgetPanel,stamp:stampVisibleVersion};
 }
