@@ -1,9 +1,8 @@
-const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.8.6',CURRENT_BUILD='8860',requested=params.get('ev')||LATEST;
+const params=new URLSearchParams(location.search),mode=params.get('editor'),LATEST='8.8.7',CURRENT_BUILD='8870',requested=params.get('ev')||LATEST;
 const editorMode=mode==='direct'||mode==='1';
 
-// Immutable Git commits used by the real editor-version switcher. Loading an
-// archived entry module also pins all of its relative imports to that release.
 const RELEASES=Object.freeze({
+ '8.8.6':{sha:'1ad246ef3ef68d08bb22d30119de6035da1f3fb0',build:'8860'},
  '8.8.5':{sha:'7e92f37e8b4036f7ef21c812e206ec0a31e05fd4',build:'8850'},
  '8.8.4':{sha:'c845dedb7beedf2405320f23ccc41d3fd4451d33',build:'8840'},
  '8.8.3':{sha:'a2deb6833c98c35a86aef83a46495b6e547aa99e',build:'8830'},
@@ -65,21 +64,13 @@ async function bootCurrent(){
   if(!portfolio){await import('./editor-recovery-v64.js?v=6.5.3');await import('./editor-baseline-sync-v652.js?v=7.7.2')}
   if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=7.7.2')}
   else{
-   await import('./editor-media-prefetch-v43.js?v=4.3.0');await import('./editor-prep-v34.js?v=3.4.0');await import('./direct-editor-v3.js?v=8.7.0');await import('./editor-ui-v4.js?v=8.7.0');await import('./editor-custom-v42.js?v=4.2.0');await import('./typography-controller-v65.js?v=6.5.3');await import('./editor-media-section-v65.js?v=8.7.0');await import('./motion-preview-fix-v44.js?v=4.4.0');await import('./editor-motion-fix-v45.js?v=4.5.0');await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.8.4');await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');await import('./editor-parity-v752.js?v=8.8.6');
+   await import('./editor-media-prefetch-v43.js?v=4.3.0');await import('./editor-prep-v34.js?v=3.4.0');await import('./direct-editor-v3.js?v=8.7.0');await import('./editor-ui-v4.js?v=8.7.0');await import('./editor-custom-v42.js?v=4.2.0');await import('./typography-controller-v65.js?v=6.5.3');await import('./editor-media-section-v65.js?v=8.7.0');await import('./motion-preview-fix-v44.js?v=4.4.0');await import('./editor-motion-fix-v45.js?v=4.5.0');await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.8.4');await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');await import('./editor-parity-v752.js?v=8.8.7');
    await import('./editor-core-v760.js?v=8.7.2');await import('./editor-meaningful-undo-v874.js?v=8.7.4');await import('./editor-safe-controls-v876.js?v=8.7.6');await import('./accordion-runtime-v877.js?v=8.8.3');await import('./editor-accordion-v877.js?v=8.8.3');await import('./editor-groups-v880.js?v=8.8.3');
-   await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');await import('./editor-history-v72.js?v=8.7.3');await import('./editor-hero-direct-crop-v886.js?v=8.8.6');await import('./editor-chrome-v73.js?v=8.8.6');await import('./editor-workspace-v760.js?v=8.7.2');await import('./editor-pages-v860.js?v=8.7.0');await import('./editor-widgets-v770.js?v=8.8.4');await import('./editor-version-history-v760.js?v=8.7.0');await import('./direct-publish-v760.js?v=8.7.2')
+   await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');await import('./editor-history-v72.js?v=8.7.3');await import('./editor-hero-direct-crop-v887.js?v=8.8.7');await import('./editor-chrome-v73.js?v=8.8.7');await import('./editor-workspace-v760.js?v=8.7.2');await import('./editor-pages-v860.js?v=8.7.0');await import('./editor-widgets-v770.js?v=8.8.4');await import('./editor-version-history-v760.js?v=8.7.0');await import('./direct-publish-v760.js?v=8.7.2')
   }
   await waitEditorSettled()
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
 }
 const explicitArchive=params.get('archive')==='1';
-if(editorMode&&requested!==LATEST&&!explicitArchive){
- const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild',CURRENT_BUILD);u.searchParams.delete('archive');history.replaceState(null,'',u.toString())
-}
-(async()=>{
- if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}
- await import('./video-performance-v884.js?v=8.8.4');
- await import('./site-v800.js?v=8.7.2');
- if(!editorMode)await import('./accordion-runtime-v877.js?v=8.8.3');
- if(editorMode)await bootCurrent()
-})();
+if(editorMode&&requested!==LATEST&&!explicitArchive){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild',CURRENT_BUILD);u.searchParams.delete('archive');history.replaceState(null,'',u.toString())}
+(async()=>{if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}await import('./video-performance-v884.js?v=8.8.4');await import('./site-v800.js?v=8.7.2');if(!editorMode)await import('./accordion-runtime-v877.js?v=8.8.3');if(editorMode)await bootCurrent()})();
