@@ -23,3 +23,4 @@ let tries=0,t=setInterval(()=>{if(init()||++tries>160)clearInterval(t)},60);setI
 addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const a=document.activeElement;if(a?.matches?.('input,textarea,select,[contenteditable="true"]'))return;e.preventDefault();clean()}if(e.key==='Escape'&&state.clean)clean(false)},true);
 addEventListener('beforeunload',()=>{for(const k of ['top','inspector','context','all'])try{state[k]?.close()}catch{}});
 window.rafDock889={detach,attach,attachAll,notifyClosed,clean,isClean:()=>state.clean};
+import('./editor-hero-resize-v890.js?v=8.9.0').catch(err=>console.warn('RAF HERO resize controls',err));
