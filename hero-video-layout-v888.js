@@ -17,7 +17,7 @@
     const fit=fitName(el)==='contain'?'contain':'cover';
     let z=n(varNum(w,'--vz',1),1);z=fit==='cover'?clamp(z,1,4):clamp(z,.25,4);
     w.dataset.rafHeroFit888=fit;w.dataset.rafHeroZoom888=String(z);
-    setI(w,'overflow','hidden');
+    setI(w,'overflow','hidden');setI(w,'background','#000');
     if(el instanceof HTMLVideoElement){
       setI(el,'position','absolute');setI(el,'inset','0');setI(el,'left','0');setI(el,'top','0');
       setI(el,'width','100%');setI(el,'height','100%');setI(el,'min-width','0');setI(el,'min-height','0');
