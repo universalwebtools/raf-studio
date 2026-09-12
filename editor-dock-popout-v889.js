@@ -1,7 +1,7 @@
-// RAF.studio — dockable desktop editor popouts v8.9.0
+// RAF.studio — dockable desktop editor popouts v8.8.9
 const q=new URLSearchParams(location.search),kind=['top','inspector','context','all'].includes(q.get('panel'))?q.get('panel'):'inspector';
 const host=document.getElementById('dockHost'),wait=document.getElementById('dockWait'),title=document.getElementById('dockTitle');
-const names={top:'GÓRNY PASEK',inspector:'WŁAŚCIWOŚCI',context:'NARZĘDZIA ZAZNACZENIA',all:'WSZYSTKIE PANELE'};title.textContent=`RAF.studio — ${names[kind]} • 8.9.0`;
+const names={top:'GÓRNY PASEK',inspector:'WŁAŚCIWOŚCI',context:'NARZĘDZIA ZAZNACZENIA',all:'WSZYSTKIE PANELE'};title.textContent=`RAF.studio — ${names[kind]} • 8.8.9`;
 let doc=null,serial=0,editing=false,last='';const interactive='button,input,select,textarea,a,[role="button"]';
 function openerDoc(){try{return window.opener?.document||null}catch{return null}}
 function keyElements(root){[...root.querySelectorAll(interactive)].forEach((el,i)=>{if(!el.dataset.rafDockKey889)el.dataset.rafDockKey889=el.id?`id:${el.id}`:`${kind}:${i}:${++serial}`})}
