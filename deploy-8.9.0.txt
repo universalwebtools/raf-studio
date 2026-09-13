@@ -1,0 +1,3 @@
+RAF.studio 8.9.0 / build 8900
+HEADER PRO + pełna edycja + bezpośredni resize/crop HERO video.
+Deployment marker: 2026-09-13.
