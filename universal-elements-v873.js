@@ -1,10 +1,10 @@
-// RAF.studio — universal editable elements hotfix v8.7.3
+// RAF.studio — universal editable elements hotfix v8.9.1
 // Makes every real CONTENT element selectable without turning layout wrappers
 // into positioned editor objects. Also promotes plain-text leaf nodes to spans
 // so their text, typography, size and position can be edited like normal text.
 (function(){
  const ROOTS=['#rafTemplate752','#rafMain','body>nav.nav','body>header.hero','body>footer.footer','body>.floating'];
- const SKIP='script,style,link,meta,title,template,noscript,#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history,#v760guides,.v72marq';
+ const SKIP='script,style,link,meta,title,template,noscript,#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history,#v760guides,.v72marq,[data-raf-header-icon="1"]';
  const CONTENT='h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em,img,picture,video,audio,canvas,svg,iframe,figure,article,form,details,summary,[role="button"],[data-raf-element],[data-home-text],[data-site-text],[data-home-media],[data-raf-section],[data-custom62],[data-raf-v76-clone]';
  const EDITABLE_TEXT=new Set(['H1','H2','H3','H4','H5','H6','P','SPAN','B','STRONG','SMALL','BLOCKQUOTE','A','BUTTON','LABEL','LI','FIGCAPTION','EM']);
  let queued=false,wrapping=false;
