@@ -83,7 +83,7 @@ function cleanV76(node,id){
 }
 function findLayoutNode(id,map){for(const el of $$('[data-raf-v76-clone],[data-raf-element],[data-home-text],[data-site-text],[data-home-media],[data-raf-section],header.hero,[data-raf-v7-id]'))if(layoutId(el,map)===id)return el;return null}
 function renderV76Clones(builder){
- const defs=Array.isArray(builder.clonesV76)?builder.clonesV76:[],map=builder.stableIdsV900||{};
+ const defs=Array.isArray(builder.clonesV76)?builder.clonesV76:[],map=builder.stableIdsV900||{},keep=new Set(defs.map(x=>String(x.id)));document.querySelectorAll('[data-raf-v76-clone]').forEach(x=>{if(!keep.has(String(x.dataset.rafV76Clone)))x.remove()});
  for(const d of defs){if(document.querySelector('[data-raf-v76-clone="'+CSS.escape(d.id)+'"]'))continue;const source=findLayoutNode(d.sourceId,map);if(!source?.parentElement||!d.html)continue;const t=document.createElement('template');t.innerHTML=d.html.trim();const node=t.content.firstElementChild;if(!node)continue;cleanV76(node,d.id);source.insertAdjacentElement('afterend',node)}
 }
 function flowParentKey(parent,map){
