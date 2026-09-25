@@ -61,7 +61,7 @@ async function writeState(state){
   window.dispatchEvent(new CustomEvent('raf:history-pro',{detail:state?.pro||{}}));
   window.dispatchEvent(new CustomEvent('raf:history-pages',{detail:state?.pages||{}}));
   window.rafRenderer900?.apply?.(state?.main||{});
-  window.rafCore900?.refresh?.();
+  window.rafCore900?.applyState?.(state?.main||{});
  }finally{busy=false;paint()}
 }
 async function undoNow(){
