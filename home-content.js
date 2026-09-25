@@ -13,6 +13,6 @@ const defaults={
  contactEyebrow:'KONTAKT',contactTitle:'ZRÓBMY COŚ DOBREGO.',contactDesc:'Fotografia, film albo oba naraz.',
  showTwoWorlds:true,showAbout:true,showReviews:true,showBrands:true,showContact:true
 };
-function render(raw={}){const c={...defaults,...raw};document.querySelectorAll('[data-home-text]').forEach(el=>{const k=el.dataset.homeText;if(!(k in c))return;const v=String(c[k]??'');if(el.dataset.multiline==='1')el.innerHTML=v.replace(/\n/g,'<br>');else el.textContent=v});document.querySelectorAll('[data-home-section]').forEach(el=>{const k='show'+el.dataset.homeSection;el.style.display=c[k]===false?'none':''})}
+function render(raw={}){if(window.RAF_RENDERER900_ACTIVE)return;const c={...defaults,...raw};document.querySelectorAll('[data-home-text]').forEach(el=>{const k=el.dataset.homeText;if(!(k in c))return;const v=String(c[k]??'');if(el.dataset.multiline==='1')el.innerHTML=v.replace(/\n/g,'<br>');else el.textContent=v});document.querySelectorAll('[data-home-section]').forEach(el=>{const k='show'+el.dataset.homeSection;el.style.display=c[k]===false?'none':''})}
 render();
 if(!EDITOR_MODE)onValue(ref(db,`${WEBSITE_ROOT}/public/homeContent`),s=>render(s.val()||{}));
