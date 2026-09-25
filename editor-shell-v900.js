@@ -11,7 +11,7 @@ body.raf-preview64 #rafTop3,body.raf-preview64 #rafPanel3{display:none!important
 `;document.head.appendChild(s)}
 export function ensureEditorShell900(){
  css();document.body.classList.add('raf-e3','raf-core9');
- let top=$('#rafTop3');if(!top){top=document.createElement('div');top.id='rafTop3';top.innerHTML='<button id="u3" title="Cofnij">↶</button><button id="r3" title="Ponów">↷</button><span id="rafStatus3">✓ Edytor 9.0 gotowy</span><button id="preview3">Podgląd</button><button id="exit3">Wyjdź</button><button id="pub3" class="pub">OPUBLIKUJ</button>';document.body.appendChild(top)}
+ let top=$('#rafTop3');if(!top){top=document.createElement('div');top.id='rafTop3';top.innerHTML='<button id="u3" title="Cofnij">↶</button><button id="r3" title="Ponów">↷</button><button id="add3">+ Sekcja</button><span id="rafStatus3">✓ Edytor 9.0 gotowy</span><button id="preview3">Podgląd</button><button id="exit3">Wyjdź</button><button id="pub3" class="pub">OPUBLIKUJ</button>';document.body.appendChild(top)}
  if(!$('#rafPanel3')){const p=document.createElement('aside');p.id='rafPanel3';p.innerHTML='<div style="font:800 9px system-ui;color:#7bcfff;letter-spacing:.1em">WŁAŚCIWOŚCI</div><h3>Kliknij element</h3>';document.body.appendChild(p)}
  if(!$('#rafModal3')){const m=document.createElement('div');m.id='rafModal3';document.body.appendChild(m)}
  $('#exit3')?.addEventListener('click',()=>location.href='/',{once:true});
