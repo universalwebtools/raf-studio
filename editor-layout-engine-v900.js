@@ -5,6 +5,7 @@ const num=(v,f=0)=>Number.isFinite(Number(v))?Number(v):f;
 export function layoutMode(el,c={}){
  if(c.layoutMode==='free'||c.layoutMode==='layout')return c.layoutMode;
  if(el?.dataset?.rafFree==='1')return'free';
+ if(el?.dataset?.rafLayout==='1')return'layout';
  if(el?.matches?.('[data-raf-section],header.hero,.rafHeader900,.rafHeaderNav900,.rafHeaderSocial900'))return'layout';
  const p=el?.parentElement;if(!p)return'free';
  const d=getComputedStyle(p).display;
