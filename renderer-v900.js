@@ -114,7 +114,7 @@ function apply(s=state){
  for(const el of $$('[data-raf-element]'))applyBuilderElement(el,state);
  for(const el of $$('[data-raf-section],header.hero'))applySection(el,state);
  applyFreeLayout(state);
- ready=true;window.dispatchEvent(new CustomEvent('raf:renderer900-applied',{detail:{device:device(),editor:EDITOR}}));
+ ready=true;if(!EDITOR)requestAnimationFrame(()=>requestAnimationFrame(()=>window.rafReleasePublicBoot?.()));window.dispatchEvent(new CustomEvent('raf:renderer900-applied',{detail:{device:device(),editor:EDITOR}}));
 }
 function schedule(){clearTimeout(timer);timer=setTimeout(()=>requestAnimationFrame(()=>apply(state)),35)}
 if(EDITOR){
