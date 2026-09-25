@@ -2,7 +2,7 @@
 const clean=s=>String(s??'').trim().replace(/\s+/g,' ').slice(0,96);
 const classes=el=>[...(el?.classList||[])].filter(x=>!/^v(?:72|760|900)/.test(x)&&!/(?:selected|rsel|sel55|pro61|custom62)/i.test(x)).sort().slice(0,4).join('.');
 const fingerprints=new WeakMap(),legacyFingerprints=new WeakMap();
-export const OBJECT_SELECTOR='[data-raf-v72-id],[data-raf-v7-id],[data-raf-free],[data-raf-layout],[data-raf-element],[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-home-media],[data-raf-section],header.hero,[data-custom62],[data-raf-v76-clone]';
+export const OBJECT_SELECTOR='img,video,iframe,[data-raf-container],[data-raf-saved-section],[data-raf-v72-id],[data-raf-v7-id],[data-raf-free],[data-raf-layout],[data-raf-element],[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-home-media],[data-raf-section],header.hero,[data-custom62],[data-raf-v76-clone]';
 export function semanticId(el){
  if(!el)return'';
  if(el.dataset?.rafV76Clone)return'clone:'+el.dataset.rafV76Clone;

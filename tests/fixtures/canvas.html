@@ -13,5 +13,6 @@ if(new URLSearchParams(location.search).has('editor')){
  await import('/editor-shell-v900.js');
  await import('/editor-history-v900.js');
  await import('/editor-core-v900.js');
+ if(new URLSearchParams(location.search).has('suite')){await import('/editor-version-history-v760.js');await import('/direct-publish-v760.js');await import('/editor-studio-v910.js');}
 }
 </script></body></html>

@@ -5,6 +5,7 @@ import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 const {applyLayout,mergedCfg}=await import('./editor-layout-engine-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
 const {resolveObjectId,semanticId,OBJECT_SELECTOR}=await import('./editor-object-id-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
 
+const {applyStudio,templateDefaults}=await import('./studio-runtime-v910.js?v='+window.RAF_EDITOR_VERSION.asset);
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
 const Q=new URLSearchParams(location.search),EDITOR=Q.has('editor'),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const device=()=>Q.get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
@@ -110,14 +111,15 @@ function applyFreeLayout(s){
  const layout=s.builder?.freeLayoutV7||{},map=s.builder?.stableIdsV900||{},d=device();
  const candidates=OBJECT_SELECTOR;
  for(const el of $$(candidates)){
+  if(el.closest('[data-studio-ui]'))continue;
   if(el.closest('#rafTop3,#rafPanel3,#v72box,#v760layers,#v760menu,#v760history'))continue;
   const id=layoutId(el,map),legacy=semanticId(el)||el.dataset.rafV7Id||('dom:'+pathKey(el));
-  const c=layout?.[d]?.[id]||layout?.[d]?.[legacy]||(d!=='desktop'?(layout?.desktop?.[id]||layout?.desktop?.[legacy]):null);
-  if(c||layoutApplied.has(el)){applyLayout(el,mergedCfg(layout,d,id in (layout?.[d]||{})||id in (layout?.desktop||{})?id:legacy));layoutApplied.add(el)}
+  const c=layout?.[d]?.[id]||layout?.[d]?.[legacy]||(d!=='desktop'?(layout?.tablet?.[id]||layout?.tablet?.[legacy]||layout?.desktop?.[id]||layout?.desktop?.[legacy]):null);
+  if(c||el.__rafTemplateOverrides||layoutApplied.has(el)){applyLayout(el,mergedCfg(layout,d,['desktop','tablet','mobile'].some(key=>id in (layout?.[key]||{}))?id:legacy,templateDefaults(el,d)));layoutApplied.add(el)}
  }
 }
 function apply(s=state){
- state=cp(s||{});for(const el of $$(OBJECT_SELECTOR)){const k=resolveObjectId(el,state.builder?.stableIdsV900||{},false);if(k&&(semanticId(el)||k.startsWith('node:')))el.dataset.rafV72Id=k}document.documentElement.dataset.rafRenderer=window.RAF_EDITOR_VERSION.latest;renderStructure(state);
+ state=cp(s||{});for(const el of $$(OBJECT_SELECTOR)){if(el.closest('[data-studio-ui]'))continue;const k=resolveObjectId(el,state.builder?.stableIdsV900||{},false);if(k&&(semanticId(el)||k.startsWith('node:')))el.dataset.rafV72Id=k}document.documentElement.dataset.rafRenderer=window.RAF_EDITOR_VERSION.latest;renderStructure(state);applyStudio(state.builder?.studio910||{},device(),state.builder?.freeLayoutV7||{});
  for(const el of $$('[data-home-text],[data-site-text],#heroK,#heroT,#heroD'))applyLegacyText(el,state);
  for(const el of $$('[data-home-media]'))applyLegacyMedia(el,state);
  for(const el of $$('[data-raf-element]'))applyBuilderElement(el,state);
@@ -126,7 +128,9 @@ function apply(s=state){
  ready=true;if(!EDITOR)requestAnimationFrame(()=>requestAnimationFrame(()=>window.rafReleasePublicBoot?.()));window.dispatchEvent(new CustomEvent('raf:renderer900-applied',{detail:{device:device(),editor:EDITOR}}));
 }
 function schedule(){clearTimeout(timer);timer=setTimeout(()=>requestAnimationFrame(()=>apply(state)),35)}
-if(EDITOR){
+if(Q.has('studioSnapshot')){
+ try{const snap=JSON.parse(sessionStorage.getItem('rafStudioSnapshot910')||'null');if(snap)apply(snap)}catch{}
+}else if(EDITOR){
  const path=WEBSITE_ROOT+'/public/editorDraft';
  onValue(ref(db,path),s=>{state=s.val()||{};schedule()});
 }else{

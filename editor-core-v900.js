@@ -1,8 +1,9 @@
 // RAF.studio — unified visual core v9.0.0 — single selection/transform/history
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,set,update} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getDatabase,ref,get,set,update,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 const {applyLayout:applyLayout900,baseCfg:baseCfg900,TYPO_KEYS}=await import('./editor-layout-engine-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
 const {resolveObjectId,fingerprint}=await import('./editor-object-id-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
+const {templateDefaults}=await import('./studio-runtime-v910.js?v='+window.RAF_EDITOR_VERSION.asset);
 
 const db=getDatabase(getApp());
 const $=(s,r=document)=>r.querySelector(s);
@@ -11,8 +12,8 @@ const cp=x=>structuredClone(x??{});
 const queryDevice=()=>new URLSearchParams(location.search).get('device');
 const dev=()=>queryDevice()|| (innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const TEXT='[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
-const CAND=TEXT+',[data-raf-free],[data-raf-layout],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
-const EDITOR_UI='#rafTop3,#rafPanel3,#rafModal3,#rafProModal61,#tpl752,#widgetsModal770,#pages860,#v72box,#v760layers,#v760menu,#v760history,#v760publishCheck,#rafDockLauncher889,#rafDockMenu889,#rafPreview900Back,#rafHeaderEdit900,.authGate,.authUserBar,[data-raf-dock-ignore]';
+const CAND=TEXT+',img,video,iframe,[data-raf-container],[data-raf-saved-section],[data-raf-free],[data-raf-layout],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
+const EDITOR_UI='[data-studio-ui],#rafTop3,#rafPanel3,#rafModal3,#rafProModal61,#tpl752,#widgetsModal770,#pages860,#v72box,#v760layers,#v760menu,#v760history,#v760publishCheck,#rafDockLauncher889,#rafDockMenu889,#rafPreview900Back,#rafHeaderEdit900,.authGate,.authUserBar,[data-raf-dock-ignore]';
 const ROOT='website/public/editorDraft/builder';
 const STABLE_ROOT=ROOT+'/stableIdsV900';
 const SNAP_DISTANCE=7;
@@ -92,7 +93,7 @@ function migrateLegacyCfg(k,el){
 function ownCfg(k,el){
  const d=dev();layout[d]||={};migrateLegacyCfg(k,el);layout[d][k]=layout[d][k]||{};return layout[d][k]
 }
-function cfg(k,el){const d=dev(),own=ownCfg(k,el),desk=layout.desktop?.[k]||{};return d==='desktop'?{...baseCfg(),...own}:{...baseCfg(),...desk,...own}}
+function cfg(k,el){const d=dev(),own=ownCfg(k,el),desk=layout.desktop?.[k]||{},tab=layout.tablet?.[k]||{},defaults=templateDefaults(el,d);return d==='desktop'?{...baseCfg(),...defaults,...own}:{...baseCfg(),...defaults,...desk,...(d==='mobile'?tab:{}),...own}}
 function cropApply(el,c,layoutScale=1){
  if(!(el instanceof HTMLImageElement))return false;
  const ls=Math.max(.05,Number(layoutScale)||1);
@@ -150,7 +151,7 @@ function renderClones(){
 }
 function decorate(){
  css();
- $$(CAND).forEach(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return;id(el);apply(el)});
+ $$(CAND).forEach(el=>{if(el.closest('[data-studio-ui]'))return;if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return;id(el);apply(el)});
  renderClones();
  if(migrationDirty||stableDirty){clearTimeout(idSaveTimer);idSaveTimer=setTimeout(async()=>{const migrate=migrationDirty,ids=stableDirty;migrationDirty=false;stableDirty=false;try{const jobs=[];if(migrate)jobs.push(set(ref(db,ROOT+'/freeLayoutV7'),cp(layout)));if(ids)jobs.push(set(ref(db,STABLE_ROOT),cp(stableIds)));if(jobs.length)await Promise.all(jobs)}catch(e){console.error('RAF Core 9 ID migration',e);migrationDirty=migrationDirty||migrate;stableDirty=stableDirty||ids}},180)}
 }
@@ -158,15 +159,15 @@ function decorate(){
 function emit(type='selection'){window.dispatchEvent(new CustomEvent('raf:v760-'+type,{detail:{ids:[...sel].map(id),elements:[...sel]}}))}
 function clear(){sel.forEach(x=>x.classList.remove('v72sel'));sel.clear();boxUpdate();emit()}
 function add(el){
- if(!el||!el.isConnected)return;
+ if(!el||!el.isConnected||el.closest('[data-studio-ui]'))return;
  for(const x of [...sel])if(x!==el&&x.contains(el)){sel.delete(x);x.classList.remove('v72sel')}
  for(const x of sel)if(x!==el&&el.contains(x))return;
  sel.add(el);el.classList.add('v72sel')
 }
-function select(el,append=false){
+function select(el,append=false,exact=false){
  if(!el)return;if(!append)clear();
  const g=cfg(id(el),el).group;
- if(g)$$('[data-raf-v72-id]').forEach(x=>{if(cfg(id(x),x).group===g)add(x)});else add(el);
+ if(g&&!exact)$$('[data-raf-v72-id]').forEach(x=>{if(cfg(id(x),x).group===g)add(x)});else add(el);
  panel();boxUpdate();emit()
 }
 function bounds(){
@@ -260,14 +261,15 @@ function flushSave(){
  const task=pendingSave;pendingSave=null;
  writeQueue=writeQueue.catch(()=>{}).then(async()=>{
   try{
-   await update(ref(db,ROOT),task.data);
+   await update(ref(db,ROOT),task.data);window.dispatchEvent(new CustomEvent('raf:save-state',{detail:{state:'saved'}}));
    if(task.ownsHistory){window.rafHistory900?.commit?.(task.label);if(task.finish){window.rafHistory900?.flush?.();historyOpen=false}else{clearTimeout(historyCloseTimer);historyCloseTimer=setTimeout(()=>historyOpen=false,700)}}
    const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana';
-  }catch(e){console.error(e);const s=$('#rafStatus3');if(s)s.textContent='⚠ Błąd zapisu: '+e.message;throw e}
+  }catch(e){if(!pendingSave)pendingSave=task;window.dispatchEvent(new CustomEvent('raf:save-state',{detail:{state:'error',message:e.message}}));console.error(e);const s=$('#rafStatus3');if(s)s.textContent='⚠ Błąd zapisu: '+e.message;throw e}
  });
  return writeQueue;
 }
 function save(label='Układ',finish=false){
+ window.dispatchEvent(new CustomEvent('raf:save-state',{detail:{state:'saving'}}));
  clearTimeout(saveTimer);
  pendingSave={data:{freeLayoutV7:cp(layout),clonesV76:cp(clones),flowOrderV772:cp(flowOrders),stableIdsV900:cp(stableIds)},label,finish,ownsHistory:historyOpen};stableDirty=false;
  saveTimer=setTimeout(()=>flushSave().catch(()=>{}),90);
@@ -365,6 +367,7 @@ function flowStep(direction){
  rememberFlow(s.parent,s.key);save('Zmiana kolejności',true);boxUpdate();panel();s.el.scrollIntoView({behavior:'smooth',block:'center'});const status=$('#rafStatus3');if(status)status.textContent=direction<0?'✓ Element przesunięty o jeden poziom wyżej':'✓ Element przesunięty o jeden poziom niżej'
 }
 function panel(){
+ if(window.rafStudio910Enabled)return;
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
  const fs=flowState();d.innerHTML='<small>V9.0 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Kliknięcie zaznacza • dwuklik edytuje tekst<br>Ruch: przeciągnij element albo użyj uchwytu ✥<br>Przeciągnięcie po pustym płótnie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
@@ -375,7 +378,7 @@ function panel(){
 }
 function cand(e){return e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
 function hits(l,t,r,b){
- const a=$$(CAND).filter(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return false;const q=el.getBoundingClientRect();return q.width&&q.height&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b});
+ const a=$$(CAND).filter(el=>{if(el.closest('[data-studio-ui]'))return;if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return false;const q=el.getBoundingClientRect();return q.width&&q.height&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b});
  return a.filter(el=>!a.some(o=>o!==el&&el.contains(o)))
 }
 
@@ -397,7 +400,17 @@ function copySelected(){
 function pasteClipboard(){let x;try{x=JSON.parse(sessionStorage.getItem('rafClipboard760')||'null')}catch{}if(!x?.ids?.length)return false;const old=[...sel];clear();x.ids.map(findById).filter(Boolean).forEach(add);const made=duplicateSelected(24);clear();made.forEach(add);panel();boxUpdate();emit();if(!made.length)old.forEach(add);return!!made.length}
 function copyStyle(){if(sel.size!==1)return false;const el=[...sel][0],c=cp(cfg(id(el),el));for(const k of ['x','y','z','hidden','locked','group','label'])delete c[k];try{sessionStorage.setItem('rafStyleClipboard760',JSON.stringify(c))}catch{}return true}
 function pasteStyle(){let s;try{s=JSON.parse(sessionStorage.getItem('rafStyleClipboard760')||'null')}catch{}if(!s||!sel.size)return false;commit();sel.forEach(el=>{Object.assign(ownCfg(id(el),el),cp(s));apply(el)});save();boxUpdate();return true}
-function patchSelected(patch,{commitNow=true}={}){if(!sel.size)return;if(commitNow)commit();sel.forEach(el=>{Object.assign(ownCfg(id(el),el),cp(patch));apply(el)});save();boxUpdate();panel();emit()}
+function patchSelected(patch,{commitNow=true}={}){
+ if(!sel.size)return;if(commitNow)commit();
+ const groupScale=sel.size>1&&patch.scale!=null,b=groupScale?bounds():null;
+ const first=cfg(id([...sel][0]),[...sel][0]),ratio=groupScale?Number(patch.scale)/(Number(first.scale)||1):1;
+ const items=[...sel].map(el=>({el,rect:el.getBoundingClientRect(),before:cfg(id(el),el)}));
+ for(const {el,rect,before} of items){if(before.locked&&!Object.hasOwn(patch,'locked'))continue;const value=ownCfg(id(el),el);Object.assign(value,cp(patch));
+  if(groupScale){value.scale=(Number(before.scale)||1)*ratio;apply(el);const r=el.getBoundingClientRect();value.x=(Number(before.x)||0)+b.left+(rect.left+rect.width/2-b.left)*ratio-(r.left+r.width/2);value.y=(Number(before.y)||0)+b.top+(rect.top+rect.height/2-b.top)*ratio-(r.top+r.height/2);}
+  apply(el);
+ }
+ save();boxUpdate();panel();emit();
+}
 function patchOne(el,patch,{commitNow=true}={}){if(!el)return;if(commitNow)commit();Object.assign(ownCfg(id(el),el),cp(patch));apply(el);save();boxUpdate();emit('change')}
 function clearProps(el,keys,{commitNow=true}={}){if(!el)return;if(commitNow)commit();const own=ownCfg(id(el),el);for(const key of keys||[])delete own[key];apply(el);save();boxUpdate();emit('change')}
 function toggleLocked(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).locked;patchSelected({locked:on})}
@@ -413,7 +426,7 @@ function resetTransform(){patchSelected({x:0,y:0,width:null,height:null,scale:1,
 function rename(label){patchSelected({label:String(label||'').slice(0,80)})}
 function list(){
  decorate();const out=[],seen=new Set();
- for(const el of $$('[data-raf-v72-id]')){const k=id(el);if(seen.has(k)||el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))continue;seen.add(k);const c=cfg(k,el),section=el.closest('[data-raf-section],header.hero'),sectionId=section?id(section):'page';out.push({id:k,el,cfg:c,sectionId,tag:el.tagName.toLowerCase(),label:c.label||el.getAttribute('aria-label')||el.alt||el.textContent?.trim().replace(/\s+/g,' ').slice(0,46)||k})}
+ for(const el of $$('[data-raf-v72-id]')){const k=id(el);if(seen.has(k)||el.closest('[data-studio-ui]')||el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))continue;seen.add(k);const c=cfg(k,el),section=el.closest('[data-raf-section],header.hero'),sectionId=section?id(section):'page';out.push({id:k,el,cfg:c,sectionId,tag:el.tagName.toLowerCase(),label:c.label||el.getAttribute('aria-label')||el.alt||el.textContent?.trim().replace(/\s+/g,' ').slice(0,46)||k})}
  return out
 }
 
@@ -457,7 +470,7 @@ window.addEventListener('pointerdown',e=>{
  if(document.body.classList.contains('raf-preview64'))return;
  if(e.target.closest?.(EDITOR_UI))return;
  if(window.rafHeroMediaEditor888?.ownsEvent?.(e))return;
- if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
+ if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img,video,iframe')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();let el=cand(e);if((e.ctrlKey||e.metaKey)&&e.altKey&&el)el=parentCandidate(el)||el;
  if(el){
   if(e.shiftKey||e.altKey){if(sel.has(el)){sel.delete(el);el.classList.remove('v72sel')}else add(el);panel();boxUpdate();emit();suppressClickUntil=performance.now()+350;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
@@ -500,6 +513,7 @@ document.addEventListener('keydown',e=>{
  if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();e.stopPropagation();deleteSelected();return}
  if(e.key==='ArrowLeft'){e.preventDefault();nudge(-s,0)}if(e.key==='ArrowRight'){e.preventDefault();nudge(s,0)}if(e.key==='ArrowUp'){e.preventDefault();nudge(0,-s)}if(e.key==='ArrowDown'){e.preventDefault();nudge(0,s)}
 },true);
+addEventListener('online',()=>flushSave().catch(()=>{}));
 addEventListener('scroll',boxUpdate,{passive:true});addEventListener('resize',()=>{decorate();boxUpdate()},{passive:true});
 const scheduleDecor=()=>{clearTimeout(decorTimer);decorTimer=setTimeout(()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')},50)};
 for(const ev of ['raf:template752-rendered','raf:universal-elements-ready','raf:widgets770-rendered','raf:history-main','raf:renderer900-applied'])window.addEventListener(ev,scheduleDecor);
@@ -511,10 +525,16 @@ window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.f
  layout=cp(d.exists()?d.val():(p.val()||{desktop:{},tablet:{},mobile:{}}));clones=cp(dc.exists()?dc.val():(pc.val()||[]));flowOrders=cp(df.exists()?df.val():(pf.val()||[]));stableIds=cp(si.val()||{});decorate();applyFlowOrders();
  window.rafCore900={
   undo:undoNow,redo:redoNow,canUndo:()=>!!window.rafHistory900?.canUndo?.(),canRedo:()=>!!window.rafHistory900?.canRedo?.(),lastAt:()=>Date.now(),nextUndoAt:()=>0,nextRedoAt:()=>0,clearRedo:()=>{},applyLayout:x=>{layout=cp(x||{});applyAll()},applyState:main=>{const b=main?.builder||{};layout=cp(b.freeLayoutV7||{desktop:{},tablet:{},mobile:{}});clones=cp(Array.isArray(b.clonesV76)?b.clonesV76:[]);flowOrders=cp(Array.isArray(b.flowOrderV772)?b.flowOrderV772:[]);stableIds=cp(b.stableIdsV900||{});const keep=new Set(clones.map(x=>String(x.id)));$$('[data-raf-v76-clone]').forEach(x=>{if(!keep.has(String(x.dataset.rafV76Clone)))x.remove()});sel=new Set([...sel].filter(x=>x.isConnected));applyAll()},
-  selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
+  group,ungroup,align,selectExact:el=>select(el,false,true),ownFor:el=>cp(layout[dev()]?.[id(el)]||{}),layoutState:()=>cp(layout),selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
   id,cfgFor:el=>cfg(id(el),el),list,save,flush:flushSave,checkpoint:commit,patchSelected,patchOne,clearProps,typographyKeys:TYPO_KEYS,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
   toggleLocked,toggleHidden,deleteSelected,restoreDeleted,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,flowUp:()=>flowStep(-1),flowDown:()=>flowStep(1),device:dev,refresh:()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')}
  };
  window.rafCore760=window.rafCore900;window.rafCore72=window.rafCore900;
+ // Keep inactive responsive canvases current, so their next save cannot replace
+ // edits made in another viewport with an older copy of the layout.
+ onValue(ref(db,ROOT),snap=>{if(pendingSave||drag||inlineEdit)return;const b=snap.val()||{},next=b.freeLayoutV7||layout;
+  if(JSON.stringify([next,b.clonesV76||[],b.flowOrderV772||[]])===JSON.stringify([layout,clones,flowOrders]))return;
+  layout=cp(next);clones=cp(b.clonesV76||[]);flowOrders=cp(b.flowOrderV772||[]);if(!stableDirty)stableIds=cp(b.stableIdsV900||stableIds);scheduleDecor();
+ });
  window.dispatchEvent(new CustomEvent('raf:v760-ready'));window.dispatchEvent(new CustomEvent('raf:core900-ready'))
 })().catch(e=>console.error('RAF core 9.0',e));

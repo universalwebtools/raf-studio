@@ -1,5 +1,7 @@
 # RAF.studio 9.0.1 — stan prac
 
+Aktualizacja: kontynuację opisuje [RAF_9_1_STATUS.md](RAF_9_1_STATUS.md). Poniższy dokument zachowuje historyczny zakres 9.0.1.
+
 Data: 25.09.2026. Kontynuacja rozmowy „001 Strona RAF STUDIO”.
 
 ## Zakres tego wydania

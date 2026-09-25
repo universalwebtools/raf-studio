@@ -17,6 +17,7 @@ function archiveFailure(error){releaseEditor();console.error('RAF archived edito
 async function bootArchived(){const release=RELEASES[requested];if(!release){goEditorVersion(LATEST,true);return}document.documentElement.dataset.rafEditorArchive=requested;wireArchivedNavigation();try{await import('https://cdn.jsdelivr.net/gh/universalwebtools/raf-studio@'+release.sha+'/editor-entry.js?rafArchive='+encodeURIComponent(requested))}catch(error){archiveFailure(error)}}
 
 async function bootCurrent(){
+ window.rafStudio910Enabled=true;window.rafCapabilityPanel900=true;
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html')||path.endsWith('/fotografia/')||path.endsWith('/film/');
  await import('./auth-gate.js?v=3.2.1');await import('./image-webp-v60.js?v=6.5.3');
  if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=7.7.2');await waitEditorSettled();return}
@@ -33,13 +34,14 @@ async function bootCurrent(){
  await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.8.8');
  await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');
  await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');
- await load('./accordion-runtime-v877.js');await load('./editor-accordion-v877.js');await load('./editor-groups-v880.js');
- await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');
- await load('./editor-hero-media-v888.js');await load('./editor-hero-resize-v890.js');
- await load('./editor-chrome-v888.js');await load('./editor-dock-v889.js');
+ await load('./accordion-runtime-v877.js');await load('./editor-accordion-v877.js');
+ await import('./editor-v70-layout-guard.js?v=7.7.2');await load('./editor-templates-v752.js');
+
+
  await load('./editor-workspace-v760.js');await import('./editor-pages-v860.js?v=8.7.0');
  await import('./editor-widgets-v770.js?v=8.8.4');await load('./editor-version-history-v760.js');
  await load('./direct-publish-v760.js');
+ await load('./editor-studio-v910.js');
  await waitEditorSettled();
 }
 const explicitArchive=params.get('archive')==='1';

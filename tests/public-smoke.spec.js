@@ -8,8 +8,7 @@ test('desktop header and social icons stay sane',async({page})=>{
  await page.waitForSelector('.rafHeader900',{state:'visible'});
  const icons=page.locator('.rafHeaderSocial900 a:visible');
  await expect(icons).toHaveCount(4);
- const sizes=await icons.evaluateAll(nodes=>nodes.map(n=>{const r=n.getBoundingClientRect();return{w:r.width,h:r.height}}));
- for(const s of sizes){expect(s.w).toBeGreaterThanOrEqual(14);expect(s.w).toBeLessThanOrEqual(72);expect(s.h).toBeLessThanOrEqual(72)}
+ await expect.poll(()=>icons.evaluateAll(nodes=>nodes.length===4&&nodes.every(n=>{const r=n.getBoundingClientRect();return r.width>=14&&r.width<=72&&r.height>=14&&r.height<=72}))).toBe(true);
  await expect(page.locator('#rafTop3')).toHaveCount(0);
 });
 

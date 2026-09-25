@@ -1,7 +1,7 @@
 // RAF.studio public shell v9.0
 import './privacy-center-v800.js?v=8.7.0';
 import './form-protection-v800.js?v=8.7.0';
-import './site-header-v900.js?v=9.0.0';
+await import('./site-header-v900.js?v='+(window.RAF_EDITOR_VERSION?.asset||'9.1.0-9100'));
 
 const Q=new URLSearchParams(location.search),EDITOR=Q.has('editor'),PREVIEW=Q.has('tplPreview');
 const cleanPath=p=>{
