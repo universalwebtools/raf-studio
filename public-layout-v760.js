@@ -89,7 +89,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
  function applyFlowOrders(){
   for(const row of flowOrders){const ordered=(row.items||[]).map(findById).filter(Boolean),parent=ordered[0]?.parentElement;if(!parent||flowParentKey(parent)!==row.parent)continue;const children=[...parent.children],positions=[];children.forEach((x,i)=>{if(ordered.includes(x)&&x.parentElement===parent)positions.push(i)});if(positions.length<2)continue;const desired=ordered.filter(x=>x.parentElement===parent),current=positions.map(i=>children[i]);if(current.every((x,i)=>x===desired[i]))continue;const final=[...children];positions.forEach((pos,i)=>{if(desired[i])final[pos]=desired[i]});final.forEach(x=>parent.appendChild(x))}
  }
- function apply(){if(window.RAF_RENDERER900_ACTIVE)return;$(CAND).forEach(applyOne);renderClones();$(CAND).forEach(applyOne);applyFlowOrders() }
+ function apply(){if(window.RAF_RENDERER900_ACTIVE)return;$$(CAND).forEach(applyOne);renderClones();$$(CAND).forEach(applyOne);applyFlowOrders() }
  function schedule(){if(window.RAF_RENDERER900_ACTIVE)return;clearTimeout(timer);requestAnimationFrame(apply);timer=setTimeout(apply,140)}
  onValue(ref(db,WEBSITE_ROOT+'/public/builder'),s=>{const b=s.val()||{};layout=b.freeLayoutV7||{};clones=Array.isArray(b.clonesV76)?b.clonesV76:[];flowOrders=Array.isArray(b.flowOrderV772)?b.flowOrderV772:[];schedule()});
  onValue(ref(db,WEBSITE_ROOT+'/public/homeMedia'),schedule);

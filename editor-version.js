@@ -1,7 +1,8 @@
 // RAF.studio — single editor version manifest
 (function(){
- const latest='9.0.0',build='9000',asset='9.0.0-9000';
+ const latest='9.0.1',build='9010',asset='9.0.1-9010';
  const archives={
+  '9.0.0':{sha:'b87e18c64fb310cb8d7f6e14b9887d2a6faa5695',build:'9000'},
   '8.9.3':{sha:'01bdd268512c95f42b6c20b77c5ef87ca1f6f1c0',build:'8930'},
  '8.9.2':{sha:'d868522cf72429336f3353d05ad546f6048d3c46',build:'8920'},
  '8.9.1':{sha:'001dc9683d50f3b1eb0b2ad993920d5303a35a2c',build:'8910'},

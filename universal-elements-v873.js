@@ -59,6 +59,7 @@
 // an element to text:null. This also preserves original <br> and inline markup.
 (function(){
  if(!new URLSearchParams(location.search).has('editor'))return;
+ if(parseInt(window.RAF_EDITOR_VERSION?.latest||'0',10)>=9)return;
  const TEXT_TAGS='h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em';
  const baselineById=new Map(),baselineByEl=new WeakMap();
  let core=null,installed=false;

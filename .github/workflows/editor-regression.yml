@@ -3,6 +3,7 @@ name: RAF Editor Regression
 on:
   push:
     branches: [main]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -18,16 +19,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: npm install
+      - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - name: Wait for deployed RAF 9 shell
-        run: |
-          ok=0
-          for i in $(seq 1 60); do
-            if curl -fsSL "https://raf-studio.pl/editor-version.js?ci=$(date +%s)" | grep -q "latest='9.0.0'"; then ok=1; break; fi
-            sleep 2
-          done
-          test "$ok" = "1"
+      # Test the checked-out commit locally, with isolated Firebase fixtures.
+      # A live version label does not establish which code was actually tested.
       - run: npm test
       - uses: actions/upload-artifact@v4
         if: failure()

@@ -14,7 +14,7 @@
  }
  function run(){window.rafFaqRuntime877?.refresh?.();noteFaqSelection()}
  for(const ev of ['raf:v760-ready','raf:v760-selection','raf:v760-change','raf:universal-elements-ready','raf:template752-rendered'])window.addEventListener(ev,()=>setTimeout(run,0));
- setInterval(run,500);
+
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run,{once:true});else run();
  window.rafAccordion877={refresh:run};
 })();

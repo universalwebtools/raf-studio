@@ -1,6 +1,6 @@
 // RAF.studio 9.0 — ONE history for the whole editor
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,set,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getDatabase,ref,get,update,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s);
 const P={main:'website/public/editorDraft',extras:'website/public/editorExtrasDraft',pro:'website/public/proV6Draft',pages:'website/public/customPagesDraft'};
@@ -51,10 +51,7 @@ function schedulePassive(){
 async function writeState(state){
  busy=true;clearTimeout(passiveTimer);clearTimeout(txnTimer);txn=null;
  try{
-  await Promise.all([
-   set(ref(db,P.main),state?.main??null),set(ref(db,P.extras),state?.extras??null),
-   set(ref(db,P.pro),state?.pro??null),set(ref(db,P.pages),state?.pages??null)
-  ]);
+  await update(ref(db,'website/public'),Object.fromEntries(Object.entries(P).map(([key,path])=>[path.split('/').at(-1),state?.[key]??null])));
   live=cp(state);current=cp(state);
   window.dispatchEvent(new CustomEvent('raf:history-main',{detail:state?.main||{}}));
   window.dispatchEvent(new CustomEvent('raf:history-extras',{detail:state?.extras||{}}));
@@ -66,17 +63,17 @@ async function writeState(state){
 }
 async function undoNow(){
  finalizeNow();if(!undo.length)return false;status('Cofanie…');
- const item=undo.pop(),before=cp(current);redo.push({state:before,label:item.label,at:Date.now()});persist();
- await writeState(item.state);status('✓ Cofnięto: '+(item.label||'zmianę'));return true
+ const item=undo.at(-1),before=cp(current);
+ await writeState(item.state);undo.pop();redo.push({state:before,label:item.label,at:Date.now()});persist();status('✓ Cofnięto: '+(item.label||'zmianę'));return true
 }
 async function redoNow(){
  finalizeNow();if(!redo.length)return false;status('Ponawianie…');
- const item=redo.pop(),before=cp(current);undo.push({state:before,label:item.label,at:Date.now()});persist();
- await writeState(item.state);status('✓ Ponowiono: '+(item.label||'zmianę'));return true
+ const item=redo.at(-1),before=cp(current);
+ await writeState(item.state);redo.pop();undo.push({state:before,label:item.label,at:Date.now()});persist();status('✓ Ponowiono: '+(item.label||'zmianę'));return true
 }
-function queued(kind){queue=queue.then(()=>kind==='redo'?redoNow():undoNow()).catch(e=>{console.error('RAF history 9',e);status('⚠ Historia: '+e.message);return false});return queue}
+function queued(kind){queue=queue.then(async()=>{await window.rafCore900?.flush?.();return kind==='redo'?redoNow():undoNow()}).catch(e=>{console.error('RAF history 9',e);status('⚠ Historia: '+e.message);return false});return queue}
 function previewStyle(){if($('#rafPreview900Css'))return;const s=document.createElement('style');s.id='rafPreview900Css';s.textContent='body.raf-preview64 #rafTop3,body.raf-preview64 #rafPanel3,body.raf-preview64 #v72box,body.raf-preview64 #v760layers,body.raf-preview64 #rafDockLauncher889,body.raf-preview64 #rafHeaderEdit900{display:none!important}#rafPreview900Back{position:fixed;right:18px;top:18px;z-index:1000060;border:1px solid #ffffff35;background:#111e;color:#fff;border-radius:999px;padding:11px 16px;font:700 12px system-ui;cursor:pointer}';document.head.appendChild(s)}
-function setPreview(on){previewStyle();preview=!!on;document.body.classList.toggle('raf-preview64',preview);let b=$('#rafPreview900Back');if(preview){if(!b){b=document.createElement('button');b.id='rafPreview900Back';b.textContent='← Wróć do edycji';b.onclick=()=>setPreview(false);document.body.appendChild(b)}b.style.display='block'}else if(b)b.style.display='none'}
+function setPreview(on){previewStyle();preview=!!on;document.body.classList.toggle('raf-preview64',preview);let b=$('#rafPreview900Back');if(preview){if(!b){b=document.createElement('button');b.id='rafPreview900Back';b.textContent='← Wróć do edycji';b.onclick=()=>setPreview(false);document.body.appendChild(b)}b.style.display='block'}else if(b)b.style.display='none';window.dispatchEvent(new CustomEvent('raf:preview900-changed',{detail:{preview}}))}
 function sourceLabel(target){
  if(target?.closest?.('#rafProModal61'))return'PRO';
  if(target?.closest?.('#widgetsModal770,.wePanel'))return'Widżet';
@@ -96,7 +93,7 @@ loadLocal();
 const first=await readRaw();live=cp(first);current=cp(first);ready=true;paint();
 for(const [key,path] of Object.entries(P))onValue(ref(db,path),s=>{live[key]=s.val()??null;schedulePassive()});
 window.addEventListener('keydown',e=>{
- if(!(e.ctrlKey||e.metaKey)||e.altKey)return;const k=String(e.key||'').toLowerCase();
+ if(preview||!(e.ctrlKey||e.metaKey)||e.altKey)return;const k=String(e.key||'').toLowerCase();
  if(k!=='z'&&k!=='y')return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
  const active=document.activeElement;if(active?.isContentEditable)active.blur();
  queued(k==='y'||(k==='z'&&e.shiftKey)?'redo':'undo')

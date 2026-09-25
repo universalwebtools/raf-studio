@@ -4,11 +4,11 @@
 // so ALT multi-select, move and scale can never leave the FAQ separator behind.
 (function(){
  const q=new URLSearchParams(location.search),ev=q.get('ev')||'';
- if(q.has('editor')&&ev&&!['8.7.7','8.8.0','8.8.1','8.8.2','8.8.3'].includes(ev))return;
+ if(q.has('editor')&&ev&&parseInt(ev,10)<9&&!['8.7.7','8.8.0','8.8.1','8.8.2','8.8.3'].includes(ev))return;
  const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
  let queued=false,running=false;
  function css(){
-  let s=$('#rafFaq877Css');if(s)s.remove();
+  let s=$('#rafFaq877Css');if(s)return;
   s=document.createElement('style');s.id='rafFaq877Css';s.textContent=`
 summary.rafFaq877{list-style:none!important;list-style-type:none!important}
 summary.rafFaq877::-webkit-details-marker{display:none!important;width:0!important;height:0!important}
@@ -61,8 +61,8 @@ details[open]>summary.rafFaq877>.rafFaqText877::before{transform:rotate(90deg)!i
  function run(){if(running)return;running=true;queued=false;try{css();$$('summary').forEach(bind)}finally{running=false}}
  function schedule(){if(queued||running)return;queued=true;requestAnimationFrame(run)}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
- new MutationObserver(schedule).observe(document.documentElement,{subtree:true,childList:true});
+ const observer=new MutationObserver(schedule);const observe=()=>{observer.disconnect();for(const root of $$('#rafMain,#rafTemplate752'))observer.observe(root,{subtree:true,childList:true})};observe();window.addEventListener('raf:template752-rendered',observe);
  for(const ev of ['raf:universal-elements-ready','raf:template752-rendered','raf:v760-ready','raf:v760-change','raf:v760-selection'])window.addEventListener(ev,schedule);
- let n=0,t=setInterval(()=>{run();if(++n>40)clearInterval(t)},250);
+
  window.rafFaqRuntime877={refresh:run};
 })();

@@ -3,7 +3,7 @@
 // an existing group without moving the surrounding section/container.
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const VERSION='9.0.0';
-let core=null,queued=false;
+let core=null,queued=false,lastPanel=null,lastSignature='';
 
 function status(t){const e=$('#rafStatus3');if(e)e.textContent=t}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]))}
@@ -65,7 +65,7 @@ function versionLabels(){
 }
 function wireLegacyButtons(items){const g=$('#v72g'),ug=$('#v72ug');if(g){g.textContent='🔗 SCAL ZAZNACZONE';g.disabled=items.length<2;g.onclick=mergeSelected}if(ug){ug.textContent='⛓ ROZDZIEL GRUPĘ';ug.disabled=!items.some(groupId);ug.onclick=splitGroup}}
 function render(){
- queued=false;core=window.rafCore760||window.rafCore72;if(!core)return;css();versionLabels();const items=selected(),panel=$('#v72panel');$('#v880groupTools')?.remove();if(!items.length||!panel)return;wireLegacyButtons(items);
+ queued=false;core=window.rafCore760||window.rafCore72;if(!core)return;css();versionLabels();const items=selected(),panel=$('#v72panel'),signature=JSON.stringify(items.map(el=>[core.id(el),cfg(el).group,cfg(el).locked,crumbsFor(el)]));if(panel===lastPanel&&signature===lastSignature&&(!items.length||$('#v880groupTools')))return;lastPanel=panel;lastSignature=signature;$('#v880groupTools')?.remove();if(!items.length||!panel)return;wireLegacyButtons(items);
  const g=sameGroup(items),crumbs=breadcrumb(items),box=document.createElement('div');box.id='v880groupTools';box.innerHTML=`<div id="v880crumb">${crumbs.map((x,i)=>`${i?'<span class="v880sep">›</span>':''}<span class="v880chip">${esc(x)}</span>`).join('')}</div><div class="v880head"><b>WYRÓWNANIE WEWNĄTRZ GRUPY</b><small>${g?items.length+' elementów':'najpierw scal zaznaczenie'}</small></div><div class="v880align"><button data-v880-align="left" ${g?'':'disabled'}>← Lewo</button><button data-v880-align="center" ${g?'':'disabled'}>↔ Środek</button><button data-v880-align="right" ${g?'':'disabled'}>Prawo →</button><button data-v880-align="top" ${g?'':'disabled'}>↑ Góra</button><button data-v880-align="middle" ${g?'':'disabled'}>↕ Środek</button><button data-v880-align="bottom" ${g?'':'disabled'}>↓ Dół</button></div><div class="v880note">Wyrównanie rusza wyłącznie elementy zaznaczonej grupy. Sekcja i pozostałe elementy strony zostają na miejscu.</div>`;
  const h3=panel.querySelector('h3');if(h3)h3.insertAdjacentElement('afterend',box);else panel.prepend(box);$$('[data-v880-align]',box).forEach(b=>b.onclick=()=>alignInside(b.dataset.v880Align))
 }

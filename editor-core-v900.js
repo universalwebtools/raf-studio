@@ -1,8 +1,8 @@
 // RAF.studio — unified visual core v9.0.0 — single selection/transform/history
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {applyLayout as applyLayout900,baseCfg as baseCfg900,TYPO_KEYS} from './editor-layout-engine-v900.js?v=9.0.0';
-import {resolveObjectId,fingerprint} from './editor-object-id-v900.js?v=9.0.0';
+import {getDatabase,ref,get,set,update} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+const {applyLayout:applyLayout900,baseCfg:baseCfg900,TYPO_KEYS}=await import('./editor-layout-engine-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
+const {resolveObjectId,fingerprint}=await import('./editor-object-id-v900.js?v='+window.RAF_EDITOR_VERSION.asset);
 
 const db=getDatabase(getApp());
 const $=(s,r=document)=>r.querySelector(s);
@@ -11,7 +11,8 @@ const cp=x=>structuredClone(x??{});
 const queryDevice=()=>new URLSearchParams(location.search).get('device');
 const dev=()=>queryDevice()|| (innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const TEXT='[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
-const CAND=TEXT+',[data-raf-free],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
+const CAND=TEXT+',[data-raf-free],[data-raf-layout],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
+const EDITOR_UI='#rafTop3,#rafPanel3,#rafModal3,#rafProModal61,#tpl752,#widgetsModal770,#pages860,#v72box,#v760layers,#v760menu,#v760history,#v760publishCheck,#rafDockLauncher889,#rafDockMenu889,#rafPreview900Back,#rafHeaderEdit900,.authGate,.authUserBar,[data-raf-dock-ignore]';
 const ROOT='website/public/editorDraft/builder';
 const STABLE_ROOT=ROOT+'/stableIdsV900';
 const SNAP_DISTANCE=7;
@@ -25,6 +26,7 @@ let sel=new Set();
 let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null,inlineEdit=null;
 let suppressClickUntil=0,suppressNextClick=false;
 let renderingClones=false,migrationDirty=false,historyOpen=false,historyCloseTimer=0;
+let pendingSave=null,writeQueue=Promise.resolve();
 const baseCfg=baseCfg900;
 function css(){
  if($('#core760css'))return;
@@ -118,8 +120,6 @@ function applyTypography(el,c){
 }
 function apply(el){
  const c=cfg(id(el),el);
- if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em,summary')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
- if(c.href!=null&&el instanceof HTMLAnchorElement&&el.getAttribute('href')!==String(c.href))el.setAttribute('href',String(c.href));
  applyLayout900(el,c);
  el.classList.toggle('v72grp',!!c.group);el.classList.toggle('v760locked',!!c.locked)
 }
@@ -254,56 +254,74 @@ function boxUpdate(){
  const fs=flowState();$('#v72flow').style.display='flex';$('#v72flowUp').style.display=sel.size===1?'':'none';$('#v72flowDown').style.display=sel.size===1?'':'none';$('#v72flowUp').disabled=!fs?.canUp;$('#v72flowDown').disabled=!fs?.canDown
 }
 function commit(label='Układ'){historyOpen=true;clearTimeout(historyCloseTimer);window.rafHistory900?.begin?.(label)}
-function save(label='Układ',finish=false){
- clearTimeout(saveTimer);const l=cp(layout),cl=cp(clones),f=cp(flowOrders),ids=cp(stableIds),writeIds=stableDirty,ownsHistory=historyOpen;stableDirty=false;
- saveTimer=setTimeout(async()=>{try{const jobs=[set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),cl),set(ref(db,ROOT+'/flowOrderV772'),f)];if(writeIds)jobs.push(set(ref(db,STABLE_ROOT),ids));await Promise.all(jobs);if(ownsHistory){window.rafHistory900?.commit?.(label);if(finish){window.rafHistory900?.flush?.();historyOpen=false}else{clearTimeout(historyCloseTimer);historyCloseTimer=setTimeout(()=>historyOpen=false,700)}}const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}catch(e){console.error(e);const s=$('#rafStatus3');if(s)s.textContent='⚠ Błąd zapisu: '+e.message}},90);
- const s=$('#rafStatus3');if(s)s.textContent='● Zmiany robocze';emit('change')
+function flushSave(){
+ clearTimeout(saveTimer);saveTimer=null;
+ if(!pendingSave)return writeQueue;
+ const task=pendingSave;pendingSave=null;
+ writeQueue=writeQueue.catch(()=>{}).then(async()=>{
+  try{
+   await update(ref(db,ROOT),task.data);
+   if(task.ownsHistory){window.rafHistory900?.commit?.(task.label);if(task.finish){window.rafHistory900?.flush?.();historyOpen=false}else{clearTimeout(historyCloseTimer);historyCloseTimer=setTimeout(()=>historyOpen=false,700)}}
+   const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana';
+  }catch(e){console.error(e);const s=$('#rafStatus3');if(s)s.textContent='⚠ Błąd zapisu: '+e.message;throw e}
+ });
+ return writeQueue;
 }
+function save(label='Układ',finish=false){
+ clearTimeout(saveTimer);
+ pendingSave={data:{freeLayoutV7:cp(layout),clonesV76:cp(clones),flowOrderV772:cp(flowOrders),stableIdsV900:cp(stableIds)},label,finish,ownsHistory:historyOpen};stableDirty=false;
+ saveTimer=setTimeout(()=>flushSave().catch(()=>{}),90);
+ const s=$('#rafStatus3');if(s)s.textContent='● Zmiany robocze';emit('change');
+}
+
 function applyAll(){decorate();applyFlowOrders();boxUpdate();panel();emit('change')}
 function undoNow(){return window.rafHistory900?.undo?.()||false}
 function redoNow(){return window.rafHistory900?.redo?.()||false}
 
 function beginMove(e){
- if(!sel.size)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
+ if(!sel.size)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit('Przesunięcie');
  const items=[...sel].filter(x=>!cfg(id(x),x).locked).map(el=>({el,k:id(el),x:Number(cfg(id(el),el).x)||0,y:Number(cfg(id(el),el).y)||0}));
  drag={mode:'move',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items,startBox:bounds(),targets:snapTargets()};
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function beginResize(e){
  if(sel.size>1){beginMultiResize(e);return}if(sel.size!==1)return;const el=[...sel][0],c=cfg(id(el),el);if(c.locked)return;
- e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit('Zmiana rozmiaru');
  const r=el.getBoundingClientRect(),w=el.offsetWidth||r.width,h=el.offsetHeight||r.height;
- drag={mode:'resize',dir:e.currentTarget.dataset.dir,pid:e.pointerId,sx:e.clientX,sy:e.clientY,el,k:id(el),x:Number(c.x)||0,y:Number(c.y)||0,w,h,ratio:w/Math.max(1,h),media:el.matches('img,video')};
+ drag={mode:'resize',dir:e.currentTarget.dataset.dir,pid:e.pointerId,sx:e.clientX,sy:e.clientY,el,k:id(el),x:Number(c.x)||0,y:Number(c.y)||0,w,h,ratio:w/Math.max(1,h),scale:Math.max(.05,Number(c.scale)||1),angle:(Number(c.rotate)||0)*Math.PI/180,cx:r.left+r.width/2,cy:r.top+r.height/2,media:el.matches('img,video')};
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function beginMultiResize(e){
  const dir=e.currentTarget.dataset.dir;if(dir.length!==2)return;const box=bounds();if(!box)return;
  const items=[...sel].filter(el=>!cfg(id(el),el).locked).map(el=>{const c=cfg(id(el),el),r=el.getBoundingClientRect();return{el,k:id(el),x:Number(c.x)||0,y:Number(c.y)||0,scale:Number(c.scale)||1,cx:r.left+r.width/2,cy:r.top+r.height/2}});if(items.length<2)return;
- e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit('Zmiana rozmiaru');
  const anchorX=dir.includes('w')?box.right:box.left,anchorY=dir.includes('n')?box.bottom:box.top,cornerX=dir.includes('w')?box.left:box.right,cornerY=dir.includes('n')?box.top:box.bottom,vx=cornerX-anchorX,vy=cornerY-anchorY;
  drag={mode:'multi-resize',dir,pid:e.pointerId,box,items,anchorX,anchorY,vx,vy,lastScale:1};$('#v760scaleBadge').style.display='block';
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function beginRotate(e){
  if(sel.size!==1)return;const el=[...sel][0],c=cfg(id(el),el);if(c.locked)return;
- e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit();
+ e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();commit('Obrót');
  const r=el.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
  drag={mode:'rotate',pid:e.pointerId,el,k:id(el),cx,cy,start:Number(c.rotate)||0,angle:Math.atan2(e.clientY-cy,e.clientX-cx)};
  try{e.currentTarget.setPointerCapture(e.pointerId)}catch{}
 }
 function resizeLive(e){
- const d=drag,dir=d.dir,dx=e.clientX-d.sx,dy=e.clientY-d.sy;
+ const d=drag,dir=d.dir,px=e.clientX-d.sx,py=e.clientY-d.sy,cos=Math.cos(d.angle),sin=Math.sin(d.angle),dx=(px*cos+py*sin)/d.scale,dy=(-px*sin+py*cos)/d.scale;
  let nw=d.w+(dir.includes('e')?dx:dir.includes('w')?-dx:0),nh=d.h+(dir.includes('s')?dy:dir.includes('n')?-dy:0);
  if(e.altKey){nw=d.w+(dir.includes('e')?2*dx:dir.includes('w')?-2*dx:0);nh=d.h+(dir.includes('s')?2*dy:dir.includes('n')?-2*dy:0)}
- const corner=dir.length===2,preserve=(corner&&d.media)||e.shiftKey;
+ const corner=dir.length===2,preserve=corner||e.shiftKey;
  if(preserve){
   const byW=Math.abs((nw-d.w)/Math.max(1,d.w))>=Math.abs((nh-d.h)/Math.max(1,d.h));
   if(byW)nh=nw/d.ratio;else nw=nh*d.ratio
  }
  nw=Math.max(MIN_SIZE,nw);nh=Math.max(MIN_SIZE,nh);
- let ox=dir.includes('w')?d.w-nw:0,oy=dir.includes('n')?d.h-nh:0;
- if(e.altKey){ox=(d.w-nw)/2;oy=(d.h-nh)/2}
- const c=ownCfg(d.k,d.el);c.x=d.x+ox;c.y=d.y+oy;c.width=Math.round(nw*100)/100;c.height=Math.round(nh*100)/100;apply(d.el)
+ const ax=e.altKey?0:dir.includes('w')?.5:dir.includes('e')?-.5:0,ay=e.altKey?0:dir.includes('n')?.5:dir.includes('s')?-.5:0;
+ const anchorX=d.cx+d.scale*(cos*ax*d.w-sin*ay*d.h),anchorY=d.cy+d.scale*(sin*ax*d.w+cos*ay*d.h);
+ const c=ownCfg(d.k,d.el);c.x=d.x;c.y=d.y;c.width=Math.round(nw*100)/100;c.height=Math.round(nh*100)/100;apply(d.el);
+ const r=d.el.getBoundingClientRect(),nowX=r.left+r.width/2+d.scale*(cos*ax*c.width-sin*ay*c.height),nowY=r.top+r.height/2+d.scale*(sin*ax*c.width+cos*ay*c.height);
+ c.x+=anchorX-nowX;c.y+=anchorY-nowY;apply(d.el)
+
 }
 function multiResizeLive(e){
  const d=drag,px=e.clientX-d.anchorX,py=e.clientY-d.anchorY,den=Math.max(1,d.vx*d.vx+d.vy*d.vy);let scale=(px*d.vx+py*d.vy)/den;scale=Math.max(.1,Math.min(4,scale));if(e.shiftKey)scale=Math.max(.1,Math.round(scale*20)/20);d.lastScale=scale;
@@ -349,7 +367,7 @@ function flowStep(direction){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- const fs=flowState();d.innerHTML='<small>V9.0 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • dwuklik aktywuje element<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
+ const fs=flowState();d.innerHTML='<small>V9.0 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Kliknięcie zaznacza • dwuklik edytuje tekst<br>Ruch: przeciągnij element albo użyj uchwytu ✥<br>Przeciągnięcie po pustym płótnie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0,scale:1});
  if($('#v72panelUp'))$('#v72panelUp').onclick=()=>flowStep(-1);if($('#v72panelDown'))$('#v72panelDown').onclick=()=>flowStep(1);
  $('#v72panelEdit').onclick=requestEdit;$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
@@ -385,8 +403,8 @@ function clearProps(el,keys,{commitNow=true}={}){if(!el)return;if(commitNow)comm
 function toggleLocked(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).locked;patchSelected({locked:on})}
 function toggleHidden(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).hidden;patchSelected({hidden:on})}
 function deleteSelected(){
- if(!sel.size)return 0;const count=sel.size;commit();
- sel.forEach(el=>{const c=ownCfg(id(el),el);c.deleted=true;c.hidden=true;apply(el)});
+ const deletable=[...sel].filter(el=>!cfg(id(el),el).locked);if(!deletable.length)return 0;const count=deletable.length;commit();
+ deletable.forEach(el=>{const c=ownCfg(id(el),el);c.deleted=true;c.hidden=true;apply(el)});
  save();clear();window.dispatchEvent(new CustomEvent('raf:v760-deleted',{detail:{count}}));return count
 }
 function restoreDeleted(el){if(!el)return false;commit();const c=ownCfg(id(el),el);c.deleted=false;c.hidden=false;apply(el);save();select(el,false);window.dispatchEvent(new CustomEvent('raf:v760-restored',{detail:{id:id(el)}}));return true}
@@ -436,17 +454,21 @@ function pendingMove(e,el){
  drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items,startBox:bounds(),targets:snapTargets(),sourceEl:el};el.classList.add('v760moving')
 }
 window.addEventListener('pointerdown',e=>{
+ if(document.body.classList.contains('raf-preview64'))return;
+ if(e.target.closest?.(EDITOR_UI))return;
  if(window.rafHeroMediaEditor888?.ownsEvent?.(e))return;
  if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();let el=cand(e);if((e.ctrlKey||e.metaKey)&&e.altKey&&el)el=parentCandidate(el)||el;
  if(el){
   if(e.shiftKey||e.altKey){if(sel.has(el)){sel.delete(el);el.classList.remove('v72sel')}else add(el);panel();boxUpdate();emit();suppressClickUntil=performance.now()+350;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
-  if(!sel.has(el)){clear();clearLegacySelection();add(el);panel();boxUpdate();emit()}
+  if(!sel.has(el)){clearLegacySelection();select(el,false)}
   if(!cfg(id(el),el).locked)pendingMove(e,el);suppressClickUntil=performance.now()+350;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return
  }
  clear();clearLegacySelection();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:null,moved:false,base:new Set()};suppressClickUntil=performance.now()+350;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('dblclick',e=>{
+ if(document.body.classList.contains('raf-preview64'))return;
+ if(e.target.closest?.(EDITOR_UI))return;
  if(window.rafHeroMediaEditor888?.ownsEvent?.(e))return;
  if(e.target.closest('[data-v760-inline-edit="1"]')){e.stopPropagation();e.stopImmediatePropagation();return}
  if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
@@ -466,12 +488,13 @@ function finishPointer(e){
  if(drag&&e.pointerId===drag.pid){const mode=drag.mode,scaled=mode==='multi-resize',scale=drag.lastScale,count=drag.items?.length||0;drag.sourceEl?.classList.remove('v760moving');if(['move','resize','multi-resize','rotate'].includes(mode))save(mode==='move'?'Przesunięcie':mode==='rotate'?'Obrót':'Zmiana rozmiaru',true);drag=null;panel();boxUpdate();guideHide();emit();if(scaled){const s=$('#rafStatus3');if(s)s.textContent='✓ '+count+' elementów przeskalowano do '+Math.round(scale*100)+'%'}}
 }
 window.addEventListener('pointerup',finishPointer,true);window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
-window.addEventListener('click',e=>{if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',e=>{if(e.target.closest?.(EDITOR_UI)||document.body.classList.contains('raf-preview64'))return;if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(performance.now()<suppressClickUntil){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
 window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
+ if(document.body.classList.contains('raf-preview64'))return;
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='g'){e.preventDefault();e.shiftKey?ungroup():group();return}
- if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();const anchor=sel.size?[...sel][0]:null,scope=anchor?.closest?.('[data-raf-section],header.hero')||document.querySelector('[data-raf-section],header.hero')||document.body;clear();$(CAND,scope).filter(x=>!x.closest('#rafTop3,#rafPanel3,#v72box')&&x.getClientRects().length).forEach(add);panel();boxUpdate();emit();return}
+ if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='a'){e.preventDefault();const anchor=sel.size?[...sel][0]:null,scope=anchor?.closest?.('[data-raf-section],header.hero')||document.querySelector('[data-raf-section],header.hero')||document.body;clear();$$(CAND,scope).filter(x=>!x.closest('#rafTop3,#rafPanel3,#v72box')&&x.getClientRects().length).filter(x=>!x.querySelector(CAND)).forEach(add);panel();boxUpdate();emit();return}
  if((e.ctrlKey||e.metaKey)&&['z','y'].includes(e.key.toLowerCase()))return;
  if(!sel.size)return;const s=e.shiftKey?10:1;
  if(e.key==='Delete'||e.key==='Backspace'){e.preventDefault();e.stopPropagation();deleteSelected();return}
@@ -487,9 +510,9 @@ window.addEventListener('raf:history-main',e=>{const n=e.detail?.builder;if(n?.f
  const [d,p,dc,pc,df,pf,si]=await Promise.all([get(ref(db,ROOT+'/freeLayoutV7')),get(ref(db,'website/public/builder/freeLayoutV7')),get(ref(db,ROOT+'/clonesV76')),get(ref(db,'website/public/builder/clonesV76')),get(ref(db,ROOT+'/flowOrderV772')),get(ref(db,'website/public/builder/flowOrderV772')),get(ref(db,STABLE_ROOT))]);
  layout=cp(d.exists()?d.val():(p.val()||{desktop:{},tablet:{},mobile:{}}));clones=cp(dc.exists()?dc.val():(pc.val()||[]));flowOrders=cp(df.exists()?df.val():(pf.val()||[]));stableIds=cp(si.val()||{});decorate();applyFlowOrders();
  window.rafCore900={
-  undo:undoNow,redo:redoNow,canUndo:()=>!!window.rafHistory900?.canUndo?.(),canRedo:()=>!!window.rafHistory900?.canRedo?.(),lastAt:()=>Date.now(),nextUndoAt:()=>0,nextRedoAt:()=>0,clearRedo:()=>{},applyLayout:x=>{layout=cp(x||{});applyAll()},applyState:main=>{const b=main?.builder||{};layout=cp(b.freeLayoutV7||{desktop:{},tablet:{},mobile:{}});clones=cp(Array.isArray(b.clonesV76)?b.clonesV76:[]);flowOrders=cp(Array.isArray(b.flowOrderV772)?b.flowOrderV772:[]);stableIds=cp(b.stableIdsV900||{});const keep=new Set(clones.map(x=>String(x.id)));$('[data-raf-v76-clone]').forEach(x=>{if(!keep.has(String(x.dataset.rafV76Clone)))x.remove()});sel=new Set([...sel].filter(x=>x.isConnected));applyAll()},
+  undo:undoNow,redo:redoNow,canUndo:()=>!!window.rafHistory900?.canUndo?.(),canRedo:()=>!!window.rafHistory900?.canRedo?.(),lastAt:()=>Date.now(),nextUndoAt:()=>0,nextRedoAt:()=>0,clearRedo:()=>{},applyLayout:x=>{layout=cp(x||{});applyAll()},applyState:main=>{const b=main?.builder||{};layout=cp(b.freeLayoutV7||{desktop:{},tablet:{},mobile:{}});clones=cp(Array.isArray(b.clonesV76)?b.clonesV76:[]);flowOrders=cp(Array.isArray(b.flowOrderV772)?b.flowOrderV772:[]);stableIds=cp(b.stableIdsV900||{});const keep=new Set(clones.map(x=>String(x.id)));$$('[data-raf-v76-clone]').forEach(x=>{if(!keep.has(String(x.dataset.rafV76Clone)))x.remove()});sel=new Set([...sel].filter(x=>x.isConnected));applyAll()},
   selected:()=>[...sel],selectElement:(el,append=false)=>select(el,append),selectById:k=>{const el=findById(k);if(el){select(el,false);if(!cfg(k,el).hidden)el.scrollIntoView({behavior:'smooth',block:'center'});return true}return false},clear,
-  id,cfgFor:el=>cfg(id(el),el),list,save,checkpoint:commit,patchSelected,patchOne,clearProps,typographyKeys:TYPO_KEYS,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
+  id,cfgFor:el=>cfg(id(el),el),list,save,flush:flushSave,checkpoint:commit,patchSelected,patchOne,clearProps,typographyKeys:TYPO_KEYS,duplicate:duplicateSelected,copy:copySelected,paste:pasteClipboard,copyStyle,pasteStyle,
   toggleLocked,toggleHidden,deleteSelected,restoreDeleted,front:()=>zOrder('front'),back:()=>zOrder('back'),resetTransform,rename,flowUp:()=>flowStep(-1),flowDown:()=>flowStep(1),device:dev,refresh:()=>{decorate();applyFlowOrders();boxUpdate();emit('layers')}
  };
  window.rafCore760=window.rafCore900;window.rafCore72=window.rafCore900;

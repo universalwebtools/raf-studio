@@ -1,4 +1,6 @@
 import {test,expect} from '@playwright/test';
+import {mockFirebase,seed} from './helpers/firebase.js';
+test.beforeEach(async({page})=>mockFirebase(page,seed()));
 
 test('desktop header and social icons stay sane',async({page})=>{
  await page.setViewportSize({width:1440,height:900});

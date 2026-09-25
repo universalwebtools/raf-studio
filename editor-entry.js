@@ -33,12 +33,12 @@ async function bootCurrent(){
  await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.8.8');
  await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');
  await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');
- await import('./accordion-runtime-v877.js?v=8.8.3');await import('./editor-accordion-v877.js?v=8.8.3');await load('./editor-groups-v880.js');
+ await load('./accordion-runtime-v877.js');await load('./editor-accordion-v877.js');await load('./editor-groups-v880.js');
  await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');
  await load('./editor-hero-media-v888.js');await load('./editor-hero-resize-v890.js');
  await load('./editor-chrome-v888.js');await load('./editor-dock-v889.js');
  await load('./editor-workspace-v760.js');await import('./editor-pages-v860.js?v=8.7.0');
- await import('./editor-widgets-v770.js?v=8.8.4');await import('./editor-version-history-v760.js?v=8.7.0');
+ await import('./editor-widgets-v770.js?v=8.8.4');await load('./editor-version-history-v760.js');
  await load('./direct-publish-v760.js');
  await waitEditorSettled();
 }
@@ -47,6 +47,6 @@ if(editorMode&&requested!==LATEST&&!explicitArchive){const u=new URL(location.hr
 (async()=>{try{
  await load('./hero-video-layout-v888.js');await load('./video-performance-v888.js');await load('./site-v800.js');await load('./renderer-v900.js');
  if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}
- if(!editorMode){await import('./accordion-runtime-v877.js?v=8.8.3');return}
+ if(!editorMode){await load('./accordion-runtime-v877.js');return}
  await bootCurrent()
 }catch(err){console.error('RAF 9.0 bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora 9.0: '+err.message;document.body.appendChild(box)}})();

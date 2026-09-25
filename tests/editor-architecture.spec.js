@@ -1,4 +1,5 @@
 import {test,expect} from '@playwright/test';
+import vm from 'node:vm';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 
@@ -16,8 +17,8 @@ test('Core 9 is the only current canvas mechanics owner',async()=>{
 
 test('one central version manifest drives current editor',async()=>{
  const manifest=read('editor-version.js'),mobile=read('mobile-editor.html'),entry=read('editor-entry.js'),index=read('index.html');
- expect(manifest).toContain("latest='9.0.0'");
- expect(manifest).toContain("build='9000'");
+ const context={window:{}};vm.runInNewContext(manifest,context);const version=context.window.RAF_EDITOR_VERSION;
+ expect(version.latest).toMatch(/^9\.\d+\.\d+$/);expect(version.asset).toContain(version.latest);expect(version.asset).toContain(version.build);
  expect(entry).toContain('RAF_EDITOR_VERSION');
  expect(mobile).toContain('RAF_EDITOR_VERSION');
  expect(index).toContain('/editor-version.js');
