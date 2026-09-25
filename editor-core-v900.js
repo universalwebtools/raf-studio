@@ -11,7 +11,7 @@ const cp=x=>structuredClone(x??{});
 const queryDevice=()=>new URLSearchParams(location.search).get('device');
 const dev=()=>queryDevice()|| (innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
 const TEXT='[data-home-text],[data-site-text],#heroK,#heroT,#heroD,[data-custom62="title"],[data-custom62="text"]';
-const CAND=TEXT+',[data-raf-free],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
+const CAND=TEXT+',[data-raf-free],[data-raf-v7-id],[data-raf-element]:not(.nav):not(.navlinks):not(.brand),[data-home-media],[data-raf-section],header.hero,.actions,.contactActions,.facts>.card,.offerCard54,.googleSummary54,.reviewCard54,.trustedLogo54,.raf-custom-section,[data-custom62="button"],[data-custom62="image"],[data-custom62="video"],[data-raf-v76-clone]';
 const ROOT='website/public/editorDraft/builder';
 const STABLE_ROOT=ROOT+'/stableIdsV900';
 const SNAP_DISTANCE=7;
