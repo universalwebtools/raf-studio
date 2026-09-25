@@ -1,7 +1,8 @@
 // RAF.studio 9.0 bootstrap — one version manifest, one core
 const params=new URLSearchParams(location.search),mode=params.get('editor'),manifest=window.RAF_EDITOR_VERSION||{latest:'9.0.0',build:'9000',archives:{}};
 const LATEST=manifest.latest,CURRENT_BUILD=manifest.build,RELEASES=manifest.archives||{},requested=params.get('ev')||LATEST;
-const editorMode=mode==='direct'||mode==='1';
+const editorMode=mode==='direct'||mode==='1',ASSET=manifest.asset||LATEST;
+const load=(path,tag=ASSET)=>import(path+'?v='+encodeURIComponent(tag));
 const buildFor=version=>version===LATEST?CURRENT_BUILD:(RELEASES[version]?.build||CURRENT_BUILD);
 function goEditorVersion(version,replace=false){const target=version===LATEST||RELEASES[version]?version:LATEST,u=new URL(location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',target);u.searchParams.set('_editorBuild',buildFor(target));if(target===LATEST)u.searchParams.delete('archive');else u.searchParams.set('archive','1');location[replace?'replace':'assign'](u.toString())}
 window.rafEditorBuildFor=buildFor;window.rafGoEditorVersion=goEditorVersion;window.rafEditorReleases=Object.freeze([LATEST,...Object.keys(RELEASES)]);
@@ -19,10 +20,10 @@ async function bootCurrent(){
  const path=location.pathname.toLowerCase(),portfolio=path.endsWith('/fotografia.html')||path.endsWith('/film.html')||path.endsWith('/fotografia/')||path.endsWith('/film/');
  await import('./auth-gate.js?v=3.2.1');await import('./image-webp-v60.js?v=6.5.3');
  if(portfolio){await import('./portfolio-editor.js?v=6.2.0');await import('./portfolio-page-v4.js?v=4.0.0');await import('./portfolio-chrome-v47.js?v=7.7.2');await waitEditorSettled();return}
- await import('./editor-shell-v900.js?v=9.0.0');
- await import('./renderer-v900.js?v=9.0.0');
- await import('./editor-history-v900.js?v=9.0.0');
- await import('./editor-core-v900.js?v=9.0.0');
+ await load('./editor-shell-v900.js');
+ await load('./renderer-v900.js');
+ await load('./editor-history-v900.js');
+ await load('./editor-core-v900.js');
 
  // Feature editors stay compatible, but Core 9 owns canvas selection/transforms/history.
  await import('./editor-recovery-v64.js?v=6.5.3');await import('./editor-baseline-sync-v652.js?v=7.7.2');
@@ -32,19 +33,19 @@ async function bootCurrent(){
  await import('./editor-sections-v55.js?v=5.5.0');await import('./editor-pro-v61.js?v=8.8.8');
  await import('./custom-sections-editor-v62.js?v=6.5.3');await import('./custom-section-delete-v653.js?v=6.5.3');
  await import('./editor-v70-migrate.js?v=7.0.1');await import('./template-blueprints-v75.js?v=8.7.1');await import('./blueprint-guard-v75.js?v=8.7.1');
- await import('./accordion-runtime-v877.js?v=8.8.3');await import('./editor-accordion-v877.js?v=8.8.3');await import('./editor-groups-v880.js?v=9.0.0');
+ await import('./accordion-runtime-v877.js?v=8.8.3');await import('./editor-accordion-v877.js?v=8.8.3');await load('./editor-groups-v880.js');
  await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=8.7.1');
- await import('./editor-hero-media-v888.js?v=9.0.0');await import('./editor-hero-resize-v890.js?v=9.0.0');
- await import('./editor-chrome-v888.js?v=9.0.0');await import('./editor-dock-v889.js?v=9.0.0');
- await import('./editor-workspace-v760.js?v=9.0.0');await import('./editor-pages-v860.js?v=8.7.0');
+ await load('./editor-hero-media-v888.js');await load('./editor-hero-resize-v890.js');
+ await load('./editor-chrome-v888.js');await load('./editor-dock-v889.js');
+ await load('./editor-workspace-v760.js');await import('./editor-pages-v860.js?v=8.7.0');
  await import('./editor-widgets-v770.js?v=8.8.4');await import('./editor-version-history-v760.js?v=8.7.0');
- await import('./direct-publish-v760.js?v=9.0.0');
+ await load('./direct-publish-v760.js');
  await waitEditorSettled();
 }
 const explicitArchive=params.get('archive')==='1';
 if(editorMode&&requested!==LATEST&&!explicitArchive){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild',CURRENT_BUILD);u.searchParams.delete('archive');history.replaceState(null,'',u.toString())}
 (async()=>{try{
- await import('./hero-video-layout-v888.js?v=9.0.0');await import('./video-performance-v888.js?v=9.0.0');await import('./site-v800.js?v=9.0.0');await import('./renderer-v900.js?v=9.0.0');
+ await load('./hero-video-layout-v888.js');await load('./video-performance-v888.js');await load('./site-v800.js');await load('./renderer-v900.js');
  if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}
  if(!editorMode){await import('./accordion-runtime-v877.js?v=8.8.3');return}
  await bootCurrent()
