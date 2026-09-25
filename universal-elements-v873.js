@@ -1,4 +1,4 @@
-// RAF.studio — universal editable elements hotfix v8.9.1
+// RAF.studio — universal editable elements v9.0 — FREE vs LAYOUT aware
 // Makes every real CONTENT element selectable without turning layout wrappers
 // into positioned editor objects. Also promotes plain-text leaf nodes to spans
 // so their text, typography, size and position can be edited like normal text.
@@ -34,7 +34,9 @@
  function mark(root,el){
   if(!eligible(el))return;
   if(!el.dataset.rafV7Id&&!el.dataset.rafElement&&!el.dataset.homeText&&!el.dataset.siteText&&!el.dataset.homeMedia&&!el.dataset.rafSection&&!el.dataset.rafV76Clone)el.dataset.rafV7Id=stableId(root,el);
-  el.dataset.rafFree='1'
+  let layoutNative=false;
+  try{const p=el.parentElement,d=p?getComputedStyle(p).display:'';layoutNative=d==='flex'||d==='inline-flex'||d==='grid'||d==='inline-grid'||!!el.closest('.rafHeader900')||el.matches('[data-raf-section],header.hero')}catch{}
+  if(layoutNative){delete el.dataset.rafFree;el.dataset.rafLayout='1'}else{delete el.dataset.rafLayout;el.dataset.rafFree='1'}
  }
  function markRoot(root){
   if(!eligible(root))return;promotePlainText(root);
