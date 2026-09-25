@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 import fs from 'node:fs';
+import {execFileSync} from 'node:child_process';
 
 const read=p=>fs.readFileSync(p,'utf8');
 
@@ -37,4 +38,10 @@ test('global history includes builder layout instead of splitting histories',asy
  expect(hist).not.toContain('CORE_BUILDER_KEYS');
  expect(hist).toContain('rafHistory900');
  expect(hist).toContain('rafUndo72');
+});
+
+
+test('critical RAF 9 modules pass JavaScript syntax check',async()=>{
+ const files=['editor-version.js','editor-entry.js','editor-shell-v900.js','editor-object-id-v900.js','editor-layout-engine-v900.js','renderer-v900.js','editor-history-v900.js','editor-core-v900.js','editor-chrome-v888.js','site-header-v900.js','editor-dock-v889.js','editor-dock-popout-v889.js'];
+ for(const file of files)execFileSync(process.execPath,['--check',file],{stdio:'pipe'});
 });
