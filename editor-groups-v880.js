@@ -2,7 +2,7 @@
 // Explicit merge/split controls, selection breadcrumbs and alignment inside
 // an existing group without moving the surrounding section/container.
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const VERSION='8.8.3';
+const VERSION='9.0.0';
 let core=null,queued=false;
 
 function status(t){const e=$('#rafStatus3');if(e)e.textContent=t}
@@ -59,10 +59,9 @@ function alignInside(mode){
 }
 
 function versionLabels(){
- const q=new URLSearchParams(location.search);if((q.get('ev')||VERSION)!==VERSION)return;
- const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select){let o=[...select.options].find(x=>x.value===VERSION);if(!o){o=document.createElement('option');o.value=VERSION;o.textContent='8.8.3 — WIDGET VIDEO + PARITY + SMART GROUPS';select.insertBefore(o,select.firstChild)}select.value=VERSION}
- for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V8.8.3 CORE');
- try{if(parent&&parent!==window){const b=parent.document.querySelector('.bar b');if(b&&/RESPONSIVE/i.test(b.textContent||''))b.textContent='RAF.studio — RESPONSIVE 8.8.3'}}catch{}
+ const latest=window.RAF_EDITOR_VERSION?.latest||VERSION;
+ for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V9.0 CORE');
+ const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select&&[...select.options].some(x=>x.value===latest))select.value=latest;
 }
 function wireLegacyButtons(items){const g=$('#v72g'),ug=$('#v72ug');if(g){g.textContent='🔗 SCAL ZAZNACZONE';g.disabled=items.length<2;g.onclick=mergeSelected}if(ug){ug.textContent='⛓ ROZDZIEL GRUPĘ';ug.disabled=!items.some(groupId);ug.onclick=splitGroup}}
 function render(){
@@ -71,7 +70,7 @@ function render(){
  const h3=panel.querySelector('h3');if(h3)h3.insertAdjacentElement('afterend',box);else panel.prepend(box);$$('[data-v880-align]',box).forEach(b=>b.onclick=()=>alignInside(b.dataset.v880Align))
 }
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(render)}
-for(const ev of ['raf:v760-ready','raf:v760-selection','raf:v760-change','raf:universal-elements-ready','raf:template752-rendered','raf:history-main'])window.addEventListener(ev,()=>{schedule();setTimeout(schedule,60)});
-new MutationObserver(()=>schedule()).observe(document.documentElement,{subtree:true,childList:true});
-let tries=0,t=setInterval(()=>{versionLabels();if(window.rafCore760||window.rafCore72){schedule();if(++tries>35)clearInterval(t)}},160);
+for(const ev of ['raf:v760-ready','raf:core900-ready','raf:v760-selection','raf:v760-change','raf:universal-elements-ready','raf:template752-rendered','raf:history-main'])window.addEventListener(ev,()=>requestAnimationFrame(schedule));
+const panelObserver=new MutationObserver(schedule);const watchPanel=()=>{panelObserver.disconnect();const p=$('#rafPanel3');if(p)panelObserver.observe(p,{subtree:true,childList:true})};watchPanel();window.addEventListener('raf:shell900-ready',watchPanel);
+versionLabels();schedule();
 window.rafGroups880={merge:mergeSelected,split:splitGroup,align:alignInside,breadcrumb:()=>breadcrumb(selected())};
