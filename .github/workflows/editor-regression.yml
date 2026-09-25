@@ -18,9 +18,16 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
       - run: npm install
       - run: npx playwright install --with-deps chromium
+      - name: Wait for deployed RAF 9 shell
+        run: |
+          ok=0
+          for i in $(seq 1 60); do
+            if curl -fsSL "https://raf-studio.pl/editor-version.js?ci=$(date +%s)" | grep -q "latest='9.0.0'"; then ok=1; break; fi
+            sleep 2
+          done
+          test "$ok" = "1"
       - run: npm test
       - uses: actions/upload-artifact@v4
         if: failure()
