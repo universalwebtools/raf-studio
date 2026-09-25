@@ -438,6 +438,7 @@ function pendingMove(e,el){
  drag={mode:'pending',pid:e.pointerId,sx:e.clientX,sy:e.clientY,items,startBox:bounds(),targets:snapTargets(),sourceEl:el};el.classList.add('v760moving')
 }
 window.addEventListener('pointerdown',e=>{
+ if(window.rafHeroMediaEditor888?.ownsEvent?.(e))return;
  if(e.button!==0||document.body.classList.contains('raf-crop-active')&&e.target.closest('img')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();let el=cand(e);if((e.ctrlKey||e.metaKey)&&e.altKey&&el)el=parentCandidate(el)||el;
  if(el){
@@ -448,6 +449,7 @@ window.addEventListener('pointerdown',e=>{
  clear();clearLegacySelection();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:null,moved:false,base:new Set()};suppressClickUntil=performance.now()+350;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('dblclick',e=>{
+ if(window.rafHeroMediaEditor888?.ownsEvent?.(e))return;
  if(e.target.closest('[data-v760-inline-edit="1"]')){e.stopPropagation();e.stopImmediatePropagation();return}
  if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  const el=cand(e);if(!el)return;if(!sel.has(el))select(el,false);if(editableText(el)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();beginInlineEdit(el)}
