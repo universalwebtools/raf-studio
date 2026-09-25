@@ -401,10 +401,7 @@ function list(){
  return out
 }
 
-function disarmMove(){
- if(moveArm?.el)moveArm.el.classList.remove('v760moveArmed');
- moveArm=null
-}
+function disarmMove(){/* Core 9 moves directly on first drag; legacy arm state retired. */}
 function clearLegacySelection(){
  $$('.rsel,.sel55,.pro61-selected,.custom62-selected,.weSelected').forEach(x=>x.classList.remove('rsel','sel55','pro61-selected','custom62-selected','weSelected'))
 }
