@@ -47,7 +47,7 @@
  function run(){queued=false;for(const root of roots())markRoot(root);window.rafCore760?.refresh?.();window.dispatchEvent(new CustomEvent('raf:universal-elements-ready'))}
  function schedule(){if(queued||wrapping)return;queued=true;requestAnimationFrame(run)}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
- new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
+ const universalObserver=new MutationObserver(schedule);const observeUniversalRoots=()=>{universalObserver.disconnect();for(const root of roots())universalObserver.observe(root,{childList:true,subtree:true});universalObserver.observe(document.body,{childList:true})};observeUniversalRoots();window.addEventListener('raf:template752-rendered',observeUniversalRoots);
  window.addEventListener('raf:template752-rendered',schedule);window.addEventListener('raf:template752-repair',schedule);window.addEventListener('raf:v760-ready',schedule);
  window.rafUniversalElements873={refresh:run};
 })();
