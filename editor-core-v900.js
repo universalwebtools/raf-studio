@@ -20,7 +20,7 @@ const MIN_SIZE=24;
 let layout={desktop:{},tablet:{},mobile:{}};
 let clones=[];
 let flowOrders=[];
-let stableIds={};let stableDirty=false;
+let stableIds={};let stableDirty=false,idSaveTimer=0;
 let sel=new Set();
 let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null,inlineEdit=null;
 let suppressClickUntil=0,suppressNextClick=false;
@@ -83,14 +83,12 @@ function id(el){
  if(k)el.dataset.rafV72Id=k;
  return k||legacyId(el)
 }
+function migrateLegacyCfg(k,el){
+ if(!el||!k)return;const olds=[el.dataset?.rafV7Id,legacyId(el)].filter(Boolean).filter(x=>x!==k);
+ for(const d of ['desktop','tablet','mobile']){layout[d]||={};if(layout[d][k])continue;for(const old of olds)if(layout[d][old]){layout[d][k]=cp(layout[d][old]);migrationDirty=true;break}}
+}
 function ownCfg(k,el){
- const d=dev();layout[d]||={};
- if(!layout[d][k]&&el&&el.dataset.rafV7Id){
-  const old=legacyId(el);
-  if(layout[d][old]){layout[d][k]=cp(layout[d][old]);migrationDirty=true}
- }
- layout[d][k]=layout[d][k]||{};
- return layout[d][k]
+ const d=dev();layout[d]||={};migrateLegacyCfg(k,el);layout[d][k]=layout[d][k]||{};return layout[d][k]
 }
 function cfg(k,el){const d=dev(),own=ownCfg(k,el),desk=layout.desktop?.[k]||{};return d==='desktop'?{...baseCfg(),...own}:{...baseCfg(),...desk,...own}}
 function cropApply(el,c,layoutScale=1){
@@ -154,7 +152,7 @@ function decorate(){
  css();
  $$(CAND).forEach(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return;id(el);apply(el)});
  renderClones();
- if(migrationDirty){migrationDirty=false;save()}
+ if(migrationDirty||stableDirty){clearTimeout(idSaveTimer);idSaveTimer=setTimeout(async()=>{const migrate=migrationDirty,ids=stableDirty;migrationDirty=false;stableDirty=false;try{const jobs=[];if(migrate)jobs.push(set(ref(db,ROOT+'/freeLayoutV7'),cp(layout)));if(ids)jobs.push(set(ref(db,STABLE_ROOT),cp(stableIds)));if(jobs.length)await Promise.all(jobs)}catch(e){console.error('RAF Core 9 ID migration',e);migrationDirty=migrationDirty||migrate;stableDirty=stableDirty||ids}},180)}
 }
 
 function emit(type='selection'){window.dispatchEvent(new CustomEvent('raf:v760-'+type,{detail:{ids:[...sel].map(id),elements:[...sel]}}))}
