@@ -15,7 +15,7 @@ function apply(key,cfg){const imgs=[...document.querySelectorAll(`[data-home-med
   pre.onload=()=>{img.src=src;img.dataset.loadedSrc=src;requestAnimationFrame(()=>{applyVisual(img,d,true)})};
   pre.onerror=()=>{console.warn('RAF.studio: nie udało się wczytać obrazu',key,src);img.style.opacity='0'};pre.src=src}
 }
-function render(raw={}){if(window.RAF_RENDERER900_ACTIVE)return;current=raw;for(const key of Object.keys(defaults))apply(key,{...defaults[key],...(raw[key]||{})})}
+function render(raw={}){current=raw;for(const key of Object.keys(defaults))apply(key,{...defaults[key],...(raw[key]||{})})}
 if(!EDITOR_MODE)onValue(ref(db,`${WEBSITE_ROOT}/public/homeMedia`),s=>render(s.val()||{}));
 addEventListener('resize',()=>{if(!EDITOR_MODE)render(current)});
 addEventListener('raf:template752-rendered',()=>{if(!EDITOR_MODE)requestAnimationFrame(()=>render(current))});

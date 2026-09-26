@@ -1,6 +1,6 @@
 // RAF.studio — 101 template picker v8.7.1 — wide previews + search + filters
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,set,update} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {TEMPLATES752,TEMPLATE_IDS752} from './template-engine-v752.js?v=8.7.1';
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],ROOT='website/public';
 const PIC=(id,r,w=1800,h=1100)=>`https://picsum.photos/seed/raf752-${id}-${r}/${w}/${h}`,VID='https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4';
@@ -39,16 +39,8 @@ function css(){if($('#tpl752css'))return;const s=document.createElement('style')
 @media(max-width:1000px){#tpl752{grid-template-columns:1fr}.tp752side{display:none}.tp752grid{grid-template-columns:repeat(2,minmax(240px,1fr))}}
 @media(max-width:680px){#tpl752{top:54px;right:4px;bottom:4px;left:4px;border-radius:12px}.tp752grid{grid-template-columns:1fr;padding:12px}.tp752head{padding:10px 12px}.tp752head b{font-size:15px!important}}`;document.head.appendChild(s)}
 async function backup(){const [a,b,c]=await Promise.all([get(ref(db,`${ROOT}/editorDraft`)),get(ref(db,`${ROOT}/editorExtrasDraft`)),get(ref(db,`${ROOT}/proV6Draft`))]);await set(ref(db,`${ROOT}/templateBackupLatest`),{savedAt:Date.now(),editorDraft:a.val()||{},extras:b.val()||{},pro:c.val()||{}})}
-async function fullStart(id){
- if(!confirm(`PEŁNY NOWY PROJEKT: ${TEMPLATES752[id].name}\n\nWczytuję projekt do szkicu. Obecny projekt zostaje w kopii zapasowej. Strona online zmieni się po publikacji.`))return;
- await window.rafStudio910?.flush?.();await window.rafVersions760?.capture?.('before_template','Przed zmianą szablonu',{source:'draft',quiet:true});
- const d=demo(id);await backup();const old=(await get(ref(db,`${ROOT}/editorDraft/builder/studio910`))).val()||{};
- // Media and reusable section masters belong to the project library.
- d.builder.studio910={media:old.media||{},folders:old.folders||[],library:old.library||{}};
- const main={site:d.site,homeContent:d.homeContent,homeMedia:d.homeMedia,visualStyles:{texts:{},sections:{}},builder:d.builder,photos:d.photos,films:d.films,reviews:[],clients:[]};
- await update(ref(db,ROOT),{editorDraft:main,editorExtrasDraft:{reviews:[],clients:[],offers:[],reviewSettings:{},brandSettings:{},offerSettings:{}},proV6Draft:d.pro});location.reload();
-}
-async function styleOnly(id){await window.rafStudio910?.flush?.();await window.rafVersions760?.capture?.('before_template','Przed zmianą układu',{source:'draft',quiet:true});const snap=await get(ref(db,`${ROOT}/editorDraft`)),d=snap.val()||{};d.builder||={};delete d.builder.templateV75;d.builder.templateV752={id,appliedAt:Date.now()};d.builder.freeLayoutV7={desktop:{},tablet:{},mobile:{}};await set(ref(db,`${ROOT}/editorDraft`),d);location.reload()}
+async function fullStart(id){if(!confirm(`PEŁNY NOWY PROJEKT: ${TEMPLATES752[id].name}\n\nWczytuję dokładnie projekt widoczny na podglądzie. Stary projekt zostaje w backupie.`))return;const d=demo(id);await backup();const main={site:d.site,homeContent:d.homeContent,homeMedia:d.homeMedia,visualStyles:{texts:{},sections:{}},builder:d.builder,photos:d.photos,films:d.films,reviews:[],clients:[]};await Promise.all([set(ref(db,`${ROOT}/editorDraft`),main),set(ref(db,`${ROOT}/editorExtrasDraft`),{reviews:[],clients:[],offers:[],reviewSettings:{},brandSettings:{},offerSettings:{}}),set(ref(db,`${ROOT}/proV6Draft`),d.pro),set(ref(db,`${ROOT}/site`),d.site),set(ref(db,`${ROOT}/homeContent`),d.homeContent),set(ref(db,`${ROOT}/homeMedia`),d.homeMedia),set(ref(db,`${ROOT}/visualStyles`),{texts:{},sections:{}}),set(ref(db,`${ROOT}/builder`),d.builder),set(ref(db,`${ROOT}/photos`),d.photos),set(ref(db,`${ROOT}/films`),d.films),set(ref(db,`${ROOT}/reviews`),[]),set(ref(db,`${ROOT}/clients`),[]),set(ref(db,`${ROOT}/offers`),[]),set(ref(db,`${ROOT}/reviewSettings`),{}),set(ref(db,`${ROOT}/brandSettings`),{}),set(ref(db,`${ROOT}/offerSettings`),{}),set(ref(db,`${ROOT}/proV6`),d.pro)]);location.reload()}
+async function styleOnly(id){const snap=await get(ref(db,`${ROOT}/editorDraft`)),d=snap.val()||{};d.builder||={};delete d.builder.templateV75;d.builder.templateV752={id,appliedAt:Date.now()};d.builder.freeLayoutV7={desktop:{},tablet:{},mobile:{}};await set(ref(db,`${ROOT}/editorDraft`),d);location.reload()}
 const previewUrl=id=>`template-preview-v752.html?preset=${encodeURIComponent(id)}&_v=871`;
 const fullPreviewUrl=id=>`/?tplPreview=${encodeURIComponent(id)}&_templateBuild=871`;
 function lazyFrames(root){if(!('IntersectionObserver'in window)){ $$('iframe[data-src]',root).forEach(f=>f.src=f.dataset.src);return }const io=new IntersectionObserver(entries=>entries.forEach(e=>{if(!e.isIntersecting)return;const f=e.target;if(f.dataset.src&&!f.src)f.src=f.dataset.src;io.unobserve(f)}),{root,rootMargin:'500px'});$$('iframe[data-src]',root).forEach(f=>io.observe(f))}
