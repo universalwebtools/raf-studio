@@ -43,6 +43,6 @@ test('global history includes builder layout instead of splitting histories',asy
 
 
 test('critical RAF 9 modules pass JavaScript syntax check',async()=>{
- const files=['editor-version.js','editor-entry.js','editor-shell-v900.js','editor-object-id-v900.js','editor-layout-engine-v900.js','renderer-v900.js','editor-history-v900.js','editor-core-v900.js','editor-chrome-v888.js','site-header-v900.js','editor-dock-v889.js','editor-dock-popout-v889.js'];
+ const files=['editor-studio-v910.js','editor-studio-data-v910.js','studio-runtime-v910.js','direct-publish-v760.js','editor-version-history-v760.js','editor-version.js','editor-entry.js','editor-shell-v900.js','editor-object-id-v900.js','editor-layout-engine-v900.js','renderer-v900.js','editor-history-v900.js','editor-core-v900.js','editor-chrome-v888.js','site-header-v900.js','editor-dock-v889.js','editor-dock-popout-v889.js'];
  for(const file of files)execFileSync(process.execPath,['--check',file],{stdio:'pipe'});
 });

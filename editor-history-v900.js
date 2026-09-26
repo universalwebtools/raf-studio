@@ -2,6 +2,12 @@
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,update,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
+// The responsive canvas is a view of the same document and shares its history.
+if(new URLSearchParams(location.search).has('studioFrame')&&parent!==window&&parent.rafHistory900){
+ window.rafHistory900=parent.rafHistory900;
+ window.rafUndo72=()=>parent.rafHistory900.undo();window.rafRedo72=()=>parent.rafHistory900.redo();
+ window.addEventListener('keydown',e=>{if(new URLSearchParams(location.search).has('studioPreview')||!(e.ctrlKey||e.metaKey)||e.altKey)return;const key=e.key.toLowerCase();if(!['z','y'].includes(key))return;e.preventDefault();e.stopImmediatePropagation();document.activeElement?.blur();parent.rafHistory900[key==='y'||e.shiftKey?'redo':'undo']();},true);
+}else{
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s);
 const P={main:'website/public/editorDraft',extras:'website/public/editorExtrasDraft',pro:'website/public/proV6Draft',pages:'website/public/customPagesDraft'};
 const KEY='rafHistory900';
@@ -59,6 +65,7 @@ async function writeState(state){
   window.dispatchEvent(new CustomEvent('raf:history-pages',{detail:state?.pages||{}}));
   window.rafRenderer900?.apply?.(state?.main||{});
   window.rafCore900?.applyState?.(state?.main||{});
+  const active=window.rafStudio910?.workWindow?.();if(active&&active!==window){active.rafRenderer900?.apply?.(state?.main||{});active.rafCore900?.applyState?.(state?.main||{});}
  }finally{busy=false;paint()}
 }
 async function undoNow(){
@@ -71,7 +78,7 @@ async function redoNow(){
  const item=redo.at(-1),before=cp(current);
  await writeState(item.state);redo.pop();undo.push({state:before,label:item.label,at:Date.now()});persist();status('✓ Ponowiono: '+(item.label||'zmianę'));return true
 }
-function queued(kind){queue=queue.then(async()=>{await window.rafCore900?.flush?.();return kind==='redo'?redoNow():undoNow()}).catch(e=>{console.error('RAF history 9',e);status('⚠ Historia: '+e.message);return false});return queue}
+function queued(kind){queue=queue.then(async()=>{if(window.rafStudio910?.flush)await window.rafStudio910.flush();else await window.rafCore900?.flush?.();return kind==='redo'?redoNow():undoNow()}).catch(e=>{console.error('RAF history 9',e);status('⚠ Historia: '+e.message);return false});return queue}
 function previewStyle(){if($('#rafPreview900Css'))return;const s=document.createElement('style');s.id='rafPreview900Css';s.textContent='body.raf-preview64 #rafTop3,body.raf-preview64 #rafPanel3,body.raf-preview64 #v72box,body.raf-preview64 #v760layers,body.raf-preview64 #rafDockLauncher889,body.raf-preview64 #rafHeaderEdit900{display:none!important}#rafPreview900Back{position:fixed;right:18px;top:18px;z-index:1000060;border:1px solid #ffffff35;background:#111e;color:#fff;border-radius:999px;padding:11px 16px;font:700 12px system-ui;cursor:pointer}';document.head.appendChild(s)}
 function setPreview(on){previewStyle();preview=!!on;document.body.classList.toggle('raf-preview64',preview);let b=$('#rafPreview900Back');if(preview){if(!b){b=document.createElement('button');b.id='rafPreview900Back';b.textContent='← Wróć do edycji';b.onclick=()=>setPreview(false);document.body.appendChild(b)}b.style.display='block'}else if(b)b.style.display='none';window.dispatchEvent(new CustomEvent('raf:preview900-changed',{detail:{preview}}))}
 function sourceLabel(target){
@@ -98,8 +105,9 @@ window.addEventListener('keydown',e=>{
  const active=document.activeElement;if(active?.isContentEditable)active.blur();
  queued(k==='y'||(k==='z'&&e.shiftKey)?'redo':'undo')
 },true);
-document.addEventListener('click',e=>{const b=e.target.closest?.('#u3,#r3,#preview3');if(!b)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(b.id==='u3')queued('undo');else if(b.id==='r3')queued('redo');else setPreview(true)},true);
+document.addEventListener('click',e=>{const b=e.target.closest?.('#u3,#r3,#preview3');if(!b)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(b.id==='u3')queued('undo');else if(b.id==='r3')queued('redo');else if(window.rafStudio910)window.rafStudio910.open('responsive');else setPreview(true)},true);
 document.addEventListener('input',e=>noteExternal(e.target),true);document.addEventListener('change',e=>noteExternal(e.target),true);
 window.rafHistory900={begin,commit,flush:finalizeNow,undo:()=>queued('undo'),redo:()=>queued('redo'),canUndo:()=>undo.length>0,canRedo:()=>redo.length>0,current:()=>cp(current),preview:setPreview};
 window.rafUndo72=()=>queued('undo');window.rafRedo72=()=>queued('redo');window.rafPreview72=setPreview;
 window.dispatchEvent(new CustomEvent('raf:history900-ready'));
+}
