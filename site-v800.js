@@ -1,7 +1,7 @@
 // RAF.studio public shell v8.9.3 — clean URLs, privacy, responsive layer + editable header
 import './privacy-center-v800.js?v=8.7.0';
 import './form-protection-v800.js?v=8.7.0';
-import './site-header-v900.js?v=8.9.3';
+import './site-header-v900.js?v=893-six-1';
 
 const Q=new URLSearchParams(location.search),EDITOR=Q.has('editor'),PREVIEW=Q.has('tplPreview');
 const cleanPath=p=>{

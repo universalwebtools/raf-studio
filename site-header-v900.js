@@ -57,7 +57,7 @@ function targetFor(i){const selectors=[
  ['[data-e752-sec="journal"]','[data-e752-sec="story"]','[data-e752-sec="archive"]'],
  ['#kontakt','[data-e752-sec="contact"]','[data-home-section="Contact"]','[data-raf-section="Contact"]']
  ][i]||[];for(const sel of selectors){const el=$(sel);if(el&&!el.closest('.rafHeader900'))return el}return null}
-function ensureAnchors(){['raf-oferta','raf-portfolio','raf-opinie','raf-blog','raf-kontakt'].forEach((id,i)=>{const t=targetFor(i);if(t&&!document.getElementById(id))t.id=id})}
+function ensureAnchors(){if(document.body.dataset.t6)return;['raf-oferta','raf-portfolio','raf-opinie','raf-blog','raf-kontakt'].forEach((id,i)=>{const t=targetFor(i);if(t&&!document.getElementById(id))t.id=id})}
 function socialHref(s){return String(s?.url||'').trim()||'#'}
 function render(){injectCss();cfg=normalize(cfg);ensureAnchors();
  if(!header){header=document.createElement('nav');header.className='nav rafHeader900';header.setAttribute('aria-label','Główne menu RAF.studio');document.body.prepend(header)}
@@ -103,7 +103,7 @@ function renderPanel(){const p=$('#rafPanel3');if(!p||!EDITOR)return;const c=nor
 }
 function openPanel(){if(!EDITOR)return;renderPanel();const s=$('#rafStatus3');if(s)s.textContent='✎ Edycja headera — każdy element możesz też zaznaczyć bezpośrednio'}
 function observe(){let t=0;new MutationObserver(ms=>{if(ms.some(m=>[...m.addedNodes].some(n=>n.nodeType===1&&(n.matches?.('#rafTemplate752,[data-e752-sec],header.hero')||n.querySelector?.('[data-e752-sec],header.hero'))))){clearTimeout(t);t=setTimeout(()=>{ensureAnchors();document.querySelectorAll('body>nav.nav:not(.rafHeader900),#rafTemplate752 .e752nav').forEach(x=>x.style.setProperty('display','none','important'));if(header&&!header.isConnected)header=null;render()},80)}}).observe(document.documentElement,{subtree:true,childList:true})}
-function boot(){injectCss();onValue(ref(db,PATH),s=>{cfg=normalize(s.val()||DEFAULT);render()});observe();for(const ev of ['raf:template752-rendered','raf:template752-repair','raf:v800-ready'])addEventListener(ev,()=>setTimeout(()=>{ensureAnchors();render()},70));if(EDITOR)setTimeout(ensureBadge,700)}
+function boot(){injectCss();if(PREVIEW&&window.rafTemplatePreviewHeader){cfg=normalize(window.rafTemplatePreviewHeader);render()}else onValue(ref(db,PATH),s=>{cfg=normalize(s.val()||DEFAULT);render()});observe();for(const ev of ['raf:template752-rendered','raf:template752-repair','raf:v800-ready'])addEventListener(ev,()=>setTimeout(()=>{ensureAnchors();render()},70));if(EDITOR)setTimeout(ensureBadge,700)}
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 window.rafSiteHeader900={open:openPanel,render:()=>render(),getConfig:()=>structuredClone(cfg),preset:()=>{cfg=structuredClone(DEFAULT);render();queueSave()}};
 
