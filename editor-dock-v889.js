@@ -1,4 +1,4 @@
-// RAF.studio — dockable editor UI / clean canvas v9.0
+// RAF.studio — dockable editor UI / clean canvas v8.8.9
 const $=(s,r=document)=>r.querySelector(s);
 const state={top:null,inspector:null,context:null,all:null,clean:false};
 const LS='rafDock889:';
@@ -19,7 +19,7 @@ function launcher(){if($('#rafDockLauncher889'))return;const l=document.createEl
 function addTopButton(){const top=$('#rafTop3');if(!top||$('#rafDockTopInline889'))return;const b=document.createElement('button');b.id='rafDockTopInline889';b.dataset.rafDockIgnore='1';b.textContent='⧉ ODCEPIJ';b.title='Odczep panele / czyste płótno';b.onclick=()=>$('#rafDockBtn889')?.click();top.appendChild(b)}
 function watchWindows(){for(const k of ['top','inspector','context','all'])if(state[k]?.closed)notifyClosed(k)}
 function init(){inject();launcher();addTopButton();state.clean=localStorage.getItem(LS+'clean')==='1';document.body.classList.toggle('rafCleanCanvas889',state.clean);paint();return !!$('#rafTop3')}
-let tries=0;const boot=()=>{if(init()||++tries>160)return;requestAnimationFrame(boot)};boot();const mo=new MutationObserver(()=>addTopButton());mo.observe(document.body,{childList:true,subtree:false});addEventListener('focus',watchWindows);document.addEventListener('visibilitychange',()=>{if(!document.hidden)watchWindows()});
+let tries=0,t=setInterval(()=>{if(init()||++tries>160)clearInterval(t)},60);setInterval(()=>{addTopButton();watchWindows()},500);
 addEventListener('keydown',e=>{if(e.key==='Tab'&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const a=document.activeElement;if(a?.matches?.('input,textarea,select,[contenteditable="true"]'))return;e.preventDefault();clean()}if(e.key==='Escape'&&state.clean)clean(false)},true);
 addEventListener('beforeunload',()=>{for(const k of ['top','inspector','context','all'])try{state[k]?.close()}catch{}});
 window.rafDock889={detach,attach,attachAll,notifyClosed,clean,isClean:()=>state.clean};

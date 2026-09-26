@@ -55,7 +55,7 @@ body.rafCleanCanvas889 #rafHeroToolbar890,body.rafCleanCanvas889 .rafHeroResizeH
   addEventListener('raf:v760-selection',()=>setTimeout(()=>{try{const a=(window.rafCore760||window.rafCore72)?.selected?.()||[];if(a.some(el=>el?.matches?.('.rafHeroVideoWrap61,.rafHeroVideo61')||el?.closest?.('.rafHeroVideoWrap61'))){(window.rafCore760||window.rafCore72)?.clear?.();ensureSelected()}}catch{}schedule()},0));
   for(const ev of ['raf:template752-rendered','raf:universal-elements-ready','raf:history-pro'])addEventListener(ev,()=>setTimeout(schedule,80));
   addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule,{passive:true});
-  const selectionChanged=()=>{lastSelected=isSelected();schedule()};for(const ev of ['raf:v760-selection','raf:hero-video-selection888','raf:history-pro','pointerup'])addEventListener(ev,selectionChanged);
+  const watch=setInterval(()=>{const s=isSelected();if(s!==lastSelected){lastSelected=s;schedule()}if(s)schedule()},220);
   setTimeout(schedule,500);
   window.rafHeroResize890={zoom:setZoom,fit:setFit,select:()=>{ensureSelected();schedule()},refresh:schedule};
 })();

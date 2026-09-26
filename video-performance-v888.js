@@ -23,11 +23,10 @@
  if('IntersectionObserver'in window){io=new IntersectionObserver(es=>{if(EDITOR&&!inPreview())return;for(const e of es){const v=e.target;if(e.isIntersecting&&document.visibilityState==='visible')resumeVideo(v,true);else try{v.pause()}catch{}}},{rootMargin:'220px 0px',threshold:.01});frameIo=new IntersectionObserver(es=>{if(EDITOR&&!inPreview())return;for(const e of es)if(e.isIntersecting&&inPreview())resumeFrame(e.target)},{rootMargin:'220px 0px',threshold:.01})}
  document.addEventListener('play',e=>{const v=e.target;if(!(v instanceof HTMLVideoElement))return;markVideo(v);if(EDITOR&&!inPreview())queueMicrotask(()=>pauseVideo(v))},true);
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState!=='visible')for(const v of videos)try{v.pause()}catch{}else schedule()});
- addEventListener('raf:preview900-changed',schedule);
  addEventListener('scroll',schedule,{passive:true});addEventListener('resize',schedule,{passive:true});
- const perfObserver=new MutationObserver(ms=>{for(const m of ms)if(m.type==='childList')for(const n of m.addedNodes)if(n.nodeType===1)prepare(n);schedule()});const observeVideoRoots=()=>{perfObserver.disconnect();for(const root of [document.querySelector('#rafMain'),document.querySelector('#rafTemplate752'),document.querySelector('.rafHeader900')].filter(Boolean))perfObserver.observe(root,{subtree:true,childList:true});perfObserver.observe(document.body,{childList:true})};observeVideoRoots();window.addEventListener('raf:template752-rendered',observeVideoRoots);
+ new MutationObserver(ms=>{for(const m of ms)if(m.type==='childList')for(const n of m.addedNodes)if(n.nodeType===1)prepare(n);schedule()}).observe(document.documentElement,{subtree:true,childList:true});
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',()=>{prepare();schedule()},{once:true});else{prepare();schedule()}
- addEventListener('focus',()=>{if(EDITOR&&!inPreview())sync()});
+ setInterval(()=>{if(EDITOR&&!inPreview())sync()},1800);
  window.rafVideoPerformance888={refresh:()=>{prepare();sync()},stats:()=>({videos:[...videos].filter(x=>x.isConnected).length,playing:[...videos].filter(x=>x.isConnected&&!x.paused).length,editorSuspended:[...videos].filter(x=>x.dataset.rafEditorSuspended888==='1').length,frames:[...frames].filter(x=>x.isConnected).length})};
  window.rafVideoPerformance884=window.rafVideoPerformance888;
 })();

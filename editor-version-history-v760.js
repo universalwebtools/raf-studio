@@ -1,6 +1,6 @@
 // RAF.studio — durable version history and rollback v8.7.0
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,set,remove,update} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getDatabase,ref,get,set,remove} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getAuth,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
 
 const app=getApp(),db=getDatabase(app),auth=getAuth(app),ROOT='website/public',HISTORY=ROOT+'/versionHistoryV76',LIMIT=12;
@@ -22,9 +22,8 @@ async function readPublished(){
 }
 async function prune(){const all=await read(HISTORY),rows=Object.entries(all).sort((a,b)=>(b[1]?.meta?.createdAt||0)-(a[1]?.meta?.createdAt||0));await Promise.all(rows.slice(LIMIT).map(([k])=>remove(ref(db,HISTORY+'/'+k))))}
 async function capture(type='manual',label='Ręczny punkt przywracania',{source='draft',quiet=false}={}){
- await allowed();if(window.rafStudio910?.flush)await window.rafStudio910.flush();else await window.rafCore900?.flush?.();const data=source==='published'?await readPublished():await readDraft(),now=Date.now(),key=String(now)+'_'+Math.random().toString(36).slice(2,6);
- const snap={meta:{createdAt:now,type,label:String(label||'Wersja').slice(0,100),source,editorVersion:window.RAF_EDITOR_VERSION?.latest||'9.0.0'},data:cp(data)};
- if((source==='draft'||type==='published')&&window.rafStudio910?.snapshot)snap.meta.previewHTML=window.rafStudio910.snapshot();
+ await allowed();const data=source==='published'?await readPublished():await readDraft(),now=Date.now(),key=String(now)+'_'+Math.random().toString(36).slice(2,6);
+ const snap={meta:{createdAt:now,type,label:String(label||'Wersja').slice(0,100),source,editorVersion:'8.7.0'},data:cp(data)};
  await set(ref(db,HISTORY+'/'+key),snap);await prune();lastAutomatic=type==='automatic'?now:lastAutomatic;if(!quiet){status('✓ Zapisano punkt przywracania');await load();open(key)}return{key,snapshot:snap}
 }
 function niceDate(ts){try{return new Intl.DateTimeFormat('pl-PL',{dateStyle:'short',timeStyle:'short'}).format(new Date(ts))}catch{return new Date(ts).toLocaleString()}}
@@ -41,10 +40,10 @@ function renderList(){const box=$('#vhList');if(!box)return;if(!items.length){bo
 function renderPreview(){const box=$('#vhPreview');if(!box)return;const s=items.find(x=>x.key===selectedKey);if(!s){box.innerHTML='<div class="vhEmpty">Wybierz wersję po lewej.</div>';return}const z=summary(s),urls=firstUrls(s);box.innerHTML='<div class="vhHero"><h3>'+esc(z.title)+'</h3></div>'+(urls.length?'<div class="vhImages">'+urls.map(u=>'<img src="'+esc(u)+'" alt="">').join('')+'</div>':'')+'<div class="vhStats"><div class="vhStat"><b>'+z.count+'</b><small>zmienionych elementów</small></div><div class="vhStat"><b>'+z.clones+'</b><small>duplikatów</small></div><div class="vhStat"><b>'+z.widgets+'</b><small>widżetów</small></div></div><p style="color:#aaa;line-height:1.5">'+esc(s.meta?.label||'')+'<br><small>'+esc(niceDate(s.meta?.createdAt))+' • RAF Editor '+esc(s.meta?.editorVersion||'')+'</small></p><div class="vhActions"><button class="rename" id="vhRename">✎ Zmień nazwę</button><button class="primary" id="vhRestoreDraft">Przywróć do edytora</button><button id="vhRestorePublic">Przywróć i opublikuj</button><button id="vhDelete">Usuń kopię</button></div>';
  $('#vhRename').onclick=()=>rename(s);$('#vhRestoreDraft').onclick=()=>restoreDraft(s);$('#vhRestorePublic').onclick=()=>restorePublic(s);$('#vhDelete').onclick=()=>drop(s)
 }
-const canon=x=>{if(x==null)return null;if(typeof x!=='object')return x;const entries=Object.keys(x).sort().map(k=>[k,canon(x[k])]).filter(([,v])=>v!==null);return entries.length?Object.fromEntries(entries):null};
+const canon=x=>{if(Array.isArray(x))return x.map(canon);if(x&&typeof x==='object')return Object.fromEntries(Object.keys(x).sort().map(k=>[k,canon(x[k])]));return x};
 const same=(a,b)=>JSON.stringify(canon(a))===JSON.stringify(canon(b));
 async function prepareDraft(data){const out=cp(data||{});out.main||={};out.main.builder||={};if(!Object.prototype.hasOwnProperty.call(out,'pages')){const draftSnap=await get(ref(db,ROOT+'/customPagesDraft'));out.pages=draftSnap.exists()?unwrapPages(draftSnap.val()):await read(ROOT+'/customPages')}const publishedAt=Number((await get(ref(db,ROOT+'/publishedAt'))).val()||0);if(publishedAt)out.main.builder.basePublishedAt=publishedAt;out.main.builder.recoveredV64='2';return out}
-async function writeDraft(data){const safe=await prepareDraft(data),pageItems=safe.pages||{},paths={editorDraft:safe.main||{},editorExtrasDraft:safe.extras||{},proV6Draft:safe.pro||{},customPagesDraft:{version:860,...(Object.keys(pageItems).length?{items:pageItems}:{})}};await update(ref(db,ROOT),paths);const checks=await Promise.all(Object.entries(paths).map(async([key,value])=>same((await get(ref(db,ROOT+'/'+key))).val()||{},value)));if(checks.some(x=>!x))throw new Error('Firebase nie potwierdził przywrócenia wersji roboczej 1:1. Spróbuj ponownie.');return safe}
+async function writeDraft(data){const safe=await prepareDraft(data),pageItems=safe.pages||{},paths={editorDraft:safe.main||{},editorExtrasDraft:safe.extras||{},proV6Draft:safe.pro||{},customPagesDraft:{version:860,...(Object.keys(pageItems).length?{items:pageItems}:{})}};await Promise.all(Object.entries(paths).map(([key,value])=>set(ref(db,ROOT+'/'+key),value)));const checks=await Promise.all(Object.entries(paths).map(async([key,value])=>same((await get(ref(db,ROOT+'/'+key))).val()||{},value)));if(checks.some(x=>!x))throw new Error('Firebase nie potwierdził przywrócenia wersji roboczej 1:1. Spróbuj ponownie.');return safe}
 async function writePublic(data){const m=data.main||{},extras=data.extras||{},writes=[set(ref(db,ROOT+'/site'),cp(m.site)),set(ref(db,ROOT+'/homeContent'),cp(m.homeContent)),set(ref(db,ROOT+'/homeMedia'),cp(m.homeMedia)),set(ref(db,ROOT+'/visualStyles'),cp(m.visualStyles)),set(ref(db,ROOT+'/builder'),cp(m.builder)),set(ref(db,ROOT+'/photos'),cp(m.photos)),set(ref(db,ROOT+'/films'),cp(m.films)),set(ref(db,ROOT+'/proV6'),cp(data.pro)),set(ref(db,ROOT+'/customPages'),cp(data.pages))];for(const k of ['reviews','clients','offers','reviewSettings','brandSettings','offerSettings'])writes.push(set(ref(db,ROOT+'/'+k),cp(extras[k])));writes.push(set(ref(db,ROOT+'/publishedAt'),Date.now()));await Promise.all(writes)}
 async function rename(s){const current=String(s.meta?.label||'Wersja'),name=prompt('Nowa nazwa tej wersji:',current);if(name===null)return;const clean=String(name).trim().slice(0,100);if(!clean){alert('Nazwa wersji nie może być pusta.');return}try{await allowed();status('Zmieniam nazwę wersji…');await set(ref(db,HISTORY+'/'+s.key+'/meta/label'),clean);s.meta||={};s.meta.label=clean;status('✓ Nazwa wersji została zmieniona');renderList()}catch(e){alert('Nie udało się zmienić nazwy: '+(e?.message||e))}}
 async function restoreDraft(s){if(!confirm('Przywrócić tę wersję tylko do edytora? Obecny szkic zostanie zastąpiony, a strona publiczna pozostanie bez zmian.'))return;try{await allowed();status('Zatrzymuję bieżący zapis i przywracam wersję…');await new Promise(r=>setTimeout(r,750));await writeDraft(s.data||{});for(const key of ['rafHistory72','rafHistory631','rafHistory632','rafHistory64'])try{sessionStorage.removeItem(key)}catch{}try{sessionStorage.setItem('rafVersionRestored830',String(Date.now()))}catch{}status('✓ Przywrócono tylko do edytora — strona online bez zmian');const u=new URL(location.href);u.searchParams.set('_restored',String(Date.now()));location.replace(u.toString())}catch(e){alert('Nie udało się przywrócić wersji: '+(e?.message||e))}}
@@ -58,12 +57,4 @@ function automatic(){clearTimeout(autoTimer);autoTimer=setTimeout(async()=>{if(D
 let tries=0,t=setInterval(()=>{if(addButton()||++tries>120)clearInterval(t)},50);
 window.addEventListener('raf:v760-change',automatic);
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&modal?.classList.contains('open'))close()});
-async function restoreToDraft(value){
- await allowed();if(window.rafStudio910?.flush)await window.rafStudio910.flush();else await window.rafCore900?.flush?.();
- await capture('before_rollback','Przed przywróceniem szkicu',{source:'draft',quiet:true});
- window.rafHistory900?.flush();window.rafHistory900?.begin('Przywróć wersję');const safe=await writeDraft(value);
- for(const [part,event] of [['main','main'],['extras','extras'],['pro','pro'],['pages','pages']])window.dispatchEvent(new CustomEvent('raf:history-'+event,{detail:safe[part]||{}}));
- window.rafRenderer900?.apply(safe.main);window.rafCore900?.applyState(safe.main);window.rafHistory900?.commit('Przywróć wersję');window.rafHistory900?.flush();return safe;
-}
-async function renameKey(key,label){await allowed();await set(ref(db,HISTORY+'/'+key+'/meta/label'),String(label).slice(0,100))}
-window.rafVersions760={capture,open,load,readDraft,readPublished,restoreToDraft,renameKey};
+window.rafVersions760={capture,open,load,readDraft,readPublished};

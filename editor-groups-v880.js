@@ -2,8 +2,8 @@
 // Explicit merge/split controls, selection breadcrumbs and alignment inside
 // an existing group without moving the surrounding section/container.
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
-const VERSION='9.0.0';
-let core=null,queued=false,lastPanel=null,lastSignature='';
+const VERSION='8.8.3';
+let core=null,queued=false;
 
 function status(t){const e=$('#rafStatus3');if(e)e.textContent=t}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]))}
@@ -59,18 +59,19 @@ function alignInside(mode){
 }
 
 function versionLabels(){
- const latest=window.RAF_EDITOR_VERSION?.latest||VERSION;
- for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V9.0 CORE');
- const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select&&[...select.options].some(x=>x.value===latest))select.value=latest;
+ const q=new URLSearchParams(location.search);if((q.get('ev')||VERSION)!==VERSION)return;
+ const select=$('#editorVersion770 select,[id^="editorVersion"] select');if(select){let o=[...select.options].find(x=>x.value===VERSION);if(!o){o=document.createElement('option');o.value=VERSION;o.textContent='8.8.3 — WIDGET VIDEO + PARITY + SMART GROUPS';select.insertBefore(o,select.firstChild)}select.value=VERSION}
+ for(const el of $$('#v72panel small,#rafPanel3 small'))if(/V8\.[0-9.]+ CORE/i.test(el.textContent||''))el.textContent=(el.textContent||'').replace(/V8\.[0-9.]+ CORE/i,'V8.8.3 CORE');
+ try{if(parent&&parent!==window){const b=parent.document.querySelector('.bar b');if(b&&/RESPONSIVE/i.test(b.textContent||''))b.textContent='RAF.studio — RESPONSIVE 8.8.3'}}catch{}
 }
 function wireLegacyButtons(items){const g=$('#v72g'),ug=$('#v72ug');if(g){g.textContent='🔗 SCAL ZAZNACZONE';g.disabled=items.length<2;g.onclick=mergeSelected}if(ug){ug.textContent='⛓ ROZDZIEL GRUPĘ';ug.disabled=!items.some(groupId);ug.onclick=splitGroup}}
 function render(){
- queued=false;core=window.rafCore760||window.rafCore72;if(!core)return;css();versionLabels();const items=selected(),panel=$('#v72panel'),signature=JSON.stringify(items.map(el=>[core.id(el),cfg(el).group,cfg(el).locked,crumbsFor(el)]));if(panel===lastPanel&&signature===lastSignature&&(!items.length||$('#v880groupTools')))return;lastPanel=panel;lastSignature=signature;$('#v880groupTools')?.remove();if(!items.length||!panel)return;wireLegacyButtons(items);
+ queued=false;core=window.rafCore760||window.rafCore72;if(!core)return;css();versionLabels();const items=selected(),panel=$('#v72panel');$('#v880groupTools')?.remove();if(!items.length||!panel)return;wireLegacyButtons(items);
  const g=sameGroup(items),crumbs=breadcrumb(items),box=document.createElement('div');box.id='v880groupTools';box.innerHTML=`<div id="v880crumb">${crumbs.map((x,i)=>`${i?'<span class="v880sep">›</span>':''}<span class="v880chip">${esc(x)}</span>`).join('')}</div><div class="v880head"><b>WYRÓWNANIE WEWNĄTRZ GRUPY</b><small>${g?items.length+' elementów':'najpierw scal zaznaczenie'}</small></div><div class="v880align"><button data-v880-align="left" ${g?'':'disabled'}>← Lewo</button><button data-v880-align="center" ${g?'':'disabled'}>↔ Środek</button><button data-v880-align="right" ${g?'':'disabled'}>Prawo →</button><button data-v880-align="top" ${g?'':'disabled'}>↑ Góra</button><button data-v880-align="middle" ${g?'':'disabled'}>↕ Środek</button><button data-v880-align="bottom" ${g?'':'disabled'}>↓ Dół</button></div><div class="v880note">Wyrównanie rusza wyłącznie elementy zaznaczonej grupy. Sekcja i pozostałe elementy strony zostają na miejscu.</div>`;
  const h3=panel.querySelector('h3');if(h3)h3.insertAdjacentElement('afterend',box);else panel.prepend(box);$$('[data-v880-align]',box).forEach(b=>b.onclick=()=>alignInside(b.dataset.v880Align))
 }
 function schedule(){if(queued)return;queued=true;requestAnimationFrame(render)}
-for(const ev of ['raf:v760-ready','raf:core900-ready','raf:v760-selection','raf:v760-change','raf:universal-elements-ready','raf:template752-rendered','raf:history-main'])window.addEventListener(ev,()=>requestAnimationFrame(schedule));
-const panelObserver=new MutationObserver(schedule);const watchPanel=()=>{panelObserver.disconnect();const p=$('#rafPanel3');if(p)panelObserver.observe(p,{subtree:true,childList:true})};watchPanel();window.addEventListener('raf:shell900-ready',watchPanel);
-versionLabels();schedule();
+for(const ev of ['raf:v760-ready','raf:v760-selection','raf:v760-change','raf:universal-elements-ready','raf:template752-rendered','raf:history-main'])window.addEventListener(ev,()=>{schedule();setTimeout(schedule,60)});
+new MutationObserver(()=>schedule()).observe(document.documentElement,{subtree:true,childList:true});
+let tries=0,t=setInterval(()=>{versionLabels();if(window.rafCore760||window.rafCore72){schedule();if(++tries>35)clearInterval(t)}},160);
 window.rafGroups880={merge:mergeSelected,split:splitGroup,align:alignInside,breadcrumb:()=>breadcrumb(selected())};

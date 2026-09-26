@@ -1,4 +1,4 @@
-// RAF.studio — universal editable elements v9.0 — FREE vs LAYOUT aware
+// RAF.studio — universal editable elements hotfix v8.9.1
 // Makes every real CONTENT element selectable without turning layout wrappers
 // into positioned editor objects. Also promotes plain-text leaf nodes to spans
 // so their text, typography, size and position can be edited like normal text.
@@ -34,9 +34,7 @@
  function mark(root,el){
   if(!eligible(el))return;
   if(!el.dataset.rafV7Id&&!el.dataset.rafElement&&!el.dataset.homeText&&!el.dataset.siteText&&!el.dataset.homeMedia&&!el.dataset.rafSection&&!el.dataset.rafV76Clone)el.dataset.rafV7Id=stableId(root,el);
-  let layoutNative=false;
-  try{const p=el.parentElement,d=p?getComputedStyle(p).display:'';layoutNative=d==='flex'||d==='inline-flex'||d==='grid'||d==='inline-grid'||!!el.closest('.rafHeader900')||el.matches('[data-raf-section],header.hero')}catch{}
-  if(layoutNative){delete el.dataset.rafFree;el.dataset.rafLayout='1'}else{delete el.dataset.rafLayout;el.dataset.rafFree='1'}
+  el.dataset.rafFree='1'
  }
  function markRoot(root){
   if(!eligible(root))return;promotePlainText(root);
@@ -47,7 +45,7 @@
  function run(){queued=false;for(const root of roots())markRoot(root);window.rafCore760?.refresh?.();window.dispatchEvent(new CustomEvent('raf:universal-elements-ready'))}
  function schedule(){if(queued||wrapping)return;queued=true;requestAnimationFrame(run)}
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',schedule,{once:true});else schedule();
- const universalObserver=new MutationObserver(schedule);const observeUniversalRoots=()=>{universalObserver.disconnect();for(const root of roots())universalObserver.observe(root,{childList:true,subtree:true});universalObserver.observe(document.body,{childList:true})};observeUniversalRoots();window.addEventListener('raf:template752-rendered',observeUniversalRoots);
+ new MutationObserver(schedule).observe(document.documentElement,{childList:true,subtree:true});
  window.addEventListener('raf:template752-rendered',schedule);window.addEventListener('raf:template752-repair',schedule);window.addEventListener('raf:v760-ready',schedule);
  window.rafUniversalElements873={refresh:run};
 })();
@@ -59,7 +57,6 @@
 // an element to text:null. This also preserves original <br> and inline markup.
 (function(){
  if(!new URLSearchParams(location.search).has('editor'))return;
- if(parseInt(window.RAF_EDITOR_VERSION?.latest||'0',10)>=9)return;
  const TEXT_TAGS='h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em';
  const baselineById=new Map(),baselineByEl=new WeakMap();
  let core=null,installed=false;
