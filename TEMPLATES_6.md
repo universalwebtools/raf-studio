@@ -1,0 +1,39 @@
+# RAF.studio — kolekcja sześciu szablonów
+
+Kolekcja działa w istniejącym edytorze RESPONSIVE 8.9.3. Przycisk SZABLONY udostępnia wyłącznie sześć poniższych projektów.
+
+| Szablon | Referencja | Kompozycja |
+| --- | --- | --- |
+| SOP the DRONE | https://sopthedrone.com/ | Ciemna strona dronowa, morska zieleń, oferta, szeroka galeria. |
+| BMBDRON | https://www.bmbdron.com/ | Czarna strona produkcyjna, szerokie otwarcie, realizacje i możliwości. |
+| Rolands Varsbergs | https://rolandsvarsbergs.com/ | Jasne portfolio autora z kategoriami fotograficznymi. |
+| AK Film | https://akfilm.pl/ | Filmowe otwarcie, turkus, siatka realizacji ślubnych. |
+| The Honest Films | https://www.thehonestfilms.com/ | Krem, oliwka, analogowy editorial, pionowe historie i pakiety. |
+| Charles Studio | https://charles-studio.pl/ | Elegancka typografia, złote akcenty, ślubne portfolio i pakiety. |
+
+To adaptacje układów dla RAF.studio, z oryginalnymi tekstami demonstracyjnymi i wymiennymi zdjęciami. Nie zawierają ofert, opinii klientów ani tożsamości właścicieli stron referencyjnych. HERO obsługuje zdjęcie oraz własny film przez istniejący panel edytora.
+
+## Obsługa
+
+- Kliknij SZABLONY (6), wybierz projekt i otwórz pełny podgląd.
+- Podgląd ma przełączniki PC / Tablet / Telefon i normalne przewijanie.
+- „Użyj szablonu” wczytuje pełny dokument do wersji roboczej.
+- „Układ + moje treści” zachowuje zapisane teksty i media, w tym HERO i kontakt, a nowe sekcje otrzymują przykładowe treści.
+- Przed wczytaniem zapisuje się `templateBackupLatest`. Aktualizacja kopii oraz wersji roboczej jest atomowa.
+- Publikacja nadal odbywa się przez istniejący przycisk PUBLIKUJ. Wybranie szablonu nie zmienia publicznej wersji strony.
+
+Podgląd i edytor korzystają z tego samego generatora dokumentu. Każdy tekst, obraz, przycisk i sekcja ma identyfikator istniejącego edytora. Stare szablony usunięto z biblioteki wyboru; moduł zgodności potrafi nadal wyświetlić zapisany wcześniej projekt, bez samoczynnej zmiany strony użytkownika.
+
+## Media demonstracyjne
+
+Wykorzystano istniejące zasoby RAF.studio i poniższe zdjęcia z Unsplash, zapisane lokalnie jako WebP:
+
+- aerial-city.webp — https://images.unsplash.com/photo-1519501025264-65ba15a82390
+- mountains.webp — https://images.unsplash.com/photo-1500534623283-312aade485b7
+- wedding-table.webp — https://images.unsplash.com/photo-1511795409834-ef04bbd61622
+- wedding-story.webp — https://images.unsplash.com/photo-1519741497674-611481863552
+- camera.webp — https://images.unsplash.com/photo-1516035069371-29a1b244cc32
+
+## Sprawdzenie
+
+Na lokalnych danych testowych, z przechwyconym Firebase SDK, sprawdzono wszystkie sześć projektów: desktop 1440 px, telefon 390 px oraz uruchomienie i wybór elementu w edytorze. Sprawdzono dokładnie sześć pozycji w bibliotece, wyszukiwanie, odnośniki do sekcji, FAQ, zapis wyłącznie do draftu, kopię poprzedniego projektu i zachowanie po błędzie zapisu. Dodatkowo: publiczne odczyty zmienionych tekstów/mediów, zachowanie treści przy zmianie układu, przyciski na telefonie i zgodność zapisanych starszych projektów.
