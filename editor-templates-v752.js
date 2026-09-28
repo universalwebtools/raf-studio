@@ -1,7 +1,7 @@
 // Six templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
-import {getDatabase,ref,get,update} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-six-1';
+import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-six-2';
 const db=getDatabase(getApp()),ROOT='website/public',$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const previewUrl=(id,thumb=false)=>`/template-preview-v752.html?preset=${encodeURIComponent(id)}&${thumb?'thumb=1&':''}v=${TEMPLATE_BUILD}`;
 export async function applyTemplate(id,{keepContent=false}={}){
@@ -15,8 +15,15 @@ export async function applyTemplate(id,{keepContent=false}={}){
   for(const k of ['photos','films','reviews','clients'])if(old.editorDraft[k])main[k]=old.editorDraft[k];
  }
  const backup={savedAt:Date.now(),editorDraft:old.editorDraft,extras:old.editorExtrasDraft,pro:old.proV6Draft,customPagesDraft:old.customPagesDraft};
- // Atomic multi-location update: failed saves cannot leave half of a template applied.
- await update(ref(db,ROOT),{templateBackupLatest:backup,editorDraft:main,editorExtrasDraft:keepContent?old.editorExtrasDraft:{reviews:[],clients:[],offers:[],reviewSettings:{},brandSettings:{},offerSettings:{}},proV6Draft:pro});
+ // A backup path may be unavailable in older Firebase rules. It must never block loading a template.
+ try{await set(ref(db,ROOT+'/templateBackupLatest'),backup)}catch(e){console.warn('RAF template backup unavailable',e);try{sessionStorage.setItem('rafTemplateBackupLatest',JSON.stringify(backup))}catch{}}
+ const extras=keepContent?old.editorExtrasDraft:{reviews:[],clients:[],offers:[],reviewSettings:{},brandSettings:{},offerSettings:{}};
+ // The page draft is decisive, so save and verify it first. Optional companion data cannot block the new layout.
+ await set(ref(db,ROOT+'/editorDraft'),main);
+ const check=await get(ref(db,ROOT+'/editorDraft/builder/templateV752/id'));
+ if(check.val()!==id)throw new Error('Firebase nie potwierdził wczytania szablonu. Spróbuj ponownie.');
+ const companions=await Promise.allSettled([set(ref(db,ROOT+'/editorExtrasDraft'),extras),set(ref(db,ROOT+'/proV6Draft'),pro)]);
+ companions.forEach(x=>{if(x.status==='rejected')console.warn('RAF optional template data unavailable',x.reason)});
 }
 function styles(){if($('#tpl752css'))return;const s=document.createElement('style');s.id='tpl752css';s.textContent=`
 #tpl752{position:fixed;inset:58px 12px 12px;z-index:1003000;background:#0d0e11;color:#f4f5f8;border:1px solid #ffffff30;border-radius:14px;display:none;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;font:13px/1.5 system-ui;box-shadow:0 25px 100px #000c;min-width:0}#tpl752.open{display:grid!important}#tpl752 *{box-sizing:border-box}
@@ -39,9 +46,14 @@ function modal(){
   if(!chosen||busy)return;const message=keepContent?'Zastosować układ i zachować Twoje treści oraz media?':'Wczytać kompletny szablon z przykładowymi treściami i zdjęciami?';
   if(!confirm(TEMPLATES752[chosen].name+'\n\n'+message+'\nObecny projekt zostanie zapisany w kopii. Zmiana dotyczy wersji roboczej; stronę opublikujesz przyciskiem PUBLIKUJ.'))return;
   busy=true;$$('button',m).forEach(b=>b.disabled=true);$('#tp752status',m).textContent='Zapisywanie…';
-  try{await applyTemplate(chosen,{keepContent});location.reload()}catch(e){busy=false;$$('button',m).forEach(b=>b.disabled=false);$('#tp752status',m).textContent='Nie zapisano: '+e.message;console.error('RAF template apply',e)}
+  try{await applyTemplate(chosen,{keepContent});sessionStorage.setItem('rafTemplateApplied752',chosen);location.replace(location.pathname+location.search+location.hash)}catch(e){busy=false;$$('button',m).forEach(b=>b.disabled=false);$('#tp752status',m).textContent='Nie zapisano: '+e.message;console.error('RAF template apply',e)}
  }
  $('#tp752full',m).onclick=()=>apply(false);$('#tp752style',m).onclick=()=>apply(true);return m;
 }
 function install(){const top=$('#rafTop3');if(!top)return false;for(const id of ['templatesBtn75','templatesBtn74','templatesBtn741','templatesBtn73','templatesBtn722'])$('#'+id)?.remove();if($('#templatesBtn752'))return true;const b=document.createElement('button');b.id='templatesBtn752';b.textContent='▦ SZABLONY (6)';b.onclick=()=>{const m=modal();m.classList.add('open');$('#tp800search',m).focus()};top.insertBefore(b,$('#proBtn61')||$('#add3')||top.lastChild);return true}
-let attempts=0;const timer=setInterval(()=>{if(install()||++attempts>160)clearInterval(timer)},50);
+function appliedNotice(){
+ const id=sessionStorage.getItem('rafTemplateApplied752');if(!id||!TEMPLATES752[id]||$('#tp752applied'))return;
+ sessionStorage.removeItem('rafTemplateApplied752');const name=TEMPLATES752[id].name,status=$('#rafStatus3');if(status)status.textContent='✓ Wczytano szablon: '+name;
+ const n=document.createElement('div');n.id='tp752applied';n.setAttribute('role','status');n.style.cssText='position:fixed;left:50%;top:72px;transform:translateX(-50%);z-index:1004000;padding:12px 18px;border:1px solid #8ee1b0;background:#10271ded;color:#eafff2;border-radius:10px;box-shadow:0 14px 45px #0009;font:700 12px/1.4 system-ui;text-align:center';n.textContent='✓ Wczytano „'+name+'” do wersji roboczej. Opublikuj, gdy projekt będzie gotowy.';document.body.append(n);setTimeout(()=>n.remove(),6000)
+}
+let attempts=0;const timer=setInterval(()=>{if(install()){appliedNotice();clearInterval(timer)}else if(++attempts>160)clearInterval(timer)},50);

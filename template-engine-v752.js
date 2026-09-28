@@ -2,7 +2,7 @@
 import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
-import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-six-1';
+import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-six-2';
 export {TEMPLATES752,TEMPLATE_IDS752};
 const q=new URLSearchParams(location.search),editor=q.has('editor'),preview=q.get('tplPreview'),db=getDatabase(getApps().length?getApp():initializeApp(firebaseConfig));
 let selected='',generation=0,saved={},legacy;
@@ -17,7 +17,7 @@ function applySaved(){
 async function choose(value,force=false){
  const id=preview||value?.id||value||'cinema';if(id===selected&&!force)return;selected=id;const run=++generation;
  if(TEMPLATES752[id]){style();let root=document.getElementById('rafTemplate752');if(!root){root=document.createElement('main');const old=document.getElementById('rafMain');if(old)old.after(root);else document.body.append(root)}mountTemplate(root,id,{editor});applySaved()}
- else{delete document.body.dataset.t6;legacy||=import('./template-legacy-v893.js?v=893-six-1');const m=await legacy;if(run===generation){m.renderLegacy752(id);const root=document.getElementById('rafTemplate752');if(root)root.dataset.templateSections=root.querySelectorAll(':scope > [data-e752-sec]').length}}
+ else{delete document.body.dataset.t6;legacy||=import('./template-legacy-v893.js?v=893-six-2');const m=await legacy;if(run===generation){m.renderLegacy752(id);const root=document.getElementById('rafTemplate752');if(root)root.dataset.templateSections=root.querySelectorAll(':scope > [data-e752-sec]').length}}
 }
 if(preview)choose(preview);else{
  const base=WEBSITE_ROOT+'/public';onValue(ref(db,base+(editor?'/editorDraft':'')+'/builder/templateV752'),s=>{if(s.exists())choose(s.val());else onValue(ref(db,base+(editor?'/editorDraft':'')+'/builder/templateV75'),x=>choose(x.val()?.id||x.val()||'cinema'),{onlyOnce:true})});
