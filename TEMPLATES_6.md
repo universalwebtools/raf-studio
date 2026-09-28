@@ -1,6 +1,6 @@
-# RAF.studio — kolekcja sześciu szablonów
+# RAF.studio — kolekcja siedmiu szablonów
 
-Kolekcja działa w istniejącym edytorze RESPONSIVE 8.9.3. Przycisk SZABLONY udostępnia wyłącznie sześć poniższych projektów.
+Kolekcja działa w istniejącym edytorze RESPONSIVE 8.9.3. Przycisk SZABLONY udostępnia wyłącznie siedem poniższych projektów.
 
 | Szablon | Referencja | Kompozycja |
 | --- | --- | --- |
@@ -10,12 +10,13 @@ Kolekcja działa w istniejącym edytorze RESPONSIVE 8.9.3. Przycisk SZABLONY udo
 | AK Film | https://akfilm.pl/ | Nawigacja na filmowym HERO, turkusowe sterowanie, trzy karty filmów i ślubna opowieść z podziałem ekranu. |
 | The Honest Films | https://www.thehonestfilms.com/ | Analogowe pełnoekranowe otwarcie, wielki szeryfowy logotyp, kremowo-oliwkowy manifest i pionowe historie. |
 | Charles Studio | https://charles-studio.pl/ | Rozjaśnione asymetryczne HERO, złoty monogram, nakładająca się typografia i luksusowy układ magazynowy. |
+| Fedorczyk — Cinematic Gold | https://fedorczyk.pl/ | Pełnoekranowe filmowe HERO, centralny znak, ciemny granat i złoto, sześć teledysków, showreel, oferta, blog, opinie oraz kontaktowy pas. |
 
 To adaptacje układów dla RAF.studio, z oryginalnymi tekstami demonstracyjnymi i wymiennymi zdjęciami. Nie zawierają ofert, opinii klientów ani tożsamości właścicieli stron referencyjnych. HERO obsługuje zdjęcie oraz własny film przez istniejący panel edytora.
 
 ## Obsługa
 
-- Kliknij SZABLONY (6), wybierz projekt i otwórz pełny podgląd.
+- Kliknij SZABLONY (7), wybierz projekt i otwórz pełny podgląd.
 - Podgląd ma przełączniki PC / Tablet / Telefon i normalne przewijanie.
 - „Użyj szablonu” wczytuje pełny dokument do wersji roboczej.
 - „Układ + moje treści” zachowuje zapisane teksty i media, w tym HERO i kontakt, a nowe sekcje otrzymują przykładowe treści.
@@ -38,4 +39,4 @@ Wykorzystano istniejące zasoby RAF.studio i poniższe zdjęcia z Unsplash, zapi
 
 ## Sprawdzenie
 
-Na lokalnych danych testowych, z przechwyconym Firebase SDK, sprawdzono wszystkie sześć projektów: desktop 1440 px, telefon 390 px oraz uruchomienie i wybór elementu w edytorze. Sprawdzono dokładnie sześć pozycji w bibliotece, wyszukiwanie, odnośniki do sekcji, FAQ, zapis wyłącznie do draftu, kopię poprzedniego projektu i zachowanie po błędzie zapisu. Dodatkowo: publiczne odczyty zmienionych tekstów/mediów, zachowanie treści przy zmianie układu, przyciski na telefonie i zgodność zapisanych starszych projektów.
+Na lokalnych danych testowych, z przechwyconym Firebase SDK, sprawdzono wszystkie siedem projektów: desktop 1440 px, telefon 390 px oraz uruchomienie i wybór elementu w edytorze. Sprawdzono dokładnie siedem pozycji w bibliotece, wyszukiwanie, odnośniki do sekcji, FAQ, zapis wyłącznie do draftu, kopię poprzedniego projektu i zachowanie po błędzie zapisu. Dodatkowo: publiczne odczyty zmienionych tekstów/mediów, zachowanie treści przy zmianie układu, przyciski na telefonie i zgodność zapisanych starszych projektów.
