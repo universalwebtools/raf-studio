@@ -1,15 +1,20 @@
 // Six templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-six-2';
+import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-six-3';
 const db=getDatabase(getApp()),ROOT='website/public',$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const previewUrl=(id,thumb=false)=>`/template-preview-v752.html?preset=${encodeURIComponent(id)}&${thumb?'thumb=1&':''}v=${TEMPLATE_BUILD}`;
 export async function applyTemplate(id,{keepContent=false}={}){
  if(!TEMPLATES752[id])throw new Error('Wybierz jeden z sześciu szablonów.');
  const fields=['editorDraft','editorExtrasDraft','proV6Draft','customPagesDraft'];
- const snaps=await Promise.all(fields.map(k=>get(ref(db,ROOT+'/'+k))));const old=Object.fromEntries(fields.map((k,i)=>[k,snaps[i].val()||{}]));
+ const [snaps,publishedSnap]=await Promise.all([Promise.all(fields.map(k=>get(ref(db,ROOT+'/'+k)))),get(ref(db,ROOT+'/publishedAt'))]);const old=Object.fromEntries(fields.map((k,i)=>[k,snaps[i].val()||{}]));
  const d=buildTemplate(id),{html,pro,...main}=d;
  main.builder.templateV752={...main.builder.templateV752,appliedAt:Date.now()};
+ // Baseline sync restores the published page whenever this marker is missing.
+ // A freshly applied template is intentionally based on the current publication,
+ // so carry its stamp forward and prevent the next editor boot from undoing it.
+ main.builder.basePublishedAt=Number(publishedSnap.val()||old.editorDraft?.builder?.basePublishedAt||0);
+ main.builder.recoveredV64='2';
  if(keepContent){
   main.site={...main.site,...old.editorDraft.site};main.homeContent={...main.homeContent,...old.editorDraft.homeContent};main.homeMedia={...main.homeMedia,...old.editorDraft.homeMedia};
   for(const k of ['photos','films','reviews','clients'])if(old.editorDraft[k])main[k]=old.editorDraft[k];

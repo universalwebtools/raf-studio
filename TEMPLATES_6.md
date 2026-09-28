@@ -21,6 +21,7 @@ To adaptacje układów dla RAF.studio, z oryginalnymi tekstami demonstracyjnymi 
 - „Układ + moje treści” zachowuje zapisane teksty i media, w tym HERO i kontakt, a nowe sekcje otrzymują przykładowe treści.
 - Przed wczytaniem edytor próbuje zapisać `templateBackupLatest`. Jeżeli starsze reguły Firebase blokują tę ścieżkę, kopia trafia do pamięci sesji, a zapis właściwego szablonu nie jest blokowany.
 - Właściwy `editorDraft` zapisuje się jako pierwszy i jest odczytywany kontrolnie przed przeładowaniem edytora. Dane dodatkowe zapisują się osobno i nie mogą cofnąć wybranego układu.
+- Nowy draft zachowuje znacznik `basePublishedAt`, dzięki czemu moduł synchronizacji po restarcie edytora nie przywraca ponownie starej opublikowanej strony.
 - Publikacja nadal odbywa się przez istniejący przycisk PUBLIKUJ. Wybranie szablonu nie zmienia publicznej wersji strony.
 
 Podgląd i edytor korzystają z tego samego generatora dokumentu. Każdy tekst, obraz, przycisk i sekcja ma identyfikator istniejącego edytora. Stare szablony usunięto z biblioteki wyboru; moduł zgodności potrafi nadal wyświetlić zapisany wcześniej projekt, bez samoczynnej zmiany strony użytkownika.
