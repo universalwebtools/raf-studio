@@ -4,12 +4,12 @@ Kolekcja działa w istniejącym edytorze RESPONSIVE 8.9.3. Przycisk SZABLONY udo
 
 | Szablon | Referencja | Kompozycja |
 | --- | --- | --- |
-| SOP the DRONE | https://sopthedrone.com/ | Ciemna strona dronowa, morska zieleń, oferta, szeroka galeria. |
-| BMBDRON | https://www.bmbdron.com/ | Czarna strona produkcyjna, szerokie otwarcie, realizacje i możliwości. |
-| Rolands Varsbergs | https://rolandsvarsbergs.com/ | Jasne portfolio autora z kategoriami fotograficznymi. |
-| AK Film | https://akfilm.pl/ | Filmowe otwarcie, turkus, siatka realizacji ślubnych. |
-| The Honest Films | https://www.thehonestfilms.com/ | Krem, oliwka, analogowy editorial, pionowe historie i pakiety. |
-| Charles Studio | https://charles-studio.pl/ | Elegancka typografia, złote akcenty, ślubne portfolio i pakiety. |
+| SOP the DRONE | https://sopthedrone.com/ | Pełnoekranowe miasto, techniczny pasek zaufania, konsola usług, panoramiczny showreel i nieregularna mozaika. |
+| BMBDRON | https://www.bmbdron.com/ | Krótki czarny nagłówek, szeroki showreel, ogromny tytuł produkcyjny, kwadratowa siatka filmów i techniczne listy. |
+| Rolands Varsbergs | https://rolandsvarsbergs.com/ | Biały nagłówek autora, pełna szerokość fotografii, dużo światła i nieobramowana ściana dziewięciu zdjęć. |
+| AK Film | https://akfilm.pl/ | Nawigacja na filmowym HERO, turkusowe sterowanie, trzy karty filmów i ślubna opowieść z podziałem ekranu. |
+| The Honest Films | https://www.thehonestfilms.com/ | Analogowe pełnoekranowe otwarcie, wielki szeryfowy logotyp, kremowo-oliwkowy manifest i pionowe historie. |
+| Charles Studio | https://charles-studio.pl/ | Rozjaśnione asymetryczne HERO, złoty monogram, nakładająca się typografia i luksusowy układ magazynowy. |
 
 To adaptacje układów dla RAF.studio, z oryginalnymi tekstami demonstracyjnymi i wymiennymi zdjęciami. Nie zawierają ofert, opinii klientów ani tożsamości właścicieli stron referencyjnych. HERO obsługuje zdjęcie oraz własny film przez istniejący panel edytora.
 
@@ -19,7 +19,8 @@ To adaptacje układów dla RAF.studio, z oryginalnymi tekstami demonstracyjnymi 
 - Podgląd ma przełączniki PC / Tablet / Telefon i normalne przewijanie.
 - „Użyj szablonu” wczytuje pełny dokument do wersji roboczej.
 - „Układ + moje treści” zachowuje zapisane teksty i media, w tym HERO i kontakt, a nowe sekcje otrzymują przykładowe treści.
-- Przed wczytaniem zapisuje się `templateBackupLatest`. Aktualizacja kopii oraz wersji roboczej jest atomowa.
+- Przed wczytaniem edytor próbuje zapisać `templateBackupLatest`. Jeżeli starsze reguły Firebase blokują tę ścieżkę, kopia trafia do pamięci sesji, a zapis właściwego szablonu nie jest blokowany.
+- Właściwy `editorDraft` zapisuje się jako pierwszy i jest odczytywany kontrolnie przed przeładowaniem edytora. Dane dodatkowe zapisują się osobno i nie mogą cofnąć wybranego układu.
 - Publikacja nadal odbywa się przez istniejący przycisk PUBLIKUJ. Wybranie szablonu nie zmienia publicznej wersji strony.
 
 Podgląd i edytor korzystają z tego samego generatora dokumentu. Każdy tekst, obraz, przycisk i sekcja ma identyfikator istniejącego edytora. Stare szablony usunięto z biblioteki wyboru; moduł zgodności potrafi nadal wyświetlić zapisany wcześniej projekt, bez samoczynnej zmiany strony użytkownika.
