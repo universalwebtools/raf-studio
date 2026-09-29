@@ -1,5 +1,5 @@
 // RAF.studio — editor/public parity v8.8.9
-import {TEMPLATES752} from './template-engine-v752.js?v=893-seven-1';
+import {TEMPLATES752} from './template-engine-v752.js?v=893-eight-1';
 import {merge61,render61} from './public-pro-v61.js?v=8.7.0';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 if(EDITOR){

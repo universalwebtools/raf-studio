@@ -1,7 +1,7 @@
-// Seven templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
+// Eight templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-seven-1';
+import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-eight-1';
 const db=getDatabase(getApp()),ROOT='website/public',$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const previewUrl=(id,thumb=false)=>`/template-preview-v752.html?preset=${encodeURIComponent(id)}&${thumb?'thumb=1&':''}v=${TEMPLATE_BUILD}`;
 export async function applyTemplate(id,{keepContent=false}={}){
