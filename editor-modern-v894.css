@@ -1,0 +1,92 @@
+/* RAF Studio Modern Workspace 8.9.3 — opt-in overlay, native editing engine untouched */
+body.raf-modern894{--rm-bg:#0d0e11;--rm-panel:#15171b;--rm-raised:#1e2126;--rm-border:#30343b;--rm-text:#f5f5f2;--rm-muted:#9ca4ad;--rm-accent:#91b7ed;--rm-header:116px;--rm-side:258px;--rm-inspector:356px}
+body.raf-modern894 #rafModern894,body.raf-modern894 #rafModern894 *{box-sizing:border-box}
+#rafModern894{position:fixed;inset:0 auto auto 0;z-index:1000070;color:#f5f5f2;font:12px/1.45 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;pointer-events:none}
+#rafModern894 button,#rafModern894 input{font:inherit}
+#rafModern894 button{cursor:pointer}
+#rafModern894 .rm-top,#rafModern894 .rm-side,#rafModern894 .rm-reopen,#rafModern894 .rm-command-overlay,#rafModern894 .rm-toast,#rafModern894 .rm-inspector-toggle{pointer-events:auto}
+#rafModern894 .rm-top{position:fixed;top:0;left:0;right:0;height:var(--rm-header);background:#0a0b0df6;border-bottom:1px solid #3a3e43;box-shadow:0 8px 30px #0009;z-index:1000072;display:flex;flex-direction:column}
+#rafModern894 .rm-titlebar{height:55px;min-height:55px;display:flex;align-items:center;gap:12px;padding:0 18px;border-bottom:1px solid #292d32}
+#rafModern894 .rm-brand{display:flex;align-items:center;gap:12px;flex:none;min-width:240px}
+#rafModern894 .rm-logo{font-size:24px;line-height:1;font-weight:850;letter-spacing:-.095em;color:#fff;white-space:nowrap}
+#rafModern894 .rm-logo small{font-size:11px;letter-spacing:0;font-weight:450}
+#rafModern894 .rm-pill{font-size:9px;font-weight:800;letter-spacing:.12em;background:#e1c39a1a;color:#efd3a8;padding:6px 8px;border:1px solid #cdaa7545;border-radius:6px;white-space:nowrap}
+#rafModern894 .rm-command-launch{display:flex;align-items:center;justify-content:space-between;gap:15px;flex:1;max-width:430px;min-width:105px;border:1px solid #383c43;color:#adb5be;background:#1a1d22;border-radius:10px;padding:10px 12px;text-align:left}
+#rafModern894 .rm-command-launch:hover{border-color:#82acd7;background:#232a34;color:#fff}
+#rafModern894 kbd{border:1px solid #414954;border-radius:5px;background:#111317;padding:3px 6px;color:#bec7d1;font-size:10px;white-space:nowrap}
+#rafModern894 .rm-spacer{flex:1}
+#rafModern894 .rm-tools{display:flex;align-items:center;gap:5px}
+#rafModern894 .rm-button{border:1px solid #353a41;border-radius:9px;background:#1a1d22;color:#e7ebef;padding:9px 12px;white-space:nowrap}
+#rafModern894 .rm-button:hover,#rafModern894 .rm-button.active{border-color:#78a8db;background:#273447}
+#rafModern894 .rm-button.rm-accent{background:#eeeae1;color:#18191b;border-color:#eeeae1;font-weight:800}
+#rafModern894 .rm-dock{height:60px;display:flex;align-items:center;gap:7px;padding:6px 13px;overflow:hidden}
+#rafModern894 .rm-dock-label{min-width:115px;font-size:10px;letter-spacing:.12em;color:#9ba4ae;padding-left:7px;font-weight:800}
+body.raf-modern894 #rafModernNativeDock{flex:1;min-width:0;height:100%;display:flex;align-items:center}
+body.raf-modern894 #rafModernNativeDock #rafTop3{position:relative!important;inset:auto!important;top:auto!important;right:auto!important;left:auto!important;bottom:auto!important;transform:none!important;z-index:auto!important;width:100%!important;height:48px!important;max-width:none!important;display:flex!important;flex-wrap:nowrap!important;justify-content:flex-start!important;overflow-x:auto!important;overflow-y:hidden!important;scrollbar-width:thin;border:0!important;background:transparent!important;box-shadow:none!important;padding:2px 3px!important;margin:0!important;backdrop-filter:none!important;border-radius:0!important;gap:6px!important;align-items:center!important}
+body.raf-modern894 #rafModernNativeDock #rafTop3>*{flex-shrink:0!important}
+body.raf-modern894 #rafModernNativeDock #rafTop3 button{min-height:36px;border:1px solid #373e47!important;background:#1c2127!important;color:#e9edf1!important;font:700 11px/1.2 Inter,system-ui,sans-serif!important;border-radius:8px!important;padding:7px 10px!important;box-shadow:none!important;transition:background .15s ease,border-color .15s ease}
+body.raf-modern894 #rafModernNativeDock #rafTop3 button:hover{background:#2b3b4b!important;border-color:#6f9bc6!important}
+body.raf-modern894 #rafModernNativeDock #rafTop3 .pub{background:#faf8f2!important;color:#16171a!important;border-color:#faf8f2!important}
+body.raf-modern894 #rafModernNativeDock #rafStatus3{color:#aab8c6!important;max-width:155px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#rafModern894 .rm-side{position:fixed;left:10px;top:calc(var(--rm-header) + 10px);bottom:45px;width:var(--rm-side);background:#111317f7;border:1px solid #353a43;border-radius:14px;box-shadow:0 20px 80px #000a;display:flex;flex-direction:column;overflow:hidden;z-index:1000067;backdrop-filter:blur(16px)}
+#rafModern894 .rm-side-title{display:flex;justify-content:space-between;align-items:center;padding:15px 14px 10px}
+#rafModern894 .rm-side-title strong{font-size:12px;letter-spacing:.08em}
+#rafModern894 .rm-side-title button{border:0;background:transparent;color:#aeb5bc;padding:5px;font-size:16px}
+#rafModern894 .rm-tabbar{display:grid;grid-template-columns:repeat(3,1fr);padding:0 10px 10px;gap:5px;border-bottom:1px solid #272c33}
+#rafModern894 .rm-tab{background:transparent;border:1px solid transparent;border-radius:8px;color:#8b96a2;padding:9px 3px;font-size:10px!important}
+#rafModern894 .rm-tab.active{background:#273747;color:#d9ecfc;border-color:#375874}
+#rafModern894 .rm-list{overflow:auto;min-height:0;flex:1;padding:10px;scrollbar-width:thin;scrollbar-color:#4d555d transparent}
+#rafModern894 .rm-category{font-size:9px;letter-spacing:.14em;color:#8e9ba8;font-weight:750;margin:12px 7px 8px;text-transform:uppercase}
+#rafModern894 .rm-listbtn{display:flex;width:100%;align-items:center;gap:9px;background:transparent;border:1px solid transparent;color:#e9edef;padding:10px 9px;border-radius:9px;text-align:left;font-size:11px;line-height:1.35}
+#rafModern894 .rm-listbtn:hover{background:#222a33;border-color:#35485e}
+#rafModern894 .rm-listbtn.selected{background:#2c3641;border-color:#6d97c4}
+#rafModern894 .rm-listbtn .rm-num{font-family:ui-monospace,monospace;color:#8d98a3;font-size:10px;min-width:25px}
+#rafModern894 .rm-listbtn .rm-title{flex:1;overflow:hidden;text-overflow:ellipsis}
+#rafModern894 .rm-subtitle{display:block;color:#818a96;font-size:10px;margin-top:2px}
+#rafModern894 .rm-listbtn .rm-arrow{color:#789fc4}
+#rafModern894 .rm-note{padding:11px;margin:10px 4px;font-size:10px;line-height:1.65;background:#273039;border:1px solid #405265;border-radius:9px;color:#d3dce4}
+#rafModern894 .rm-bottom{padding:10px;border-top:1px solid #2f343a;display:flex;flex-direction:column;gap:7px}
+#rafModern894 .rm-bottom small{color:#9ca5b1;font-size:10px}
+#rafModern894 .rm-inline{display:flex;gap:6px}
+#rafModern894 .rm-inline button{flex:1}
+#rafModern894 .rm-reopen{position:fixed;top:calc(var(--rm-header) + 13px);left:11px;z-index:1000074;border:1px solid #4c657e;background:#162432;color:#e5efff;padding:11px 15px;border-radius:10px;box-shadow:0 10px 40px #000a;display:none}
+body.raf-modern894.rm-side-collapsed #rafModern894 .rm-side{display:none}
+body.raf-modern894.rm-side-collapsed #rafModern894 .rm-reopen{display:block}
+body.raf-modern894 #rafPanel3{top:calc(var(--rm-header) + 10px)!important;right:10px!important;bottom:44px!important;width:var(--rm-inspector)!important;min-width:290px!important;max-width:60vw!important;height:auto!important;border-radius:14px!important;background:#14171bf5!important;border:1px solid #3a414a!important;box-shadow:0 18px 65px #000a!important;backdrop-filter:blur(20px)!important;padding:18px!important;color:#f4f6f8!important;z-index:1000069!important;scrollbar-width:thin;scrollbar-color:#4c515a transparent}
+body.raf-modern894 #rafPanel3 h2,body.raf-modern894 #rafPanel3 h3,body.raf-modern894 #rafPanel3 h4{color:#f8f9fa!important;letter-spacing:-.02em}
+body.raf-modern894 #rafPanel3 label{display:block;color:#b7c1cc!important;font-size:11px!important;margin:12px 0 6px!important}
+body.raf-modern894 #rafPanel3 input:not([type=checkbox]),body.raf-modern894 #rafPanel3 select,body.raf-modern894 #rafPanel3 textarea{width:100%;min-height:37px;background:#0b0d11!important;color:#f5f6f7!important;border:1px solid #3b4551!important;border-radius:8px!important;padding:8px 9px!important;font-size:12px!important}
+body.raf-modern894 #rafPanel3 input:focus,body.raf-modern894 #rafPanel3 textarea:focus,body.raf-modern894 #rafPanel3 select:focus{outline:2px solid #679ed9!important;outline-offset:1px}
+body.raf-modern894 #rafPanel3 button{background:#242a31!important;color:#f3f5f7!important;border:1px solid #404b56!important;border-radius:8px!important;min-height:32px;cursor:pointer}
+body.raf-modern894 #rafPanel3 button:hover{background:#344455!important;border-color:#78a9d8!important}
+body.raf-modern894 #rafPanel3 .wePanelHead{background:#242636!important;border-color:#626690!important}
+body.raf-modern894 #rafPanel3 .weSection{border-color:#41464e!important}
+body.raf-modern894 #v760layers{top:calc(var(--rm-header) + 10px)!important;left:calc(var(--rm-side) + 19px)!important;bottom:45px!important;max-height:calc(100vh - var(--rm-header) - 55px)!important;z-index:1000100!important}
+body.raf-modern894 #rafDockLauncher889{top:auto!important;bottom:8px!important;left:50%!important;transform:translateX(-50%)!important;z-index:1000080!important}
+body.raf-modern894 #v72panel{z-index:1000070!important}
+#rafModern894 .rm-inspector-toggle{position:fixed;right:10px;top:calc(var(--rm-header) + 12px);border:1px solid #4c657e;border-radius:8px;background:#172535;color:#daeaff;padding:9px 11px;z-index:1000072}
+body.raf-modern894:not(.rm-inspector-collapsed) #rafModern894 .rm-inspector-toggle{right:calc(var(--rm-inspector) + 18px)}
+body.raf-modern894.rm-inspector-collapsed #rafPanel3{display:none!important}
+body.raf-modern894.rm-inspector-collapsed #rafModern894 .rm-inspector-toggle{right:11px}
+#rafModern894 .rm-toast{position:fixed;left:50%;bottom:47px;transform:translateX(-50%);background:#192a27;border:1px solid #4c9b81;color:#eefcf7;border-radius:9px;padding:11px 16px;box-shadow:0 8px 30px #0009;max-width:500px;text-align:center;z-index:1000200}
+#rafModern894 .rm-toast[hidden]{display:none}
+#rafModern894 .rm-command-overlay{position:fixed;inset:0;background:#030508d9;backdrop-filter:blur(6px);display:grid;place-items:start center;padding:13vh 18px 20px;z-index:1000200}
+#rafModern894 .rm-command-overlay[hidden]{display:none}
+#rafModern894 .rm-command{width:min(650px,100%);max-height:72vh;background:#15191e;border:1px solid #516171;border-radius:18px;box-shadow:0 35px 120px #000e;overflow:hidden;display:flex;flex-direction:column}
+#rafModern894 .rm-searchbar{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid #3a4550}
+#rafModern894 .rm-searchbar input{flex:1;min-width:0;border:0;outline:0;background:none;color:#fff;font:17px system-ui}
+#rafModern894 .rm-searchbar button{border:0;background:transparent;color:#aeb8c4}
+#rafModern894 .rm-searchresults{min-height:100px;overflow:auto;padding:8px 12px 14px}
+#rafModern894 .rm-result{width:100%;border:0;background:transparent;border-radius:9px;display:flex;align-items:center;justify-content:space-between;text-align:left;padding:13px;color:#f4f6f8;gap:12px}
+#rafModern894 .rm-result:hover,#rafModern894 .rm-result.active{background:#263548}
+#rafModern894 .rm-result small{color:#8ba4bc}
+#rafModern894 .rm-keyhint{color:#a1afc0;font-size:10px;padding:9px 16px;border-top:1px solid #37404a}
+#rafModern894 .rm-foot{display:none}
+body.raf-modern894 .rm-quick-hide #rafModern894 .rm-side{display:none}
+body.raf-modern894.rm-focus #rafModern894 .rm-side,body.raf-modern894.rm-focus #rafModern894 .rm-top,body.raf-modern894.rm-focus #rafModern894 .rm-inspector-toggle,body.raf-modern894.rm-focus #rafPanel3{visibility:hidden!important;pointer-events:none!important}
+body.raf-modern894.rm-focus #rafModern894 .rm-reopen{display:block!important;top:12px}
+body.raf-modern894.rm-focus #rafModern894 .rm-reopen::after{content:" · FOCUS"}
+body.raf-modern894.rm-focus #rafDockLauncher889{opacity:0}
+@media(max-width:1200px){#rafModern894 .rm-brand{min-width:155px}#rafModern894 .rm-titlebar{gap:8px;padding:0 9px}#rafModern894 .rm-command-launch{max-width:260px}#rafModern894 .rm-command-launch span{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
+@media(max-width:990px){body.raf-modern894{--rm-side:216px;--rm-inspector:300px}#rafModern894 .rm-brand{min-width:142px}#rafModern894 .rm-titlebar .rm-command-launch{display:none}#rafModern894 .rm-dock-label{display:none}#rafModern894 .rm-side{width:216px}body.raf-modern894 #v760layers{left:229px!important}}
+@media(max-width:740px){body.raf-modern894{--rm-header:106px}#rafModern894 .rm-titlebar{height:50px;min-height:50px}#rafModern894 .rm-brand{min-width:0}#rafModern894 .rm-logo{font-size:19px}#rafModern894 .rm-pill{display:none}#rafModern894 .rm-tools .rm-button{padding:7px}#rafModern894 .rm-side{width:min(300px,calc(100vw - 25px))}body.raf-modern894 #rafPanel3{right:5px!important;max-width:90vw!important;top:var(--rm-header)!important}#rafModern894 .rm-command-overlay{padding-top:8vh}}
