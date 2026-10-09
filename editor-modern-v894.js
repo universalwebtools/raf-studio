@@ -24,7 +24,7 @@
         <div class="rm-spacer"></div>
         <div class="rm-tools">
           <button type="button" class="rm-button" id="rmNative894" title="Pokaż klasyczny wygląd bez wyłączania edytora">Klasyczny</button>
-          <button type="button" class="rm-button" id="rmFocus894" title="Ukryj panele (Alt+F)">▣ Płótno</button>
+          <button type="button" class="rm-button" id="rmFocus894" title="Ukryj panele (Alt+Shift+F)">▣ Płótno</button>
           <button type="button" class="rm-button rm-accent" id="rmBackup894" title="Historia wersji / zapisz punkt przywracania">↶ Wersje</button>
         </div>
       </div>
@@ -76,7 +76,7 @@
     {id:"desktop",name:"Widok komputera",hint:"Przejdź do desktopowej wersji 8.9.3",icon:"▣",fire:()=>navigateDesktop()},
     {id:"tablet",name:"Edytor tabletowy",hint:"Przełącz na istniejący moduł tablet",icon:"▯",fire:()=>navigateMobile("tablet")},
     {id:"mobile",name:"Edytor telefonu",hint:"Przełącz na istniejący moduł telefon",icon:"▯",fire:()=>navigateMobile("mobile")},
-    {id:"focus",name:"Tryb pełnego płótna",hint:"Alt+F · pokaż / ukryj panele",icon:"◱",fire:()=>toggleFocus()},
+    {id:"focus",name:"Tryb pełnego płótna",hint:"Alt+Shift+F · pokaż / ukryj panele",icon:"◱",fire:()=>toggleFocus()},
     {id:"classic",name:"Wróć do klasycznej wersji 8.9.3",hint:"Ten sam projekt bez nakładki modernizacji",icon:"↩",fire:()=>goClassic()}
   ];
   function navigateDesktop(){const u=new URL(location.href);u.searchParams.delete("device");location.assign(u.toString());}
@@ -96,7 +96,7 @@
     $("#rmFocus894").classList.toggle("active",!!state.focus);
     $$(".rm-tab").forEach(b=>b.classList.toggle("active",b.dataset.rmTab===state.tab));
   }
-  function toggleFocus(){state.focus=!state.focus;saveUI();config();toast(state.focus?"Pełne płótno · Alt+F, aby przywrócić panele":"Przywrócono panele edytora");}
+  function toggleFocus(){state.focus=!state.focus;saveUI();config();toast(state.focus?"Pełne płótno · Alt+Shift+F, aby przywrócić panele":"Przywrócono panele edytora");}
   function canvasSections(){
     const roots=$$("header.hero,[data-raf-section]").filter(x=>{
       if(x.closest("#rafModern894,#rafPanel3,#v760layers,#rafModal3,#tpl752,#widgetsModal770,#pages860,#v760history,#rafTop3"))return false;
@@ -161,7 +161,7 @@
     box.append(el);
     const h=document.createElement("div");h.className="rm-category";h.textContent="SKRÓTY I GESTY";box.append(h);
     const shortcuts=[
-      ["Ctrl+K","Szukaj narzędzi i sekcji"],["Alt+F","Pełne płótno"],["Ctrl+Z / Ctrl+Y","Cofnij / ponów"],["Tab","Pokaż / ukryj stary dock"],["Alt + przeciągnięcie","Zaznacz obiekty ramką"],["Shift + klik","Multi-select w edytorze"],["Dwuklik","Edycja lub wybór elementu"],["Uchwyty narożne","Skaluj zaznaczenie"],["Ctrl","Omiń magnes podczas ruchu"]
+      ["Ctrl+K","Szukaj narzędzi i sekcji"],["Alt+Shift+F","Pełne płótno"],["Ctrl+Z / Ctrl+Y","Cofnij / ponów"],["Tab","Pokaż / ukryj stary dock"],["Alt + przeciągnięcie","Zaznacz obiekty ramką"],["Shift + klik","Multi-select w edytorze"],["Dwuklik","Edycja lub wybór elementu"],["Uchwyty narożne","Skaluj zaznaczenie"],["Ctrl","Omiń magnes podczas ruchu"]
     ];
     for(const [key,description] of shortcuts){const r=document.createElement("div");r.className="rm-listbtn";const k=document.createElement("kbd");k.textContent=key;k.style.flex="none";const v=document.createElement("span");v.textContent=description;v.style.marginLeft="5px";r.append(k,v);box.append(r);}
     const b=document.createElement("button");b.className="rm-listbtn";b.type="button";b.textContent="◷ Otwórz historię wersji";b.onclick=snapshot;box.append(b);
@@ -199,7 +199,7 @@
     h.addEventListener("pointerup",()=>{if(drag){drag=false;saveUI();}});
     h.addEventListener("pointercancel",()=>{drag=false;});
     const update=()=>{h.hidden=!!(state.inspectorCollapsed||state.focus)};
-    const oldConfig=config; // Resize handle visibility also follows inspector state.
+    // Resize handle visibility follows inspector state.
     addEventListener("resize",update);
     new MutationObserver(update).observe(document.body,{attributes:true,attributeFilter:["class"]});
     update();
@@ -224,7 +224,7 @@
     const editing=e.target?.closest?.("input,textarea,select,[contenteditable=true],[contenteditable=''],[role=textbox]");
     if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();e.stopPropagation();openCommands();return;}
     if(e.key==="Escape"&&!$("#rmCommandOverlay894").hidden){e.preventDefault();closeCommands();return;}
-    if(e.altKey&&!e.ctrlKey&&!e.metaKey&&e.key.toLowerCase()==="f"&&!editing){e.preventDefault();toggleFocus();}
+    if(e.altKey&&e.shiftKey&&!e.ctrlKey&&!e.metaKey&&e.key.toLowerCase()==="f"&&!editing){e.preventDefault();toggleFocus();}
   },true);
   // A mouse/keyboard user gesture updates only the sidebar index; never adjusts site content.
   const schedule=()=>{if(state.tab!=="sections")return;clearTimeout(refreshTimer);refreshTimer=setTimeout(()=>{if(!$("#rmCommandOverlay894").hidden)return;sideSections();},600);};
