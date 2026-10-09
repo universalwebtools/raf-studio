@@ -75,6 +75,11 @@ async function bootCurrent(){
    await import('./editor-v70-layout-guard.js?v=7.7.2');await import('./editor-templates-v752.js?v=893-eight-1');await import('./editor-history-v72.js?v=8.7.3');await import('./editor-hero-media-v888.js?v=8.9.3');await import('./editor-hero-resize-v890.js?v=8.9.3');await import('./editor-chrome-v888.js?v=8.9.3');await import('./editor-dock-v889.js?v=8.9.3');await import('./editor-workspace-v760.js?v=8.7.2');await import('./editor-pages-v860.js?v=8.7.0');await import('./editor-widgets-v770.js?v=8.8.4');await import('./editor-version-history-v760.js?v=8.7.0');await import('./direct-publish-v760.js?v=8.7.2')
   }
   await waitEditorSettled()
+  // Modern 8.9.3 UI is opt-in. The original editor, saving, plugins and archives are unchanged.
+  if(new URLSearchParams(location.search).get('modern')==='1'){
+    try{await import('./editor-modern-v894.js?v=8940')}
+    catch(modernError){console.error('RAF modern workspace failed; continuing with classic editor.',modernError)}
+  }
  }catch(err){console.error('RAF visual editor bootstrap error',err);releaseEditor();const box=document.createElement('div');box.style.cssText='position:fixed;inset:20px;z-index:999999;background:#111;color:#fff;padding:20px;font:16px system-ui;border:1px solid #333;border-radius:16px';box.textContent='Błąd uruchamiania edytora: '+err.message;document.body.appendChild(box)}
 }
 const explicitArchive=params.get('archive')==='1';
