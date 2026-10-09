@@ -42,7 +42,7 @@ function initialProject(){
  photo.sections[0].props.title="FOTOGRAFIA.";photo.sections[0].props.image="/assets/photo-session.png";
  const film=page("Film","/film",["hero","video","features","contact","footer"]);
  film.sections[0].props.title="FILM.";film.sections[0].props.image="/assets/film-ad.png";
- return {schema:"raf-editor-90",version:"9.0.0-beta.1",name:"RAF.studio",theme:{accent:"#d7b58a",background:"#121417",text:"#f5f5f3",font:"Inter"},pages:[home,photo,film],media:[],updatedAt:Date.now()};
+ return {schema:"raf-editor-90",version:"9.0.0-beta.1",name:"RAF.studio",theme:{accent:"#d7b58a",background:"#121417",text:"#f5f5f3",font:"Inter",layout:"cinematic"},pages:[home,photo,film],media:[],updatedAt:Date.now()};
 }
 function normalize(v){if(!v||v.schema!=="raf-editor-90"||!Array.isArray(v.pages)||!v.pages.length)throw Error("Plik nie jest projektem edytora 9.0.");
  v.pages.forEach(p=>{if(!Array.isArray(p.sections))p.sections=[];p.sections.forEach(s=>{s.props||={};s.responsive||={};s.responsive.desktop||={};s.responsive.tablet||={};s.responsive.mobile||={};s.hidden||={desktop:false,tablet:false,mobile:false};});});v.media=Array.isArray(v.media)?v.media:[];v.theme||=initialProject().theme;return v;}
@@ -75,7 +75,7 @@ function sectionHtml(s,preview=false){
  const bg=/^#[a-f0-9]{3,8}$/i.test(c.background||"")?c.background:project.theme.background;
  const cols=Math.max(1,Math.min(5,ui.device==="mobile"?(s.responsive.mobile.columns||1):ui.device==="tablet"?(s.responsive.tablet.columns||2):Number(c.columns)||3));
  const scale=Math.max(60,Math.min(175,Number(c.fontScale)||100));
- const sty="background:"+esc(bg)+";color:"+esc(color)+";padding:"+pad+"px 6%;min-height:"+min+"px;text-align:"+align+";font-size:"+scale+"%;";
+ const sty="background:"+esc(bg)+";color:"+esc(color)+";padding:"+pad+"px 6%;min-height:"+min+"px;text-align:"+align+";font-size:"+scale+"%;--font-scale:"+(scale/100)+";";
  let body="",items=Array.isArray(p.items)?p.items:[],imgs=Array.isArray(p.images)?p.images:[];
  if(s.type==="hero"){
  const image=safe(p.image);const heroBg=image?"background-image:linear-gradient(90deg,#08090bd9,#0b0d0d66),url('"+image+"');background-size:cover;background-position:center;":"";
@@ -98,7 +98,7 @@ function sectionHtml(s,preview=false){
 
 function renderCanvas(){
  const p=activePage(),canvas=$("#siteCanvas");
- canvas.className="site-canvas "+ui.device;canvas.style.zoom=(ui.zoom/100);
+ canvas.className="site-canvas "+ui.device+" theme-"+(project.theme.layout||"cinematic");canvas.style.zoom=(ui.zoom/100);canvas.style.fontFamily=project.theme.font+",sans-serif";
  canvas.style.background=project.theme.background;
  canvas.innerHTML=p.sections.map(s=>sectionHtml(s)).join("")||"<div style=\"padding:70px;text-align:center\">Dodaj pierwszą sekcję w panelu po lewej.</div>";
  $("#currentPageName").textContent=p.name;$("#selectionName").textContent=ui.selected.length===1?selected().name:ui.selected.length>1?ui.selected.length+" zaznaczone":"Brak zaznaczenia";
@@ -194,13 +194,38 @@ function exportJSON(){const text=JSON.stringify(project,null,2),url=URL.createOb
 function makeSnapshot(){try{const snap=JSON.parse(localStorage.getItem(SNAP)||"[]");snap.unshift({date:new Date().toLocaleString("pl-PL"),data:project});localStorage.setItem(SNAP,JSON.stringify(snap.slice(0,3)));toast("Zapisano punkt przywracania.");}catch(e){toast("Nie udało się zapisać punktu: "+e.message);}}
 function restoreDialog(){const snaps=JSON.parse(localStorage.getItem(SNAP)||"[]");openDialog("Punkty przywracania",snaps.length?snaps.map((x,i)=>"<div class=\"page-row\"><span>"+esc(x.date)+"</span><button class=\"small-btn\" data-restore=\""+i+"\">Przywróć</button></div>").join(""):"<p class=\"hint\">Nie ma jeszcze zapisanych punktów.</p>");}
 function templateDialog(){openDialog("Wybierz styl nowej strony","<p class=\"hint\">Szablon zastąpi bieżący szkic (nie stronę opublikowaną). Zmianę można cofnąć przez Ctrl+Z.</p><div class=\"widget-grid\"><button class=\"widget-card\" data-template=\"cinematic\"><span class=\"widget-icon\">◼</span><strong>Cinematic / czerń</strong></button><button class=\"widget-card\" data-template=\"wedding\"><span class=\"widget-icon\">◇</span><strong>Wedding / krem</strong></button><button class=\"widget-card\" data-template=\"minimal\"><span class=\"widget-icon\">▫</span><strong>Editorial / minimalizm</strong></button><button class=\"widget-card\" data-template=\"creative\"><span class=\"widget-icon\">✦</span><strong>Creative / żywe kolory</strong></button></div>");}
-function applyTemplate(k){if(!confirm("Wczytać nowy szablon do szkicu 9.0? Stary szkic będzie dostępny przez Cofnij."))return;transact(()=>{const name=project.name;project=initialProject();project.name=name;const themes={cinematic:["#d7b58a","#111317","#f5f5f3"],wedding:["#9c745a","#ede6dd","#251c19"],minimal:["#222222","#f8f8f5","#151515"],creative:["#ecb83c","#181b31","#ffffff"]};const z=themes[k]||themes.cinematic;project.theme={accent:z[0],background:z[1],text:z[2],font:k==="wedding"||k==="minimal"?"Georgia":"Inter"};for(const page of project.pages)for(const s of page.sections){s.responsive.desktop.background=z[1];s.responsive.desktop.textColor=z[2];}ui.pageId=project.pages[0].id;ui.selected=[];});closeDialog();toast("Wczytano szablon: "+k);}
+function applyTemplate(k){
+ if(!confirm("Wczytać nowy szablon do szkicu 9.0? Stary szkic można przywrócić przez Ctrl+Z."))return;
+ const schemes={
+ cinematic:{colors:["#d7b58a","#111317","#f5f5f3"],font:"Inter",sections:["hero","gallery","features","video","cta","contact","footer"]},
+ wedding:{colors:["#97755a","#f1e9df","#2b201a"],font:"Georgia",sections:["hero","text","gallery","reviews","pricing","contact","footer"]},
+ minimal:{colors:["#1a1a1a","#fafaf8","#171717"],font:"Arial",sections:["hero","text","gallery","contact","footer"]},
+ creative:{colors:["#f7c35a","#27244f","#faf2ff"],font:"Verdana",sections:["hero","features","video","gallery","logos","cta","faq","contact","footer"]}
+ };
+ const cfg=schemes[k]||schemes.cinematic;
+ transact(()=>{
+  const name=project.name;project=initialProject();project.name=name;
+  const z=cfg.colors;project.theme={accent:z[0],background:z[1],text:z[2],font:cfg.font,layout:k};
+  const home=project.pages[0];home.sections=cfg.sections.map(section);
+  if(k==="wedding"){home.sections[0].props.title="EMOCJE W KADRZE.";home.sections[0].props.kicker="FOTOGRAFIA ŚLUBNA · REPORTAŻ";home.sections[0].props.image="/assets/photo-wedding.png";}
+  if(k==="minimal"){home.sections[0].props.title="MNIEJ ZNACZY WIĘCEJ.";home.sections[0].props.image="";home.sections[0].props.body="Autorskie fotografie. Wyrazisty obraz. Prosta forma.";home.sections[0].responsive.desktop.minHeight=440;home.sections.find(x=>x.type==="gallery").responsive.desktop.columns=2;}
+  if(k==="creative"){home.sections[0].props.title="ODWAŻNE HISTORIE.";home.sections[0].props.image="/assets/film-ad.png";home.sections[0].responsive.desktop.align="center";}
+  for(const page of project.pages)for(const s of page.sections){
+   s.responsive.desktop.background=z[1];s.responsive.desktop.textColor=z[2];
+   if(s.type==="hero"&&k!=="minimal")s.responsive.desktop.textColor="#ffffff";
+   if(k==="minimal")s.responsive.desktop.padding=54;
+   if(k==="wedding")s.responsive.desktop.padding=88;
+   if(k==="creative"&&s.type==="features")s.responsive.desktop.background="#423774";
+  }
+  ui.pageId=project.pages[0].id;ui.selected=[];
+ });closeDialog();toast("Wczytano nowy układ szablonu: "+k);
+}
 
 function changePage(pid){const p=project.pages.find(x=>x.id===pid);if(!p)return;ui.pageId=pid;ui.selected=[];renderAll();}
 function newPage(){const name=prompt("Nazwa nowej podstrony:","Nowa strona");if(!name||!name.trim())return;transact(()=>{const slug="/"+name.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");const p=page(name.trim().slice(0,90),slug,["hero","text","contact","footer"]);project.pages.push(p);ui.pageId=p.id;ui.selected=[];});}
 function renamePage(){const p=activePage(),n=prompt("Zmień nazwę podstrony:",p.name);if(!n||!n.trim())return;transact(()=>p.name=n.trim().slice(0,90));}
 function preview(){
- const canvas=document.createElement("div");canvas.className="site-canvas "+ui.device;canvas.style.background=project.theme.background;canvas.style.fontFamily=project.theme.font+",sans-serif";canvas.innerHTML=activePage().sections.map(s=>sectionHtml(s,true)).join("");
+ const canvas=document.createElement("div");canvas.className="site-canvas "+ui.device+" theme-"+(project.theme.layout||"cinematic");canvas.style.background=project.theme.background;canvas.style.fontFamily=project.theme.font+",sans-serif";canvas.innerHTML=activePage().sections.map(s=>sectionHtml(s,true)).join("");
  const mount=$("#previewStage");mount.innerHTML="";mount.append(canvas);$("#previewOverlay").hidden=false;
 }
 function importLegacy(){
