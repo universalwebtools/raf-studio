@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0c0e11">
+<title>RAF.studio · Nowy edytor 9.0 (test)</title>
+<link rel="stylesheet" href="./editor.css?v=9001">
+</head>
+<body>
+<div id="app" class="shell">
+  <header class="top">
+    <div class="brand"><a href="/admin/" aria-label="Panel administracyjny">RAF<span>•studio</span></a><span class="build">EDITOR 9.0 <b>BETA</b></span></div>
+    <div class="top-project"><input id="projectName" title="Nazwa projektu" aria-label="Nazwa projektu"><span id="saveStatus" aria-live="polite">Wczytywanie szkicu…</span></div>
+    <div class="device-bar" role="group" aria-label="Widok urządzenia">
+      <button class="device active" data-device="desktop" title="Komputer">▣ <span>Komputer</span></button>
+      <button class="device" data-device="tablet" title="Tablet">▯ <span>Tablet</span></button>
+      <button class="device" data-device="mobile" title="Telefon">▯ <span>Telefon</span></button>
+      <select id="zoom" title="Powiększenie obszaru" aria-label="Powiększenie"><option value="100">100%</option><option value="85">85%</option><option value="70">70%</option><option value="55">55%</option></select>
+    </div>
+    <div class="top-actions">
+      <button id="undo" title="Cofnij (Ctrl+Z)">↶</button><button id="redo" title="Ponów (Ctrl+Y)">↷</button>
+      <button id="openPreview">Podgląd</button><button id="exportTop">↓ Eksport</button>
+      <button class="publish-disabled" title="W wersji testowej publikowanie na stronie produkcyjnej jest wyłączone" disabled>Publikuj <span>🔒</span></button>
+    </div>
+  </header>
+  <aside class="left-panel">
+    <nav class="panel-tabs" aria-label="Narzędzia edytora">
+      <button data-tab="layers" class="active">Warstwy</button><button data-tab="add">Dodaj</button><button data-tab="pages">Strony</button><button data-tab="media">Media</button><button data-tab="design">Styl</button>
+    </nav>
+    <div class="sidebar-heading"><strong id="sidebarTitle">Warstwy strony</strong><span id="sidebarAux"></span></div>
+    <div id="sidebarContent" class="sidebar-scroll"></div>
+    <div class="left-bottom">
+      <div class="draft-badge"><span class="led"></span> Oddzielny szkic 9.0</div>
+      <a href="/admin/">← Powrót do panelu admina</a>
+    </div>
+  </aside>
+  <main class="work-area" id="workArea">
+    <div class="canvas-toolbar"><div class="crumbs">PROJEKT <span>›</span> <b id="currentPageName">Strona główna</b> <span>›</span> <b id="selectionName">Brak zaznaczenia</b></div><div><span id="deviceSize">1440 px</span> <span class="dot">•</span> <span>Edytuj tekst podwójnym kliknięciem</span></div></div>
+    <div class="stage-viewport" id="stageViewport">
+      <div id="siteCanvas" class="site-canvas" tabindex="0" aria-label="Podgląd i edycja strony"></div>
+      <button id="addBottom" class="add-bottom">＋ Dodaj sekcję</button>
+    </div>
+  </main>
+  <aside class="inspector">
+    <div class="inspector-head"><span>WŁAŚCIWOŚCI</span><strong id="inspectorTitle">Nic nie zaznaczono</strong></div>
+    <div id="inspectorBody" class="inspector-scroll"><p class="hint">Kliknij dowolną sekcję na podglądzie lub w panelu warstw.</p></div>
+    <div class="inspector-foot"><small id="storageHint">Szkic zapisuje się tylko w tej przeglądarce.</small></div>
+  </aside>
+  <div class="bottom-strip"><span><span class="led"></span> Tryb testowy · wersje 7.x–8.9.3 pozostają nietknięte</span><span id="itemCounter">0 sekcji</span></div>
+</div>
+<div id="previewOverlay" class="overlay" hidden><div class="modal preview-modal"><div class="modal-head"><div><small>PODGLĄD BEZ PUBLIKACJI</small><strong>Podgląd strony 9.0</strong></div><button id="closePreview" aria-label="Zamknij">✕</button></div><div id="previewStage" class="preview-stage"></div></div></div>
+<div id="dialogOverlay" class="overlay" hidden><div class="modal dialog-modal"><div class="modal-head"><strong id="dialogTitle">Ustawienia</strong><button id="closeDialog" aria-label="Zamknij">✕</button></div><div id="dialogContent" class="dialog-content"></div></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+<div id="auth90" class="auth-screen"><div class="auth-box"><div class="auth-logo">RAF<span>•studio</span></div><div class="auth-small">EDYTOR 9.0 · DOSTĘP ADMINISTRATORA</div><h1>Zaloguj się</h1><p>Nowy edytor korzysta z logowania Firebase. Projekty testowe są oddzielone od działającej strony.</p><form id="auth90Form"><label>E-mail<input id="auth90Email" type="email" autocomplete="username" required></label><label>Hasło<input id="auth90Password" type="password" autocomplete="current-password" required></label><button type="submit" id="auth90Submit">Zaloguj do edytora</button><p class="auth-error" id="auth90Error" role="alert"></p></form><a href="/admin/">← Panel administracyjny</a></div></div>
+<input type="file" id="jsonFile" accept=".json,application/json" hidden>
+<input type="file" id="imageFile" accept="image/*" multiple hidden>
+<script src="./editor.js?v=9001" defer></script>
+<script type="module" src="./auth.js?v=9001"></script>
+</body></html>
