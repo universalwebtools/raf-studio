@@ -1,10 +1,12 @@
-// Eight independent reference-led templates for RAF.studio RESPONSIVE 8.9.3.
+// Nine independent reference-led templates for RAF.studio RESPONSIVE 8.9.3.
 // Each template owns its markup, hierarchy and navigation; only editor bindings are shared.
-export const TEMPLATE_BUILD='893-eight-1';
+import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-white-1';
+export const TEMPLATE_BUILD='893-white-1';
 const asset=n=>'/assets/'+n;
 const A={city:asset('templates/aerial-city.webp'),mountains:asset('templates/mountains.webp'),table:asset('templates/wedding-table.webp'),wedding:asset('templates/wedding-story.webp'),couple:asset('photo-wedding.png'),camera:asset('templates/camera.webp'),film:asset('portal-film.png'),event:asset('photo-event.png'),product:asset('photo-product.png'),session:asset('photo-session.png'),ad:asset('film-ad.png'),filmEvent:asset('film-event.png'),filmSocial:asset('film-social.png'),filmSlow:asset('film-slowmo.png'),portalPhoto:asset('portal-photo.png')};
 
 export const TEMPLATES752={
+ [WHITE_STORY_ID]:WHITE_STORY,
  'sop-drone':{name:'SOP the DRONE',source:'https://sopthedrone.com/',category:'Dron / produkcja',family:'sop',bg:'#20282d',fg:'#f4f7f5',ac:'#70cdb7',font:'Arial',heroImage:A.city,description:'Pełnoekranowy lot nad miastem, techniczny pulpit usług i nieregularna galeria.',sections:['Hero','Pasek zaufania','Pulpit usług','Showreel','Galeria lotnicza','Przebieg lotu','Kontakt']},
  'bmb-dron':{name:'BMBDRON',source:'https://www.bmbdron.com/',category:'Dron / produkcja',family:'bmb',bg:'#050505',fg:'#ffffff',ac:'#df2f38',font:'Arial',heroImage:A.film,description:'Czarny dom produkcyjny: szeroki showreel, ogromna typografia i techniczna lista możliwości.',sections:['Hero','Manifest produkcyjny','Filmy','Możliwości','Studio','Kontakt']},
  'rolands-varsbergs':{name:'Rolands Varsbergs',source:'https://rolandsvarsbergs.com/',category:'Foto / portfolio',family:'rolands',bg:'#ffffff',fg:'#111111',ac:'#111111',font:'Arial',heroImage:A.event,description:'Białe portfolio autora z dużą ilością oddechu, mocnym podpisem i ścianą fotografii.',sections:['Hero','Wprowadzenie','Portfolio','Usługi','Klienci','Kontakt']},
@@ -20,6 +22,7 @@ export const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const media=url=>({url,desktop:{x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,inherit:false},tablet:{inherit:true},mobile:{inherit:true}});
 
 export function buildTemplate(id){
+ if(id===WHITE_STORY_ID)return buildWhiteStory(TEMPLATE_BUILD);
  const t=TEMPLATES752[id];if(!t)throw new Error('Nieznany szablon: '+id);
  const homeContent={},homeMedia={heroMedia:media(t.heroImage)};
  const site={heroK:'RAF.studio',heroT:'',heroD:'',email:'hello@raf-studio.pl',phone:'',instagram:'',whatsapp:'',gallery:'https://galeria.raf-studio.pl/'};
@@ -147,5 +150,6 @@ export function mountTemplate(root,id,{editor=false}={}){
  document.body.dataset.e752=id;document.body.dataset.t6=t.family;document.body.removeAttribute('data-tpl75');
  root.querySelectorAll('[data-site-text]').forEach(el=>el.textContent=d.site[el.dataset.siteText]||'');
  root.querySelectorAll('h1,h2,h3,p,a,img,article,figure,small,span,summary,details,section,li,b').forEach((el,i)=>{if(!el.matches('[data-home-text],[data-site-text],[data-home-media],[data-raf-element],[data-raf-section]'))el.dataset.rafV7Id=`t6:${id}:${i}`;if(editor)el.dataset.rafFree='1'});
+ if(id===WHITE_STORY_ID)mountWhiteStory(root,{editor});
  window.dispatchEvent(new CustomEvent('raf:template752-rendered',{detail:{id,family:t.family,variant:2}}));return d;
 }
