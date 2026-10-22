@@ -1,7 +1,7 @@
-// Eight templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
+// Nine templates for RAF.studio RESPONSIVE 8.9.3. Applying changes draft only.
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-eight-1';
+import {TEMPLATES752,TEMPLATE_IDS752,buildTemplate,TEMPLATE_BUILD,esc} from './template-collection-v893.js?v=893-white-1';
 const db=getDatabase(getApp()),ROOT='website/public',$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const previewUrl=(id,thumb=false)=>`/template-preview-v752.html?preset=${encodeURIComponent(id)}&${thumb?'thumb=1&':''}v=${TEMPLATE_BUILD}`;
 export async function applyTemplate(id,{keepContent=false}={}){
@@ -15,6 +15,10 @@ export async function applyTemplate(id,{keepContent=false}={}){
  // so carry its stamp forward and prevent the next editor boot from undoing it.
  main.builder.basePublishedAt=Number(publishedSnap.val()||old.editorDraft?.builder?.basePublishedAt||0);
  main.builder.recoveredV64='2';
+ // A visual redesign must not replace the owner's contact details with demo data.
+ if(id==='rojczyk-white')for(const field of ['email','phone','instagram','whatsapp','gallery']){
+  const value=old.editorDraft.site?.[field];if(value)main.site[field]=value;
+ }
  if(keepContent){
   main.site={...main.site,...old.editorDraft.site};main.homeContent={...main.homeContent,...old.editorDraft.homeContent};main.homeMedia={...main.homeMedia,...old.editorDraft.homeMedia};
   for(const k of ['photos','films','reviews','clients'])if(old.editorDraft[k])main[k]=old.editorDraft[k];
