@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><title>Public template flow regression</title>
+<script type="importmap">{"imports":{"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js":"./fixtures/firebase-builder.js","https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js":"./fixtures/firebase-builder.js"}}</script>
+<h1>Public template flow regression</h1><pre id="results">Running…</pre>
+<header class="hero" data-raf-section="Hero"><h1 id="heroT">Legacy hero</h1></header>
+<main id="rafMain"><section id="legacy-about" data-raf-section="About">Legacy about</section><section id="legacy-contact" data-raf-section="Contact">Legacy contact</section></main>
+<script type="module">
+import {publishBuilder} from './fixtures/firebase-builder.js';
+import '../builder-runtime.js';
+import {TEMPLATE_IDS752,buildTemplate,mountTemplate} from '../template-collection-v893.js';
+const results=document.getElementById('results'),lines=[];
+const check=(ok,message)=>{if(!ok)throw Error(message)};
+const legacy=document.getElementById('rafMain');
+const sectionKeys=root=>[...root.children].filter(el=>el.hasAttribute('data-raf-section')).map(el=>el.dataset.rafSection);
+try{
+ // Legacy pages still use their original container and section order.
+ publishBuilder({sectionOrder:['Hero','Contact','About']});
+ check(sectionKeys(legacy).join(',')==='Contact,About','Legacy order');
+ check(document.querySelector('header.hero').parentElement===document.body,'Legacy hero stays outside main');
+ lines.push('PASS: legacy page order');
+ for(const id of TEMPLATE_IDS752){
+  const d=buildTemplate(id);
+  // Data arrives first, before the asynchronously loaded template exists.
+  publishBuilder(d.builder);
+  const root=document.createElement('main');root.id='rafTemplate752';legacy.after(root);
+  mountTemplate(root,id);
+  const original=[...root.querySelectorAll(':scope > [data-raf-section]')];
+  const expected=d.builder.sectionOrder;
+  check(sectionKeys(root).join(',')===expected.join(','),id+': mount after data');
+  // Data arrives again after mount, with an edited order and custom section.
+  const order=['Hero',...expected.slice(1).reverse(),'Custom-test'];
+  publishBuilder({...d.builder,sectionOrder:order,customSections:[{id:'Custom-test',type:'cta',title:'Custom content',text:'Preserved on the active page'}]});
+  check(sectionKeys(root).join(',')===order.join(','),id+': saved order and custom section');
+  check(original.every(el=>el.parentElement===root),id+': section ownership');
+  check(!legacy.querySelector('[data-raf-section^="T6-"]'),id+': no template section in hidden legacy page');
+  window.dispatchEvent(new Event('resize'));
+  check(sectionKeys(root).join(',')===order.join(','),id+': resize preserves complete page');
+  check(root.querySelectorAll('.raf-custom-section').length===1,id+': no duplicate custom sections');
+  for(const a of root.querySelectorAll('a[href^="#"]')){
+   const target=a.getAttribute('href').slice(1);if(!target)continue;
+   check(root.querySelector('[id="'+CSS.escape(target)+'"]'),id+': anchor '+target+' stays in active page');
+  }
+  if(id==='rojczyk-white'){
+   root.querySelector('[data-rw-photo="0"]').click();
+   check(root.querySelector('.rw-lightbox').open,'Gallery handlers survive reordering');
+   root.querySelector('.rw-lightbox-close').click();
+   check(!root.querySelector('.rw-lightbox').open,'Gallery close handler');
+  }
+  root.remove();delete document.body.dataset.t6;delete document.body.dataset.e752;
+  lines.push('PASS: '+id+' — load order, saved order, resize, custom section, anchors');
+ }
+ results.textContent=lines.join('\n')+'\nPASS: all public template flow checks';results.dataset.result='pass';
+}catch(error){results.textContent=lines.join('\n')+'\nFAIL: '+error.message;results.dataset.result='fail';console.error(error)}
+</script></html>

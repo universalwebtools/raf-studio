@@ -2,6 +2,7 @@
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
+import {fitTemplateLayout} from './template-layout-fit-v893.js?v=8.9.3-public-flow-2';
 
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')&&!Q.has('tplPreview')){
@@ -41,7 +42,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
   else id='dom:'+pathKey(el);
   el.dataset.rafV7PublicId=id;return id
  }
- function cfg(id){const d=dev(),desk=layout.desktop?.[id]||{},cur=layout[d]?.[id]||{};return d==='desktop'?desk:{...desk,...cur}}
+ function cfg(id,el){return fitTemplateLayout(layout,id,dev(),{family:document.body.dataset.t6,hero:!!el.closest('#rafTemplate752 #rw-top'),width:document.documentElement.clientWidth})}
  function cropApply(el,c,layoutScale=1){
   if(!(el instanceof HTMLImageElement))return false;const ls=Math.max(.05,Number(layoutScale)||1);
   if(!c){el.style.transformOrigin='center center';el.style.scale=String(ls);return true}
@@ -62,7 +63,7 @@ if(!Q.has('editor')&&!Q.has('tplPreview')){
 	  el.dataset.v760Typography=[...controlled].join(' ')
 	 }
 	 function applyOne(el){
-	  const id=idFor(el),c=cfg(id);if(!id||!c||!Object.keys(c).length)return;
+	  const id=idFor(el),c=cfg(id,el);if(!id||!c||!Object.keys(c).length)return;
 	  if(c.text!=null&&el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em')&&!el.querySelector('img,video,svg,iframe,input,textarea,select')&&el.textContent!==String(c.text))el.textContent=String(c.text);
 	  if(c.href!=null&&el instanceof HTMLAnchorElement&&el.getAttribute('href')!==String(c.href))el.setAttribute('href',String(c.href));
 	  applyTypography(el,c);
