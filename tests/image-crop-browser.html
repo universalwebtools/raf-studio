@@ -1,0 +1,48 @@
+<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAF image crop regression</title>
+<link rel="stylesheet" href="../template-collection-v893.css">
+<script type="importmap">{"imports":{"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js":"./fixtures/firebase-crop.js","https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js":"./fixtures/firebase-crop.js","https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js":"./fixtures/firebase-crop.js"}}</script>
+<style>html,body{margin:0;overflow-x:clip}#qa{position:relative;z-index:1000050;background:#def3ff;padding:12px;font:13px system-ui}#qa button{padding:9px;margin:3px}#results{white-space:pre-wrap}#rafTop3{position:fixed;top:8px;left:20px;z-index:1000035;display:none}#rafPanel3{position:fixed;right:12px;top:160px;bottom:10px;width:280px;overflow:auto;background:#111;color:white;z-index:1000032;padding:12px;font:11px system-ui;border-radius:12px}#rafPanel3 label{display:block}#rafPanel3 input,#rafPanel3 select,#rafPanel3 textarea{width:100%;background:#111;color:#fff;border:1px solid #666;border-radius:6px}#rafPanel3 button{background:#152532;color:white;border:1px solid #555;border-radius:5px;padding:8px;cursor:pointer}#rafStatus3{color:#075}#qa-public{width:100%;height:780px;border:2px solid #0af}body.qa-public #rafPanel3{display:none}</style>
+<div id="qa"><b>Test edytora — dane wyłącznie lokalne</b><button id="qa-hero">Wybierz zdjęcie HERO</button><button id="qa-about">Wybierz portret</button><button id="qa-test">Sprawdź kadrowanie i cofanie</button><button id="qa-publish">Sprawdź zapis w widoku publicznym</button><button id="qa-phone">Podgląd 390 px</button><button id="qa-large">Test dużego płótna</button><button id="qa-reset">Reset testu</button><span id="rafStatus3"></span><pre id="results"></pre></div>
+<div id="rafTop3"></div><aside id="rafPanel3"></aside><main id="rafTemplate752"></main>
+<script type="module">
+import {mountTemplate} from '../template-collection-v893.js';
+import {seed,saved,set} from './fixtures/firebase-crop.js';
+const query=new URLSearchParams(location.search),isPublic=query.has('public');
+const root=document.getElementById('rafTemplate752');const templateData=mountTemplate(root,'rojczyk-white',{editor:!isPublic});
+const photo=root.querySelector('[data-home-media="heroMedia"]'),portrait=root.querySelector('.rw-about>img');
+const check=(v,msg)=>{if(!v)throw Error(msg)},tick=()=>new Promise(r=>setTimeout(r,220));
+if(isPublic){
+ document.body.classList.add('qa-public');document.getElementById('qa').textContent='Widok publiczny — zapisany kadr';
+ const stored=saved(),builder=stored.website?.public?.editorDraft?.builder||stored.website?.public?.builder||{};seed({website:{public:{...stored.website?.public,builder,homeMedia:templateData.homeMedia}}});
+ await import('../public-layout-v760.js');await import('../home-media.js');await import('../public-force-sync-v65.js');await photo.decode();await tick();await set('website/public/homeMedia',templateData.homeMedia);await new Promise(r=>setTimeout(r,800));
+ const r=photo.getBoundingClientRect();document.getElementById('qa').textContent=JSON.stringify({public:true,frame:{left:r.left,width:r.width,height:r.height},crop:photo.style.backgroundSize,ghost:!!document.getElementById('rafCropPreview893'),parentOverflow:getComputedStyle(photo.parentElement).overflow});
+}else{
+ document.body.classList.add('raf-e3');
+ await import('../editor-core-v760.js');await import('../editor-workspace-v760.js');await tick();
+ const core=window.rafCore760;
+ document.getElementById('qa-hero').onclick=()=>{core.selectElement(photo);photo.scrollIntoView({block:'center'})};
+ document.getElementById('qa-about').onclick=()=>{core.selectElement(portrait);portrait.scrollIntoView({block:'center'})};
+ document.getElementById('qa-reset').onclick=()=>{sessionStorage.removeItem('raf-crop-regression');location.reload()};
+ document.getElementById('qa-publish').onclick=async()=>{core.save();await tick();let frame=document.getElementById('qa-public');if(!frame){frame=document.createElement('iframe');frame.id='qa-public';document.getElementById('qa').after(frame)}frame.src='image-crop-browser.html?public=1';frame.scrollIntoView({block:'start'})};
+ document.getElementById('qa-phone').onclick=()=>{const f=document.getElementById('qa-public');if(f){f.style.width='390px';f.style.display='block';f.src='image-crop-browser.html?public=1'}};
+ document.getElementById('qa-large').onclick=async()=>{core.patchOne(root.querySelector('#rw-top'),{width:4197,height:1700,x:-828,y:-336,scale:.61});core.selectElement(photo);await tick();document.getElementById('v893fullWidth').click();await tick();const r=photo.getBoundingClientRect();document.getElementById('results').textContent='Large canvas full width: '+JSON.stringify({left:r.left,width:r.width,height:r.height})};
+ document.getElementById('qa-test').onclick=async()=>{
+  const result=document.getElementById('results'),lines=[];
+  try{
+   core.applyLayout({desktop:{},tablet:{},mobile:{}});core.selectElement(photo);await photo.decode();await tick();
+   core.patchOne(photo,{x:-150,width:600,height:420,crop:{x:35,y:60,zoom:1.8,fit:'cover'}});await tick();
+   let r=photo.getBoundingClientRect();check(Math.abs(r.width-600)<1,'Zoom must not enlarge frame');check(Math.abs(r.height-420)<1,'Zoom must not enlarge frame height');
+   check(getComputedStyle(photo.parentElement).overflow==='visible','Column must not clip moved frame');
+   check(photo.style.backgroundSize&&photo.dataset.rafCropRender==='1','Crop rendered in image frame');lines.push('PASS fixed frame, source zoom and unclipped column');
+   const before=r.left;core.patchOne(photo,{x:-350});await tick();check(Math.abs(photo.getBoundingClientRect().left-before+200)<1,'Frame moves beyond column');
+   core.undo();await tick();check(Math.abs(photo.getBoundingClientRect().left-before)<1,'Undo restores frame position');lines.push('PASS movement outside column and undo');
+   document.getElementById('v760cropDrag').click();await tick();check(document.getElementById('rafCropPreview893'),'Crop ghost visible');
+   document.getElementById('v760cropDrag').click();await tick();check(!document.getElementById('rafCropPreview893'),'Crop ghost removed on finish');lines.push('PASS ghost start / finish');
+   document.getElementById('v893fullWidth').click();await tick();r=photo.getBoundingClientRect();check(Math.abs(r.left)<1,'Full width begins at page left');check(Math.abs(r.width-document.documentElement.clientWidth)<1,'Full width fills page');lines.push('PASS full page width');
+   core.undo();await tick();check(Math.abs(photo.getBoundingClientRect().width-600)<1,'Undo full width');core.redo();await tick();check(Math.abs(photo.getBoundingClientRect().left)<1,'Redo full width');lines.push('PASS full width undo / redo');
+   result.textContent=lines.join('\n');result.dataset.result='pass';
+  }catch(e){result.textContent=lines.join('\n')+'\nFAIL '+e.message;result.dataset.result='fail';console.error(e)}
+ };
+ core.selectElement(photo);
+}
+</script></html>
