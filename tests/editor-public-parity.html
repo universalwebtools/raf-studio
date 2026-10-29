@@ -1,0 +1,50 @@
+<!doctype html><html lang="pl"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RAF — editor / public parity regression</title>
+<link rel="stylesheet" href="../styles.css"><link rel="stylesheet" href="../layout-v61.css">
+<script type="importmap">{"imports":{"https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js":"./fixtures/firebase-parity.js","https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js":"./fixtures/firebase-parity.js","https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js":"./fixtures/firebase-parity.js"}}</script>
+<style>html,body{margin:0}html.raf-editor-ready body,html.raf-public-ready body{transition:none!important}#qa{background:#eef3f8;color:#111;padding:18px;font:14px/1.5 system-ui}#qa button{padding:10px;margin-right:8px}#results{white-space:pre-wrap}.pair{display:grid;gap:20px;padding:20px;background:#e6e6e6;color:#111;font:14px system-ui}.pair iframe{display:block;background:#fff;height:780px;border:0;max-width:none}.proof .pair{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;padding:14px}.proof .frame-viewport{height:540px;overflow:hidden}.proof .pair iframe{transform:scale(.48);transform-origin:top left;height:1080px}.proof #results{max-height:24px;overflow:hidden}.proof #qa p{display:none}#rafTop3,#rafPanel3,#rafNav3{display:none!important}</style>
+<div id="qa"><b>Porównanie tego samego projektu i szerokości</b><p><button id="desktop">Komputer 1280 px</button><button id="phone">Telefon 390 px</button><button id="remount">Ponownie wczytaj szablon</button><button id="change">Zmień jasność i rozmiar zakładki</button><button id="move">Przesuń zdjęcie i porównaj zapis</button><button id="undo">Cofnij przesunięcie</button><button id="proof">Porównanie obok siebie</button><button id="check">Sprawdź zgodność</button></p><pre id="results"></pre></div>
+<script type="module">
+import {seed,set} from './fixtures/firebase-parity.js';
+import {buildWhiteStory} from '../template-white-story-v893.js';
+const q=new URLSearchParams(location.search),mode=q.get('mode'),tick=ms=>new Promise(r=>setTimeout(r,ms));
+if(!mode){
+ const pair=document.createElement('div');pair.className='pair';document.body.append(pair);
+ for(const name of ['editor','public']){const label=document.createElement('b');label.textContent=name==='editor'?'EDYTOR':'PO PUBLIKACJI';const f=document.createElement('iframe');f.id=name;f.src='editor-public-parity.html?mode='+name+(name==='editor'?'&editor=direct':'');f.style.width='1280px';const card=document.createElement('div');card.className='frame-card';const viewport=document.createElement('div');viewport.className='frame-viewport';viewport.append(f);card.append(label,viewport);pair.append(card)}
+ const frames=()=>[...pair.querySelectorAll('iframe')];
+ for(const [id,width]of [['desktop',1280],['phone',390]])document.getElementById(id).onclick=()=>frames().forEach(f=>f.style.width=width+'px');
+ document.getElementById('proof').onclick=()=>document.body.classList.toggle('proof');
+ document.getElementById('remount').onclick=()=>frames().forEach(f=>f.contentWindow.postMessage({action:'remount'},location.origin));
+ document.getElementById('change').onclick=()=>frames().forEach(f=>f.contentWindow.postMessage({action:'change'},location.origin));
+ document.getElementById('undo').onclick=()=>document.getElementById('editor').contentWindow.postMessage({action:'undo'},location.origin);
+ document.getElementById('move').onclick=()=>document.getElementById('editor').contentWindow.postMessage({action:'move'},location.origin);
+ addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.action==='published-layout')document.getElementById('public').contentWindow.postMessage(e.data,location.origin)});
+ document.getElementById('check').onclick=async()=>{
+  const result=document.getElementById('results');result.dataset.result='running';result.textContent='Sprawdzanie…';await Promise.all(frames().map(async f=>{const deadline=Date.now()+10000;while(!f.contentDocument.documentElement.matches('.raf-editor-ready,.raf-public-ready')&&Date.now()<deadline)await tick(50);await f.contentDocument.fonts.ready;await f.contentDocument.querySelector('.rw-hero-photo img')?.decode().catch(()=>{})}));await tick(700);
+  const measure=doc=>['.rw-nav-link','.rw-hero-copy h1','.rw-hero-photo img','.rw-about>img'].map(selector=>{const el=doc.querySelector(selector),cs=doc.defaultView.getComputedStyle(el),r=el.getBoundingClientRect();return{selector,font:cs.fontSize,filter:cs.filter,opacity:cs.opacity,rect:[r.x,r.y,r.width,r.height].map(x=>Math.round(x*10)/10),crop:cs.backgroundSize}});
+  const [editor,published]=frames().map(f=>measure(f.contentDocument)),differences=[];
+  for(const f of frames()){const body=f.contentDocument.body,style=f.contentWindow.getComputedStyle(body);if(style.visibility!=='visible'||Number(style.opacity)!==1)differences.push(f.id+' is not visible')}
+  editor.forEach((a,i)=>{const b=published[i];for(const key of ['font','filter','opacity','crop'])if(a[key]!==b[key])differences.push(a.selector+' '+key+': '+a[key]+' / '+b[key]);if(a.rect.some((v,j)=>Math.abs(v-b.rect[j])>1))differences.push(a.selector+' frame: '+a.rect+' / '+b.rect)});
+  result.dataset.result=differences.length?'fail':'pass';result.textContent=(differences.length?'FAIL\n'+differences.join('\n'):'PASS — geometria, czcionki, jasność, krycie i kadr są zgodne')+'\n'+JSON.stringify({editor,published},null,2);
+ };
+}else{
+ document.getElementById('qa').remove();
+ const template=buildWhiteStory('parity-test'),main={site:template.site,homeContent:template.homeContent,homeMedia:template.homeMedia,visualStyles:template.visualStyles,builder:template.builder};
+ main.builder.freeLayoutV7={desktop:{'section:Hero':{width:4197,height:1700,x:-828.5,y:-336,scale:.61},'tx:heroT':{scale:2.3527,x:215,y:-89},'media:heroMedia':{width:3003.57,height:1400,x:-913.9,y:11.95,crop:{x:34.61,y:31.38,zoom:1,fit:'cover'}}}};
+ const base='website/public',editor=mode==='editor';seed({website:{public:{...structuredClone(main),editorDraft:structuredClone(main),proV6:template.pro,proV6Draft:template.pro}}});
+ // The legacy editor starts before asynchronous template mounting in production.
+ document.body.insertAdjacentHTML('beforeend','<header class="hero" data-raf-section="Hero"><div class="heroMedia"><img data-home-media="heroMedia" src="/assets/photo-wedding.png"></div></header><main id="rafMain"></main>');
+ if(editor){await import('../editor-media-prefetch-v43.js');await import('../direct-editor-v3.js');await tick(30);await import('../editor-pro-v61.js');await import('../editor-parity-v888.js');await import('../editor-core-v760.js');}
+ await import('../public-pro-v61.js?v=893-parity-1');await import('../template-engine-v752.js?v=893-white-1');
+ if(!editor){await import('../home-media.js');await import('../public-force-sync-v65.js');await import('../public-layout-v760.js');}
+ await document.fonts.ready;
+ // The isolated harness bypasses authentication and the production boot entry.
+ // Release the same paint gate after its real rendering modules have loaded.
+ document.documentElement.classList.add(editor?'raf-editor-ready':'raf-public-ready');
+ addEventListener('message',async e=>{if(e.origin!==location.origin)return;
+  if(e.data?.action==='remount')dispatchEvent(new CustomEvent('raf:template752-repair'));
+  if(e.data?.action==='change'){const root=base+(editor?'/editorDraft':'');await set(root+'/homeMedia/heroMedia/desktop',{brightness:73,contrast:112,opacity:84,x:50,y:50,zoom:1});await set(root+'/builder/freeLayoutV7/desktop/el:t6-roj-nav-about',{fontSize:19});if(editor)dispatchEvent(new CustomEvent('raf:history-main',{detail:{builder:(await (await import('./fixtures/firebase-parity.js')).get(root+'/builder')).val()}}));}
+  if(['move','undo'].includes(e.data?.action)&&editor){const img=document.querySelector('#rafTemplate752 [data-home-media="heroMedia"]');if(e.data.action==='undo')window.rafCore760.undo();else window.rafCore760.patchOne(img,{x:-120,width:700,height:510});window.rafCore760.save();await tick(300);const layout=(await (await import('./fixtures/firebase-parity.js')).get(base+'/editorDraft/builder/freeLayoutV7')).val();parent.postMessage({action:'published-layout',layout},location.origin)}
+  if(e.data?.action==='published-layout'&&!editor)await set(base+'/builder/freeLayoutV7',e.data.layout);
+ });
+}
+</script></html>

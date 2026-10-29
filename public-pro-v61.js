@@ -16,7 +16,7 @@ function heroVideo(){
  const heroes=$$('[data-raf-section="Hero"]');
  for(const old of heroes){
   const oldMedia=$('.heroMedia',old);
-  if(oldMedia){$('.rafHeroVideoWrap61',oldMedia)?.remove();oldMedia.classList.remove('raf-video-active61');for(const img of $$(':scope > img',oldMedia)){img.style.visibility='';img.style.opacity=''}}
+  if(oldMedia){$('.rafHeroVideoWrap61',oldMedia)?.remove();oldMedia.classList.remove('raf-video-active61');for(const img of $$(':scope > img',oldMedia)){img.style.visibility=''}}
   $('.rafHeroOverlay61',old)?.remove();$('.e800HeroShade',old)?.style.removeProperty('opacity');
   old.classList.remove('rafHeroVideoEnabled61','rafHeroNoTint61','rafHeroMobileFull61','rafHeroMobileContent61','rafHeroMobileFixed61');old.style.removeProperty('--raf-hero-mobile-height')
  }
