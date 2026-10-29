@@ -1,15 +1,28 @@
-// RAF.studio — prefetch mediów edytora v4.3
-import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js";
-import { firebaseConfig, WEBSITE_ROOT } from "./firebase-config.js";
-const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
-const keys=['heroMedia','photoPortal','filmPortal','aboutPortrait'];
-const dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
-function cfgFor(cfg={},d=dev()){const desk=cfg.desktop||{};return d==='desktop'?{x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,radius:0,...desk}:{x:50,y:50,zoom:1,brightness:100,contrast:100,opacity:100,radius:0,...desk,...(cfg[d]||{})}}
-function preload(src){return new Promise(resolve=>{if(!src)return resolve(false);const i=new Image();i.onload=()=>resolve(true);i.onerror=()=>resolve(false);i.src=src})}
-for(const k of keys){const el=document.querySelector(`[data-home-media="${k}"]`);if(el)el.style.opacity='0'}
+// Keep media appearance current after asynchronous template mounting as well as
+// initial boot. A one-time prefetch only styled the now-hidden legacy hero.
+import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
+import {getDatabase,ref,get,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
+import {mediaConfig,applyMediaAppearance} from './media-appearance-v893.js?v=893-parity-1';
+const db=getDatabase(getApps().length?getApp():initializeApp(firebaseConfig));
+const base=WEBSITE_ROOT+'/public',dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');
+let published={},draft={},frame=0;
+function render(){
+ frame=0;const media={...published,...draft};
+ for(const img of document.querySelectorAll('img[data-home-media]')){
+  const saved=media[img.dataset.homeMedia];if(!saved)continue;
+  const source=window.rafCore760?.cfgFor(img)?.src||saved.url;
+  if(source&&img.getAttribute('src')!==source)img.src=source;
+  applyMediaAppearance(img,mediaConfig(saved,dev()));
+ }
+}
+function schedule(){if(!frame)frame=requestAnimationFrame(render)}
 try{
- const s=await get(ref(db,`${WEBSITE_ROOT}/public/editorDraft/homeMedia`));
- const media=s.val()||{};
- await Promise.all(keys.map(async k=>{const el=document.querySelector(`[data-home-media="${k}"]`);const m=media[k]||{};const src=m.url||'';if(!el||!src)return;const ok=await preload(src);if(!ok)return;const c=cfgFor(m);el.src=src;el.dataset.loadedSrc=src;el.style.objectPosition=`${c.x}% ${c.y}%`;el.style.transformOrigin=`${c.x}% ${c.y}%`;el.style.transform=`scale(${Math.max(1,Number(c.zoom)||1)})`;el.style.objectFit='cover';el.style.width='100%';el.style.height='100%';el.style.filter=`brightness(${Number(c.brightness)||100}%) contrast(${Number(c.contrast)||100}%)`;el.style.borderRadius=`${Number(c.radius)||0}px`;el.style.opacity=String((Number(c.opacity)||100)/100)}));
-}catch(e){console.warn('RAF editor media prefetch',e)}
+ const [p,d]=await Promise.all([get(ref(db,base+'/homeMedia')),get(ref(db,base+'/editorDraft/homeMedia'))]);
+ published=p.val()||{};draft=d.val()||{};render();
+ onValue(ref(db,base+'/editorDraft/homeMedia'),s=>{draft=s.val()||{};schedule()});
+}catch(error){console.warn('RAF editor media appearance',error)}
+addEventListener('raf:template752-rendered',schedule);
+addEventListener('raf:v760-ready',schedule);
+addEventListener('raf:history-main',schedule);
+addEventListener('resize',schedule,{passive:true});

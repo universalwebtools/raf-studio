@@ -1,7 +1,7 @@
 // RAF.studio — reliable global history v8.7.3 (NO RELOAD, queued Ctrl+Z)
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
-import {merge61,render61} from './public-pro-v61.js?v=7.2.0';
+import {merge61,render61} from './public-pro-v61.js?v=893-parity-1';
 const db=getDatabase(getApp()),$=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],P={main:'website/public/editorDraft',extras:'website/public/editorExtrasDraft',pro:'website/public/proV6Draft',pages:'website/public/customPagesDraft'},KEY='rafHistory862';
 const CORE_BUILDER_KEYS=['freeLayoutV7','clonesV76','flowOrderV772'];
 let current=null,undo=[],redo=[],live={main:null,extras:null,pro:null,pages:null},ready=false,busy=false,timer=null,lastGlobalAt=0,preview=false,pendingExternalAt=0,pendingExternalReadyAt=0,historyQueue=Promise.resolve(),queuedHistory=0;const cp=x=>structuredClone(x??null),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b),dev=()=>new URLSearchParams(location.search).get('device')||(innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop');

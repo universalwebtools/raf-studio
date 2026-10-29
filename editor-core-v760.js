@@ -1,5 +1,6 @@
 // RAF.studio — unified visual core v8.7.2
 import {applyImageFrame,linearMatrix} from './image-frame-v893.js?v=893-crop-1';
+import {fitTemplateLayout} from './template-layout-fit-v893.js?v=8.9.3-public-flow-2';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 
@@ -107,7 +108,20 @@ function ownCfg(k,el){
  layout[d][k]=layout[d][k]||{};
  return layout[d][k]
 }
-function cfg(k,el){const d=dev(),own=ownCfg(k,el),desk=layout.desktop?.[k]||{};return d==='desktop'?{...baseCfg(),...own}:{...baseCfg(),...desk,...own}}
+function fitContext(el){return {family:document.body.dataset.t6,hero:!!el?.closest('#rafTemplate752 #rw-top'),width:document.documentElement.clientWidth}}
+function cfg(k,el){ownCfg(k,el);return {...baseCfg(),...fitTemplateLayout(layout,k,dev(),fitContext(el))}}
+function materializeFittedLayout(){
+ // At the first edit, checkpoint the original and edit the geometry actually
+ // displayed. Responsive fitting must not discard a later drag or resize.
+ const changes=[];
+ for(const el of $$(CAND)){
+  const k=id(el),context=fitContext(el);if(!context.hero)continue;
+  const d=dev(),raw=d==='desktop'?(layout.desktop?.[k]||{}):{...(layout.desktop?.[k]||{}),...(layout[d]?.[k]||{})};
+  const fitted=fitTemplateLayout(layout,k,d,context);
+  if(JSON.stringify(raw)!==JSON.stringify(fitted))changes.push([k,el,fitted]);
+ }
+ for(const [k,el,fitted] of changes)Object.assign(ownCfg(k,el),fitted);
+}
 function applyTypography(el,c){
  if(!el.matches('h1,h2,h3,h4,h5,h6,p,span,b,strong,small,blockquote,a,button,label,li,figcaption,em'))return;
  const controlled=new Set((el.dataset.v760Typography||'').split(' ').filter(Boolean));
@@ -270,7 +284,7 @@ function boxUpdate(){
 function stateShot(){return{layout:cp(layout),clones:cp(clones),flowOrders:cp(flowOrders)}}
 function historyItem(value,fallbackAt=0){return value&&value.state&&typeof value==='object'?{state:value.state,at:Number(value.at)||fallbackAt}:{state:value,at:fallbackAt}}
 function restoreState(x){layout=cp(x.layout||{});clones=cp(x.clones||[]);flowOrders=cp(x.flowOrders||[]);applyAll();save()}
-function commit(){const at=Date.now();undo.push({state:stateShot(),at});if(undo.length>80)undo.shift();redo=[];lastAt=at;window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at}}))}
+function commit(){const at=Date.now();undo.push({state:stateShot(),at});if(undo.length>80)undo.shift();redo=[];lastAt=at;materializeFittedLayout();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at}}))}
 function save(){
  clearTimeout(saveTimer);const l=cp(layout),c=cp(clones),f=cp(flowOrders);
  saveTimer=setTimeout(()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c),set(ref(db,ROOT+'/flowOrderV772'),f)]).then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
