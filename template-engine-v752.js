@@ -2,7 +2,8 @@
 import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
-import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-white-1';
+import {applyMediaAppearance,mediaConfig} from './media-appearance-v893.js?v=893-parity-1';
+import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-image-parity-2';
 export {TEMPLATES752,TEMPLATE_IDS752};
 const q=new URLSearchParams(location.search),editor=q.has('editor'),preview=q.get('tplPreview'),db=getDatabase(getApps().length?getApp():initializeApp(firebaseConfig));
 let selected='',generation=0,saved={},legacy;
@@ -14,7 +15,7 @@ function applySaved(){
  root.querySelectorAll('[data-home-text]').forEach(el=>{const v=saved.homeContent?.[el.dataset.homeText];if(v!=null)el.textContent=String(v)});
  root.querySelectorAll('[data-site-text]').forEach(el=>{const v=saved.site?.[el.dataset.siteText];if(v!=null)el.textContent=String(v)});
  const device=innerWidth<=640?'mobile':innerWidth<=980?'tablet':'desktop';
- root.querySelectorAll('[data-home-media]').forEach(el=>{const c=saved.homeMedia?.[el.dataset.homeMedia];if(!c)return;if(c.url)el.src=c.url;const d={...(c.desktop||{}),...(device==='desktop'?{}:c[device]||{})};el.style.objectPosition=`${d.x??50}% ${d.y??50}%`;el.style.transform=`scale(${d.zoom??1})`;el.style.opacity=String((d.opacity??100)/100)});
+ root.querySelectorAll('[data-home-media]').forEach(el=>{const c=saved.homeMedia?.[el.dataset.homeMedia];if(!c)return;if(c.url&&el.getAttribute('src')!==c.url)el.src=c.url;applyMediaAppearance(el,mediaConfig(c,device))});
 }
 async function choose(value,force=false){
  const id=preview||value?.id||value||'cinema';if(id===selected&&!force)return;selected=id;const run=++generation;

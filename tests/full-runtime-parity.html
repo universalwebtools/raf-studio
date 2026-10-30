@@ -1,0 +1,25 @@
+<!doctype html><html lang="pl"><meta charset="utf-8"><title>RAF — pełny edytor i publikacja</title>
+<style>body{margin:0;background:#e9eef2;color:#15202c;font:14px system-ui}header{padding:16px}button{padding:9px;margin:3px}#result{white-space:pre-wrap;padding:12px;margin:0;max-height:150px;overflow:auto}.pair{display:flex;gap:12px;padding:12px}.card{flex:1;min-width:0}.viewport{overflow:hidden;height:650px;background:white;margin-top:8px}iframe{border:0;transform-origin:top left}strong{display:block}</style>
+<header><b>Ten sam projekt — edytor i opublikowana strona</b><div><button data-width="1280">PC 1280</button><button data-width="1920">PC 1920</button><button data-width="820">Tablet 820</button><button data-width="390">Telefon 390</button><button id="check">Sprawdź zgodność</button><button id="publish">Odczytaj publikację testową</button><button id="remount">Wczytaj ponownie szablon</button><button id="hero">Zdjęcie HERO</button><button id="car">Zdjęcie z samochodem</button></div></header>
+<pre id="result">Pełny zestaw modułów produkcyjnych. Baza testowa w pamięci.</pre><div class="pair"><div class="card"><strong>EDYTOR</strong><div class="viewport"><iframe id="editor" src="qa-runtime.html?editor=direct&ev=8.9.3"></iframe></div></div><div class="card"><strong>PO PUBLIKACJI</strong><div class="viewport"><iframe id="published" src="qa-runtime.html"></iframe></div></div></div>
+<script>
+const frames=[...document.querySelectorAll('iframe')];let width=1280;
+function size(){frames.forEach(f=>{const scale=Math.min(1,f.parentElement.clientWidth/width);f.style.width=width+'px';f.style.height=650/scale+'px';f.style.transform='scale('+scale+')'})}
+size();addEventListener('resize',size);
+document.querySelectorAll('[data-width]').forEach(b=>b.onclick=()=>{width=Number(b.dataset.width);size()});
+document.getElementById('remount').onclick=()=>frames.forEach(f=>f.contentWindow.postMessage({qa:'remount'},location.origin));
+document.getElementById('publish').onclick=()=>frames[0].contentWindow.postMessage({qa:'export'},location.origin);
+addEventListener('message',e=>{if(e.origin===location.origin&&e.data?.qa==='published')frames[1].contentWindow.postMessage({qa:'apply',data:e.data.data},location.origin)});
+for(const [id,selector] of [['hero','#rw-top'],['car','#rw-approach']])document.getElementById(id).onclick=()=>frames.forEach(f=>f.contentWindow.postMessage({qa:'scroll',selector},location.origin));
+document.getElementById('check').onclick=async()=>{
+ const out=document.getElementById('result');out.textContent='Sprawdzanie…';out.dataset.result='running';
+ await Promise.all(frames.map(async f=>{await f.contentDocument.fonts.ready;await Promise.all([...f.contentDocument.querySelectorAll('.rw-hero-photo img,.rw-about>img,.rw-split>img')].map(i=>{i.loading='eager';return Promise.race([i.decode().catch(()=>{}),new Promise(r=>setTimeout(r,5000))])}))}));
+ await new Promise(r=>setTimeout(r,700));
+ const measure=f=>{const doc=f.contentDocument,w=f.contentWindow;return ['.rw-hero-photo img','.rw-about>img','.rw-split>img','.rw-nav-link','.rw-hero-copy h1'].map(selector=>{
+  const el=doc.querySelector(selector);if(!el)return{selector,missing:true};const c=w.getComputedStyle(el),r=el.getBoundingClientRect();return{selector,id:el.dataset.rafV72Id||el.dataset.rafV7PublicId,rect:[r.x,r.y+w.scrollY,r.width,r.height].map(n=>Math.round(n*100)/100),font:c.fontSize,filter:c.filter,opacity:c.opacity,crop:[c.backgroundSize,c.backgroundPosition],src:el.tagName==='IMG'?el.src:undefined};
+ })};
+ const [editor,published]=frames.map(measure),diff=[];
+ editor.forEach((a,i)=>{const b=published[i];for(const key of ['id','font','filter','opacity','crop','src','missing'])if(JSON.stringify(a[key])!==JSON.stringify(b[key]))diff.push(a.selector+' '+key);if(a.rect?.some((v,j)=>Math.abs(v-b.rect[j])>1))diff.push(a.selector+' wymiary/pozycja: '+a.rect+' / '+b.rect)});
+ out.dataset.result=diff.length?'fail':'pass';out.textContent=(diff.length?'FAIL: '+diff.join('\n'):'PASS — wymiary, położenie, kadrowanie, wygląd i identyfikatory zgodne przy '+width+' px')+'\n'+JSON.stringify({editor:editor.map(({src,...x})=>x),published:published.map(({src,...x})=>x)},null,2);
+};
+</script></html>

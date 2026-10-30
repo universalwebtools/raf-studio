@@ -28,7 +28,12 @@ function ensure(){draft.site||={};draft.homeContent||={};draft.homeMedia||={};dr
 function mergeDevice(obj,base){const d=device();obj[d]={...base(),...(obj[d]||{})};if(d!=='desktop'&&obj[d].inherit!==false)obj[d]={...base(),...(obj.desktop||{}),...(obj[d]||{}),inherit:true};return obj[d]}
 function textCfg(k){draft.visualStyles.texts[k]||={desktop:baseText()};return mergeDevice(draft.visualStyles.texts[k],baseText)}
 function mediaCfg(k){const m=draft.homeMedia[k]||=( {desktop:baseMedia()} ),d=device();return m[d]={...(m[d]||{}),...mediaConfig(m,d)}}
-function sectionCfg(k){draft.visualStyles.sections[k]||={desktop:{paddingTop:null,paddingBottom:null,minHeight:null,background:'',hidden:false,inherit:true}};return mergeDevice(draft.visualStyles.sections[k],()=>({paddingTop:null,paddingBottom:null,minHeight:null,background:'',hidden:false,inherit:true}))}
+function sectionCfg(k){
+ const by=draft.visualStyles.sections[k]||={},d=device(),own=by[d]||{};
+ // Resolve inheritance before adding defaults: null defaults must not erase
+ // desktop spacing when the mobile/tablet settings do not exist yet.
+ return by[d]={paddingTop:null,paddingBottom:null,minHeight:null,background:'',hidden:false,inherit:true,...(d!=='desktop'&&own.inherit!==false?by.desktop||{}:{}),...own,...(d!=='desktop'&&own.inherit!==false?{inherit:true}:{})}
+}
 function elementCfg(k){draft.builder.elements[k]||={desktop:{inherit:true}};return mergeDevice(draft.builder.elements[k],()=>({inherit:true,text:null,href:null,background:'',color:'',radius:null,paddingX:null,paddingY:null,fontSize:null,zIndex:5,hidden:false,animation:''}))}
 function textValue(k){return ['heroK','heroT','heroD'].includes(k)?(draft.site[k]??''):(draft.homeContent[k]??'')}
 function setTextValue(k,v){if(['heroK','heroT','heroD'].includes(k))draft.site[k]=v;else draft.homeContent[k]=v}

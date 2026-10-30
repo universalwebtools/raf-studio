@@ -1,7 +1,8 @@
 // RAF.studio — Blueprint guard + editor bindings v8.7.1 WYSIWYG
 import './blueprint-hero-v75.js?v=8.7.0';
 import './blueprint-longform-v751.js?v=8.7.0';
-import './template-engine-v752.js?v=893-white-1';
+import './template-engine-v752.js?v=893-image-parity-2';
+import {bindTemplateElements} from './template-bindings-v893.js?v=893-image-parity-2';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 function css(){if($('#rafBlueprintGuard75'))return;const s=document.createElement('style');s.id='rafBlueprintGuard75';s.textContent=`
@@ -16,6 +17,6 @@ body.raf-e3 .tpl75Section[data-raf-section],body.raf-e3 .tpl75Section [data-raf-
 `;document.head.appendChild(s)}
 function stablePath(el,root){const p=[];let n=el;while(n&&n!==root&&p.length<5){const par=n.parentElement;if(!par)break;const siblings=[...par.children].filter(x=>x.tagName===n.tagName);p.unshift(`${n.tagName.toLowerCase()}${siblings.length>1?'-'+siblings.indexOf(n):''}`);n=par}return p.join('_')||el.tagName.toLowerCase()}
 function bindLegacy(){if(!EDITOR)return;$$('.tpl75Section').forEach((sec,i)=>{const kind=[...sec.classList].find(x=>x.startsWith('tpl75-')&&x!=='tpl75Section')||[...sec.classList].find(x=>x.startsWith('tpl751-'))||'section';sec.dataset.rafSection=`Tpl75-${i}-${kind.replace('tpl75-','').replace('tpl751-','')}`;sec.dataset.rafFree='1';$$('h2,h3,p,blockquote,a,button,img,article,form,input,select,textarea,strong,b,span,details,summary',sec).forEach(el=>{if(el.dataset.rafElement||el.dataset.homeText||el.dataset.homeMedia)return;el.dataset.rafFree='1';el.dataset.rafV7Id=`bp75:${i}:${stablePath(el,sec)}`})})}
-function bind752(){if(!EDITOR)return;const root=$('#rafTemplate752');if(!root)return;$$('[data-e752-sec]',root).forEach((sec,i)=>{sec.dataset.rafFree='1';$$('h1,h2,h3,p,blockquote,a,button,img,article,form,input,select,textarea,strong,b,span,details,summary',sec).forEach((el,k)=>{el.dataset.rafFree='1';if(!el.dataset.rafV7Id)el.dataset.rafV7Id=`e752:${document.body.dataset.e752||'tpl'}:${i}:${k}`})})}
+function bind752(){bindTemplateElements($('#rafTemplate752'),document.body.dataset.e752,{editor:EDITOR})}
 function run(){css();bindLegacy();bind752()}
 run();let timer;const obs=new MutationObserver(()=>{clearTimeout(timer);timer=setTimeout(run,35)});obs.observe(document.documentElement,{childList:true,subtree:true,attributes:true,attributeFilter:['data-tpl75','data-e752']});window.addEventListener('raf:template752-rendered',run);setTimeout(()=>obs.disconnect(),45000);
