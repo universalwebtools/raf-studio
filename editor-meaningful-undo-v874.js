@@ -14,7 +14,7 @@
    try{
     const rows=(core.list?.()||[]).map(row=>{
      const c=row?.cfg||{};
-     return [row?.id||'',c.x,c.y,c.width,c.height,c.scale,c.rotate,c.z,c.hidden,c.deleted,c.locked,c.group,c.text,c.href,c.src,c.fontFamily,c.fontSize,c.fontWeight,c.fontStyle,c.lineHeight,c.letterSpacing,c.color,c.textAlign,c.textTransform,c.textDecoration,c.fontKerning];
+     return [row?.id||'',c.x,c.y,c.width,c.height,c.scale,c.rotate,c.z,c.hidden,c.deleted,c.locked,c.group,c.text,c.href,c.src,c.fontFamily,c.fontSize,c.fontWeight,c.fontStyle,c.lineHeight,c.letterSpacing,c.color,c.textAlign,c.textTransform,c.textDecoration,c.fontKerning,c.crop?.x,c.crop?.y,c.crop?.zoom,c.crop?.fit,c.imageFrame,c.imageFrameHeight];
     });
     rows.sort((a,b)=>String(a[0]).localeCompare(String(b[0])));
     return JSON.stringify(rows);

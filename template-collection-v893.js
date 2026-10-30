@@ -1,6 +1,7 @@
 // Nine independent reference-led templates for RAF.studio RESPONSIVE 8.9.3.
 // Each template owns its markup, hierarchy and navigation; only editor bindings are shared.
 import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-white-1';
+import {bindTemplateElements} from './template-bindings-v893.js?v=893-image-parity-2';
 export const TEMPLATE_BUILD='893-white-1';
 const asset=n=>'/assets/'+n;
 const A={city:asset('templates/aerial-city.webp'),mountains:asset('templates/mountains.webp'),table:asset('templates/wedding-table.webp'),wedding:asset('templates/wedding-story.webp'),couple:asset('photo-wedding.png'),camera:asset('templates/camera.webp'),film:asset('portal-film.png'),event:asset('photo-event.png'),product:asset('photo-product.png'),session:asset('photo-session.png'),ad:asset('film-ad.png'),filmEvent:asset('film-event.png'),filmSocial:asset('film-social.png'),filmSlow:asset('film-slowmo.png'),portalPhoto:asset('portal-photo.png')};
@@ -151,5 +152,6 @@ export function mountTemplate(root,id,{editor=false}={}){
  root.querySelectorAll('[data-site-text]').forEach(el=>el.textContent=d.site[el.dataset.siteText]||'');
  root.querySelectorAll('h1,h2,h3,p,a,img,article,figure,small,span,summary,details,section,li,b').forEach((el,i)=>{if(!el.matches('[data-home-text],[data-site-text],[data-home-media],[data-raf-element],[data-raf-section]'))el.dataset.rafV7Id=`t6:${id}:${i}`;if(editor)el.dataset.rafFree='1'});
  if(id===WHITE_STORY_ID)mountWhiteStory(root,{editor});
+ bindTemplateElements(root,id,{editor});
  window.dispatchEvent(new CustomEvent('raf:template752-rendered',{detail:{id,family:t.family,variant:2}}));return d;
 }

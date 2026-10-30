@@ -1,5 +1,6 @@
 // RAF.studio — unified visual core v8.7.2
 import {applyImageFrame,linearMatrix} from './image-frame-v893.js?v=893-crop-1';
+import {heroImageAtPoint} from './editor-image-hit-v893.js?v=893-image-parity-2';
 import {fitTemplateLayout} from './template-layout-fit-v893.js?v=8.9.3-public-flow-2';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
@@ -149,7 +150,7 @@ function apply(el){
  const scaledMedia=applyImageFrame(el,c);if(!scaledMedia){el.style.transformOrigin='center center';el.style.scale=String(Math.max(.05,Number(c.scale)||1))}
  applyTypography(el,c);
  if(c.z)el.style.zIndex=String(c.z);
- if(c.src&&el instanceof HTMLImageElement)el.src=c.src;
+ if(c.src&&el instanceof HTMLImageElement&&el.getAttribute('src')!==c.src)el.src=c.src;
  if(c.hidden||c.deleted){el.dataset.v72hidden='1';el.style.display='none'}else if(el.dataset.v72hidden==='1'){el.style.removeProperty('display');el.dataset.v72hidden='0'}
  el.classList.toggle('v72grp',!!c.group);el.classList.toggle('v760locked',!!c.locked)
 }
@@ -390,7 +391,7 @@ function panel(){
  $('#v72panelEdit').onclick=requestEdit;$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
  p.classList.add('raf-panel-open62');p.style.display='block'
 }
-function cand(e){return e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
+function cand(e){return heroImageAtPoint(e.target,e.clientX,e.clientY)||e.target.closest?.('[data-raf-v72-id]')||e.target.closest?.(CAND)}
 function hits(l,t,r,b){
  const a=$$(CAND).filter(el=>{if(el.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,#v72box,#v760layers,#v760menu,#v760history'))return false;const q=el.getBoundingClientRect();return q.width&&q.height&&q.right>=l&&q.left<=r&&q.bottom>=t&&q.top<=b});
  return a.filter(el=>!a.some(o=>o!==el&&el.contains(o)))
@@ -517,7 +518,7 @@ function finishPointer(e){
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
-window.addEventListener('click',e=>{if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',e=>{const image=heroImageAtPoint(e.target,e.clientX,e.clientY);if(image&&image!==e.target&&sel.has(image)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
 window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;
