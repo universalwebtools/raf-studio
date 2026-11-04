@@ -2,7 +2,7 @@
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {getStorage,ref as sRef,uploadBytesResumable,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js';
-import {WIDGET_CATALOG_770,makeWidget770,normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=8.7.0';
+import {WIDGET_CATALOG_770,makeWidget770,normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=893-click-1';
 
 const app=getApp(),db=getDatabase(app),storage=getStorage(app),PATH='website/public/editorDraft/builder/widgetsV77';
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)],cp=x=>JSON.parse(JSON.stringify(x??{}));
