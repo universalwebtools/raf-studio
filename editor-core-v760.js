@@ -1,6 +1,7 @@
 // RAF.studio — unified visual core v8.7.2
 import {applyImageFrame,linearMatrix} from './image-frame-v893.js?v=893-crop-1';
 import {heroImageAtPoint} from './editor-image-hit-v893.js?v=893-image-parity-2';
+import {canvasAction,editGesture,isEditorUi,registerNavigationSave} from './editor-interactions-v893.js?v=893-click-1';
 import {fitTemplateLayout} from './template-layout-fit-v893.js?v=8.9.3-public-flow-2';
 import {getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
@@ -23,6 +24,8 @@ let flowOrders=[];
 let sel=new Set();
 let overlay=null,guides=null,drag=null,marq=null,saveTimer=null,decorTimer=null,inlineEdit=null;
 let lastTap=null,moveArm=null,suppressClickUntil=0,suppressNextClick=false;
+let editAction=null;
+let pendingWrite=null,saveInFlight=Promise.resolve(),saveVersion=0;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
 const TYPO_KEYS=['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','color','textAlign','textTransform','textDecoration','fontKerning'];
@@ -288,9 +291,12 @@ function restoreState(x){layout=cp(x.layout||{});clones=cp(x.clones||[]);flowOrd
 function commit(){const at=Date.now();undo.push({state:stateShot(),at});if(undo.length>80)undo.shift();redo=[];lastAt=at;materializeFittedLayout();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core',at}}))}
 function save(){
  clearTimeout(saveTimer);const l=cp(layout),c=cp(clones),f=cp(flowOrders);
- saveTimer=setTimeout(()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c),set(ref(db,ROOT+'/flowOrderV772'),f)]).then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
+ pendingWrite={version:++saveVersion,run:()=>Promise.all([set(ref(db,ROOT+'/freeLayoutV7'),l),set(ref(db,ROOT+'/clonesV76'),c),set(ref(db,ROOT+'/flowOrderV772'),f)])};
+ saveTimer=setTimeout(()=>flushSave().then(()=>{const s=$('#rafStatus3');if(s)s.textContent='✓ Wersja robocza zapisana'}).catch(console.error),140);
  const s=$('#rafStatus3');if(s)s.textContent='● Zmiany robocze';emit('change')
 }
+function flushSave(){clearTimeout(saveTimer);if(pendingWrite){const write=pendingWrite;pendingWrite=null;saveInFlight=saveInFlight.catch(()=>{}).then(write.run).catch(error=>{if(write.version===saveVersion)pendingWrite||=write;throw error})}return saveInFlight}
+registerNavigationSave(flushSave);
 function applyAll(){decorate();applyFlowOrders();boxUpdate();panel();emit('change')}
 function undoNow(){if(!undo.length)return false;const item=historyItem(undo.pop());redo.push({state:stateShot(),at:item.at});restoreState(item.state);lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core-undo',at:lastAt}}));return true}
 function redoNow(){if(!redo.length)return false;const item=historyItem(redo.pop());undo.push({state:stateShot(),at:item.at});restoreState(item.state);lastAt=Date.now();window.dispatchEvent(new CustomEvent('raf:history-source',{detail:{source:'core-redo',at:lastAt}}));return true}
@@ -385,7 +391,7 @@ function flowStep(direction){
 function panel(){
  const p=$('#rafPanel3');if(!p||!sel.size)return;
  $('#v72panel')?.remove();const d=document.createElement('div');d.id='v72panel';d.className='v72multi';
- const fs=flowState();d.innerHTML='<small>V8.7.2 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Pojedyncze kliknięcie niczego nie zaznacza • dwuklik aktywuje element<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
+ const fs=flowState();d.innerHTML='<small>V8.7.2 CORE • '+(sel.size===1?'ELEMENT':'MULTI-SELECT')+'</small><h3>'+(sel.size===1?id([...sel][0]):sel.size+' elementy')+'</h3><div class="v72grid"><button data-a="left">← Lewo</button><button data-a="center">↔ Środek</button><button data-a="right">Prawo →</button><button data-a="top">↑ Góra</button><button data-a="middle">↕ Środek</button><button data-a="bottom">↓ Dół</button><button id="v72g">Grupuj</button><button id="v72ug">Rozgrupuj</button><button id="v72reset">Reset XY + skala</button></div>'+(sel.size===1?'<div class="v72grid" style="grid-template-columns:1fr 1fr"><button id="v72panelUp" '+(!fs?.canUp?'disabled':'')+'>↑ O JEDEN POZIOM</button><button id="v72panelDown" '+(!fs?.canDown?'disabled':'')+'>↓ O JEDEN POZIOM</button></div>':'')+'<div class="v72grid" style="grid-template-columns:1fr 1fr 1fr"><button id="v72panelEdit">✎ Edytuj</button><button id="v72panelHide">◌ Ukryj</button><button id="v72panelDelete" style="border-color:#ff4e68;color:#ff9bac">⌫ Usuń</button></div><div style="font-size:9px;color:#777;margin-top:8px">Tekst: szybki dwuklik lub ✎ Edytuj = pisanie bezpośrednio na stronie<br>Usuwanie przenosi cały element do Kosza — można go przywrócić w Warstwach<br>Linki i przyciski: klik uruchamia • Ctrl/⌘+klik wybiera do edycji<br>Pozostałe elementy: dwuklik aktywuje edycję<br>Ruch: przeciągnij przy drugim kliknięciu albo użyj uchwytu ✥<br>Alt+przeciągnięcie = zaznacz ramką • Ctrl podczas ruchu = bez magnesu<br>Multi-select: przeciągnij dowolny fioletowy narożnik, aby proporcjonalnie skalować całość<br>Shift podczas skalowania grupy = skok co 5%</div>';
  p.prepend(d);$$('[data-a]',d).forEach(x=>x.onclick=()=>align(x.dataset.a));$('#v72g').onclick=group;$('#v72ug').onclick=ungroup;$('#v72reset').onclick=()=>patchSelected({x:0,y:0,scale:1});
  if($('#v72panelUp'))$('#v72panelUp').onclick=()=>flowStep(-1);if($('#v72panelDown'))$('#v72panelDown').onclick=()=>flowStep(1);
  $('#v72panelEdit').onclick=requestEdit;$('#v72panelHide').onclick=toggleHidden;$('#v72panelDelete').onclick=deleteSelected;
@@ -482,6 +488,15 @@ function pendingMove(e,el){
 }
 
 window.addEventListener('pointerdown',e=>{
+ editAction=null;
+ if(isEditorUi(e.target)){suppressNextClick=false;suppressClickUntil=0;return}
+ const action=canvasAction(e.target);
+ if(action&&e.button===0&&!document.body.classList.contains('raf-crop-active')){
+  lastTap=null;disarmMove();suppressNextClick=false;suppressClickUntil=0;
+  if(!editGesture(e)){clear();clearLegacySelection();return}
+  decorate();clearLegacySelection();select(action,false);editAction=action;pendingMove(e,action);
+  e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return
+ }
  if(e.button!==0||document.body.classList.contains('raf-crop-active')||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  decorate();const el=cand(e);
  if(e.altKey||e.shiftKey){lastTap=null;disarmMove();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel),modifier:true};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
@@ -494,6 +509,7 @@ window.addEventListener('pointerdown',e=>{
  lastTap=null;disarmMove();if(e.target.closest('a,button,img,video,iframe'))return;clear();clearLegacySelection();suppressClickUntil=performance.now()+520;suppressNextClick=true;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
 },true);
 window.addEventListener('dblclick',e=>{
+ if(isEditorUi(e.target)||canvasAction(e.target))return;
  if(e.target.closest('[data-v760-inline-edit="1"]')){e.stopPropagation();e.stopImmediatePropagation();return}
  if(e.button!==0||e.target.closest('#rafTop3,#rafPanel3,#rafProModal61,#tpl752,#widgetsModal770,input,textarea,select,[contenteditable="true"],#v72box,#v760layers,#v760menu,#v760history'))return;
  const el=cand(e);if(!el)return;if(!sel.has(el))select(el,false);if(editableText(el)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();beginInlineEdit(el);return}armMove(el);e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()
@@ -514,11 +530,20 @@ window.addEventListener('pointermove',e=>{
 },true);
 function finishPointer(e){
  if(marq&&e.pointerId===marq.pid){if(!marq.moved&&marq.startEl){if(sel.has(marq.startEl)){sel.delete(marq.startEl);marq.startEl.classList.remove('v72sel')}else add(marq.startEl)}suppressClickUntil=performance.now()+450;$('#v72marq')?.remove();marq=null;panel();boxUpdate();guideHide();emit();e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
- if(drag&&e.pointerId===drag.pid){const ready=drag.mode==='pending'&&drag.sourceEl&&!drag.sourceEl.matches(TEXT)?drag.sourceEl:null,scaled=drag.mode==='multi-resize',scale=drag.lastScale,count=drag.items?.length||0;drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','multi-resize','rotate'].includes(drag.mode))save();drag=null;if(ready)armMove(ready);panel();boxUpdate();guideHide();emit();if(scaled){const s=$('#rafStatus3');if(s)s.textContent='✓ '+count+' elementów przeskalowano do '+Math.round(scale*100)+'% • Ctrl+Z cofa całość'}}
+ if(drag&&e.pointerId===drag.pid){const ready=drag.mode==='pending'&&drag.sourceEl&&!drag.sourceEl.matches(TEXT)?drag.sourceEl:null,scaled=drag.mode==='multi-resize',scale=drag.lastScale,count=drag.items?.length||0;drag.sourceEl?.classList.remove('v760moving');if(drag.mode==='move')suppressClickUntil=performance.now()+450;if(['move','resize','multi-resize','rotate'].includes(drag.mode))save();drag=null;if(ready&&!canvasAction(ready))armMove(ready);panel();boxUpdate();guideHide();emit();if(scaled){const s=$('#rafStatus3');if(s)s.textContent='✓ '+count+' elementów przeskalowano do '+Math.round(scale*100)+'% • Ctrl+Z cofa całość'}}
 }
 window.addEventListener('pointerup',finishPointer,true);
 window.addEventListener('pointercancel',e=>{finishPointer(e);guideHide()},true);
-window.addEventListener('click',e=>{const image=heroImageAtPoint(e.target,e.clientX,e.clientY);if(image&&image!==e.target&&sel.has(image)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}},true);
+window.addEventListener('click',e=>{
+ if(isEditorUi(e.target))return;
+ const action=canvasAction(e.target);
+ if(action){
+  const editing=editGesture(e)||editAction===action;editAction=null;suppressNextClick=false;suppressClickUntil=0;
+  if(editing){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();if(!sel.has(action)){clearLegacySelection();select(action,false)}}
+  return
+ }
+ const image=heroImageAtPoint(e.target,e.clientX,e.clientY);if(image&&image!==e.target&&sel.has(image)){e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(e.target.closest('[data-v760-inline-edit="1"]')){if(e.target.closest('a'))e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}if(suppressNextClick||performance.now()<suppressClickUntil){suppressNextClick=false;suppressClickUntil=0;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation()}
+},true);
 window.addEventListener('dragstart',e=>{if(drag?.sourceEl)e.preventDefault()},true);
 document.addEventListener('keydown',e=>{
  if(e.target.closest?.('input,textarea,select,[contenteditable="true"]'))return;

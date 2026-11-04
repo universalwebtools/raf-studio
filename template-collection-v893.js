@@ -1,6 +1,6 @@
 // Nine independent reference-led templates for RAF.studio RESPONSIVE 8.9.3.
 // Each template owns its markup, hierarchy and navigation; only editor bindings are shared.
-import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-white-1';
+import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-click-1';
 import {bindTemplateElements} from './template-bindings-v893.js?v=893-image-parity-2';
 export const TEMPLATE_BUILD='893-white-1';
 const asset=n=>'/assets/'+n;

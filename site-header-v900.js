@@ -1,3 +1,4 @@
+import {canvasAction} from './editor-interactions-v893.js?v=893-click-1';
 // RAF.studio — editable overlay site header v8.9.3 — mobile socials + strict WYSIWYG parity
 // One header for public + editor: logo left, centered navigation, socials right.
 // Every visible part also has a stable data-raf-element id, while this module
@@ -72,8 +73,7 @@ function render(){injectCss();cfg=normalize(cfg);ensureAnchors();
  $$('svg',header).forEach(svg=>{svg.dataset.rafHeaderIcon='1';svg.removeAttribute('data-raf-free');svg.removeAttribute('data-raf-v7-id');svg.removeAttribute('data-raf-v72-id');svg.removeAttribute('data-raf-v7-public-id');for(const p of ['position','left','top','width','max-width','height','scale','rotate','transform','translate','z-index'])svg.style.removeProperty(p)});
  const img=$('.rafHeaderBrand900 img',header),txt=$('.rafHeaderLogoText900',header);if(!cfg.logoUrl){img.style.display='none';txt.style.display='block'}else img.addEventListener('error',()=>{img.style.display='none';txt.style.display='block'},{once:true});
  $('.rafHeaderToggle900',header).onclick=e=>{e.preventDefault();e.stopPropagation();header.classList.toggle('open')};
- if(EDITOR)header.addEventListener('click',e=>{const a=e.target.closest('a');if(a&&!e.ctrlKey&&!e.metaKey)e.preventDefault()});
- if(EDITOR)header.addEventListener('dblclick',e=>{if(!e.target.closest('.rafHeaderToggle900'))openPanel()});
+ if(EDITOR)header.addEventListener('dblclick',e=>{if(!canvasAction(e.target))openPanel()});
  if(EDITOR){ensureBadge();setTimeout(()=>window.rafUniversalElements873?.refresh?.(),0)}
 }
 function scheduleRender(){clearTimeout(renderTimer);renderTimer=setTimeout(render,25)}

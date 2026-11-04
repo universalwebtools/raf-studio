@@ -2,8 +2,8 @@
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
-import './site-v800.js?v=8.7.0';
-import {normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=8.7.0';
+import './site-v800.js?v=893-click-1';
+import {normalizeWidgets770,mountWidgets770} from './widgets-core-v770.js?v=893-click-1';
 
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')&&!Q.has('tplPreview')){
