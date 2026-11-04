@@ -1,4 +1,25 @@
-// RAF.studio — portfolio chrome v6.2
-const $=s=>document.querySelector(s);const p=new URLSearchParams(location.search),ver=p.get('ev')||'6.2';
-function init(){const top=$('.peTop');if(!top)return false;top.querySelector(':scope > b')?.remove();const st=$('#peStatus');if(st&&!/Zmiany|Opublik|Błąd/i.test(st.textContent))st.textContent=`✓ Edytor v${ver}`;for(const id of ['peVersion47','peVersion54','peVersion55','peVersion60','peVersion61','peVersion62'])$('#'+id)?.remove();const w=document.createElement('label');w.id='peVersion62';w.style.cssText='display:flex;gap:5px;align-items:center;color:#aaa;font:10px system-ui';w.innerHTML=`<span>Wersja</span><select style="background:#080809;color:#fff;border:1px solid #ffffff22;border-radius:8px;padding:6px"><option value="6.2">6.2 — najnowsza</option><option value="6.1">6.1</option><option value="6.0">6.0</option><option value="5.5">5.5</option><option value="5.4">5.4</option><option value="5.0">5.0</option><option value="4.7">4.7</option></select>`;top.insertBefore(w,$('#peAdd')||top.firstChild);const s=w.querySelector('select');s.value=ver;s.onchange=()=>{const u=new URL(location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',s.value);location.href=u};const go=path=>{const u=new URL(path,location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',ver);location.href=u};if($('#peHome'))$('#peHome').onclick=()=>go('index.html');if($('#pePhoto'))$('#pePhoto').onclick=()=>go('fotografia.html');if($('#peFilm'))$('#peFilm').onclick=()=>go('film.html');const panel=$('#pePanel');document.addEventListener('click',()=>setTimeout(()=>{if(panel)panel.style.display=$('.pe-selected')?'block':'none'},0),true);return true}
-let n=0;const t=setInterval(()=>{if(init()||++n>100)clearInterval(t)},50);
+// RAF.studio — portfolio chrome aligned with the active editor release.
+const $=s=>document.querySelector(s);
+const params=new URLSearchParams(location.search);
+const version=params.get('ev')||'8.9.3';
+
+function versions(){
+ const rows=Array.isArray(window.rafEditorReleases)?window.rafEditorReleases:[version];
+ return [...new Set([version,...rows])]
+}
+function goVersion(next){
+ if(typeof window.rafGoEditorVersion==='function'){window.rafGoEditorVersion(next);return}
+ const u=new URL(location.href);u.searchParams.set('editor','direct');u.searchParams.set('ev',next);location.href=u
+}
+function init(){
+ const top=$('.peTop');if(!top)return false;
+ top.querySelector(':scope > b')?.remove();
+ const status=$('#peStatus');if(status&&!/Zmiany|Opublik|Błąd/i.test(status.textContent))status.textContent=`✓ Edytor v${version}`;
+ for(const id of ['peVersion47','peVersion54','peVersion55','peVersion60','peVersion61','peVersion62','peVersion893'])$('#'+id)?.remove();
+ const wrap=document.createElement('label');wrap.id='peVersion893';wrap.style.cssText='display:flex;gap:5px;align-items:center;color:#aaa;font:10px system-ui';
+ wrap.innerHTML=`<span>Wersja</span><select aria-label="Wersja edytora" style="background:#080809;color:#fff;border:1px solid #ffffff22;border-radius:8px;padding:6px">${versions().map((v,i)=>`<option value="${v}">${v}${i===0?' — najnowsza':''}</option>`).join('')}</select>`;
+ top.insertBefore(wrap,$('#peAdd')||top.firstChild);
+ const select=wrap.querySelector('select');select.value=version;select.onchange=()=>goVersion(select.value);
+ return true
+}
+let tries=0;const timer=setInterval(()=>{if(init()||++tries>100)clearInterval(timer)},50);
