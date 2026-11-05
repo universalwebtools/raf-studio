@@ -22,6 +22,7 @@ function css(){
  '.v760layer.deleted{grid-template-columns:minmax(0,1fr) 86px;opacity:.7;border-color:#ff4e6822}.v760restore{color:#76e6ac!important}.v760danger{border-color:#ff4e68!important;color:#ff9bac!important;background:#210b11!important}.v760trashHead{color:#ff8ca0!important}.v760toast{position:fixed;left:50%;bottom:24px;translate:-50% 0;z-index:1000099;display:flex;align-items:center;gap:12px;padding:11px 13px;border:1px solid #ffffff24;border-radius:12px;background:#101012f2;color:#fff;box-shadow:0 18px 55px #000b;font:12px system-ui}.v760toast button{border:1px solid #55cfff;background:#092133;color:#9bddff;border-radius:8px;padding:7px 10px;cursor:pointer}'+
  '#v760menu{position:fixed;z-index:1000070;width:220px;background:#101012f5;border:1px solid #ffffff24;border-radius:12px;padding:7px;box-shadow:0 22px 70px #000c;color:#fff;font:12px system-ui;display:none;backdrop-filter:blur(20px)}#v760menu.open{display:block}#v760menu button{display:flex;justify-content:space-between;width:100%;border:0;background:transparent;color:#eee;padding:8px 9px;border-radius:7px;cursor:pointer;text-align:left}#v760menu button:hover{background:#ffffff12}#v760menu hr{border:0;border-top:1px solid #ffffff13;margin:5px 0}#v760menu small{color:#777}'+
  '#rafPanel3 #v760common{border:1px solid #22a8ff44;background:#07131b;margin:0 0 12px;padding:11px;border-radius:11px}#v760common .v760title{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px}#v760common .v760title small{color:#70caff;font-weight:900;letter-spacing:.12em}#v760common .v760grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}#v760common label{margin:5px 0 2px!important}#v760common input,#v760common select,#v760common textarea{box-sizing:border-box;padding:7px!important}#v760common textarea{min-height:86px;resize:vertical}#v760common .v760actions{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px}#v760common .v760actions button{padding:7px 4px!important;font-size:10px}#v760common .v850type{border-top:1px solid #43b9ff44;margin-top:10px;padding-top:10px}#v760common .v850typeTitle{font-size:10px;font-weight:900;letter-spacing:.13em;color:#70caff;margin-bottom:5px}#v760common .v850typeNote{font-size:9px;color:#8f9ba3;line-height:1.45;margin:6px 0}#v760common .v850typeActions{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:8px}#v760common .v850typeActions button{padding:7px 5px!important;font-size:9px}'+
+ '#rafPanel3{overscroll-behavior:contain;scrollbar-gutter:stable;touch-action:pan-y}'+
  '.v760crop{border-top:1px solid #ffffff13;margin-top:10px;padding-top:9px}.v760crop b{font-size:11px}.v760rangeLine{display:grid;grid-template-columns:42px 1fr 38px;gap:5px;align-items:center}.v760rangeLine input{padding:0!important}.v760rangeLine output{text-align:right;color:#aaa;font-size:9px}.v760cropActive{outline:2px dashed #ff3aa6!important;outline-offset:-3px;cursor:grab!important}'+
  '@media(max-width:700px){#v760layers{left:4px;right:4px;top:58px;bottom:4px;width:auto}#v760devices{display:none}}';
  document.head.appendChild(s)
@@ -113,6 +114,7 @@ function syncInspector(el){
 }
 function renderInspector(force=false){
  if(!core||augmenting)return;const el=single(),p=$('#rafPanel3');if(!el||!p){$('#v760common')?.remove();return}
+ const previous=$('#v760common'),inspectorId=core.id(el),keepScroll=previous?.dataset.id===inspectorId,savedScroll=keepScroll?p.scrollTop:0;
  cropMode=!!cropPreview?.active;if(!force&&syncInspector(el))return;augmenting=true;
  try{
   $('#v760common')?.remove();const box=document.createElement('section');box.id='v760common';box.dataset.id=core.id(el);box.innerHTML=inspectorHtml(el);p.prepend(box);
@@ -132,7 +134,7 @@ function renderInspector(force=false){
   $$('[data-v760]',box).forEach(b=>b.onclick=()=>runAction(b.dataset.v760));
   $('#v893heroImage',box)?.addEventListener('click',()=>core.selectElement(el.querySelector('img[data-home-media="heroMedia"]')));
   if(el instanceof HTMLImageElement)wireCrop(el,box)
- }finally{augmenting=false}
+ }finally{augmenting=false;requestAnimationFrame(()=>{p.scrollTop=keepScroll?Math.min(savedScroll,Math.max(0,p.scrollHeight-p.clientHeight)):0})}
 }
 function cropValue(box){return{x:Number($('#v760cropX',box).value),y:Number($('#v760cropY',box).value),zoom:Number($('#v760zoom',box).value),fit:$('#v760fit',box).value}}
 function wireCrop(el,box){
@@ -163,8 +165,12 @@ function installEvents(){
  window.addEventListener('raf:pages860-updated',()=>scheduleInspector(true));
  window.addEventListener('raf:v760-edit',()=>{scheduleInspector(true);setTimeout(()=>{$('#v760text,#v760href,#v760x')?.focus();$('#rafPanel3')?.scrollTo({top:0,behavior:'smooth'})},20)});window.addEventListener('raf:v760-deleted',e=>{toast(e.detail?.count===1?'Element przeniesiony do Kosza':(e.detail?.count||0)+' elementy przeniesione do Kosza');scheduleLayers()})
 }
+function installInspectorScroll(){
+ const p=$('#rafPanel3');if(!p||p.dataset.v760Wheel==='1')return;p.dataset.v760Wheel='1';
+ p.addEventListener('wheel',e=>{if(e.ctrlKey||!e.deltaY)return;const unit=e.deltaMode===1?18:e.deltaMode===2?p.clientHeight:1,max=Math.max(0,p.scrollHeight-p.clientHeight);if(!max)return;e.preventDefault();e.stopPropagation();p.scrollTop=clamp(p.scrollTop+e.deltaY*unit,0,max)},{passive:false,capture:true})
+}
 async function init(){
  css();for(let i=0;i<100&&!window.rafCore760;i++)await new Promise(r=>setTimeout(r,50));core=window.rafCore760;if(!core)throw new Error('Brak rdzenia edytora 7.7');
- let n=0,t=setInterval(()=>{if(topUI()||++n>120)clearInterval(t)},50);layerPanel();contextMenu();cropPreview=createCropPreview(core,()=>{syncCropUi();scheduleInspector(false)});installEvents();new MutationObserver(()=>{if(!augmenting)scheduleInspector(false)}).observe($('#rafPanel3')||document.body,{childList:true,subtree:true});core.refresh();scheduleInspector(true)
+ let n=0,t=setInterval(()=>{if(topUI()||++n>120)clearInterval(t)},50);layerPanel();contextMenu();cropPreview=createCropPreview(core,()=>{syncCropUi();scheduleInspector(false)});installEvents();installInspectorScroll();new MutationObserver(()=>{if(!augmenting)scheduleInspector(false)}).observe($('#rafPanel3')||document.body,{childList:true,subtree:true});core.refresh();scheduleInspector(true)
 }
 init().catch(e=>console.error('RAF workspace 7.7',e));
