@@ -2,9 +2,10 @@
 import {registerNavigationSave} from './editor-interactions-v893.js?v=893-click-1';
 import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,get,set} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+import {getStorage,ref as storageRef,uploadBytesResumable,getDownloadURL} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-storage.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 
-const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
+const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app),storage=getStorage(app);
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const clone=x=>structuredClone(x??[]),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const isFilm=/\/film(?:\.html|\/)?$/i.test(location.pathname),type=isFilm?'film':'photo',key=isFilm?'films':'photos';
@@ -31,7 +32,7 @@ function cardFor(item){
  card.style.setProperty('--span',d.span||12);card.style.aspectRatio=d.ratio||defaultsCfg().ratio;
  card.dataset.id=item.id;card.dataset.type=type;card.dataset.rafFree='1';card.dataset.rafV7Id=base;
  card.innerHTML=`<img data-raf-free="1" data-raf-v7-id="${esc(base)}:image" src="${esc(item.image||'')}" alt="${esc(item.title||'')}"><div class="shade"></div><div class="cap"><small data-raf-free="1" data-raf-v7-id="${esc(base)}:category">${esc(item.category||'')}</small><b data-raf-free="1" data-raf-v7-id="${esc(base)}:title">${esc(item.title||'Bez tytułu')}</b>${isFilm?`<span class="play" data-raf-free="1" data-raf-v7-id="${esc(base)}:play">▶</span>`:''}</div>`;
- const image=$('img',card);image.style.objectPosition=`${d.x??50}% ${d.y??50}%`;
+ const image=$('img',card);image.style.objectPosition=`${d.x??50}% ${d.y??50}%`;image.addEventListener('dblclick',e=>{e.preventDefault();e.stopPropagation();selectedId=item.id;window.rafCore760?.selectElement?.(image)});
  return card
 }
 
@@ -59,9 +60,10 @@ function tilePanelHtml(item){
  <label>Tytuł kafelka<input id="portfolioTitle893" value="${esc(item.title||'')}"></label>
  <label>Kategoria<input id="portfolioCategory893" value="${esc(item.category||'')}"></label>
  <label>Zdjęcie / URL<input id="portfolioImage893" value="${esc(item.image||'')}"></label>
+ <div class="portfolioPhotoTools893"><button id="portfolioReplaceImage893">⇧ Podmień zdjęcie</button><button id="portfolioEditImage893">✥ Kadruj i ustaw rozmiar</button><input id="portfolioFile893" type="file" accept="image/*" hidden><div id="portfolioUpload893"></div></div>
  ${isFilm?`<label>Film URL<input id="portfolioVideo893" value="${esc(item.video||'')}" placeholder="YouTube / Vimeo / MP4"></label>`:''}
  <label>Widoczność<select id="portfolioVisible893"><option value="1" ${item.visible!==false?'selected':''}>Widoczny</option><option value="0" ${item.visible===false?'selected':''}>Ukryty</option></select></label>
- <div class="portfolioTileHelp893">Zdjęcie zaznaczysz bezpośrednio na stronie. Pełne kadrowanie, rozmiar, pozycję i podmianę pliku znajdziesz wyżej w panelu elementu.</div>
+ <div class="portfolioTileHelp893">Możesz też dwukrotnie kliknąć zdjęcie na stronie, aby od razu otworzyć pełne kadrowanie.</div>
  <div class="portfolioTileActions893"><button id="portfolioEarlier893">← Wcześniej</button><button id="portfolioLater893">Później →</button><button id="portfolioDuplicate893">Duplikuj kafelek</button><button id="portfolioDelete893" class="portfolioDanger893">Usuń kafelek</button></div>`
 }
 
@@ -76,7 +78,11 @@ function renderTilePanel(){
  if(video)video.oninput=()=>{start();item.video=video.value;markDirty()};
  visible.onchange=()=>{start();item.visible=visible.value==='1';card.classList.toggle('portfolioHidden893',!item.visible);patchElement(card,{hidden:!item.visible});markDirty()};
  $('#portfolioEarlier893',box).onclick=()=>moveItem(-1);$('#portfolioLater893',box).onclick=()=>moveItem(1);
- $('#portfolioDuplicate893',box).onclick=duplicateItem;$('#portfolioDelete893',box).onclick=deleteItem
+ $('#portfolioDuplicate893',box).onclick=duplicateItem;$('#portfolioDelete893',box).onclick=deleteItem;
+ const imageEl=$('img',card),file=$('#portfolioFile893',box),uploadStatus=$('#portfolioUpload893',box);
+ $('#portfolioEditImage893',box).onclick=()=>{if(!imageEl)return;window.rafCore760?.selectElement?.(imageEl);setTimeout(()=>$('#rafPanel3')?.scrollTo({top:0,behavior:'smooth'}),40)};
+ $('#portfolioReplaceImage893',box).onclick=()=>file.click();
+ file.onchange=async()=>{let selectedFile=file.files?.[0];if(!selectedFile)return;if(!/^image\//.test(selectedFile.type||'')){uploadStatus.textContent='Wybierz plik graficzny.';return}start();try{selectedFile=await window.rafOptimizeImageFile?.(selectedFile)||selectedFile}catch{}const safe=selectedFile.name.replace(/[^a-zA-Z0-9._-]+/g,'_'),task=uploadBytesResumable(storageRef(storage,`website/media/${Date.now()}_${safe}`),selectedFile,{contentType:selectedFile.type||'image/webp'});task.on('state_changed',s=>uploadStatus.textContent=`Wysyłanie… ${Math.round(s.bytesTransferred/s.totalBytes*100)}%`,e=>uploadStatus.textContent='Błąd: '+e.message,async()=>{const url=await getDownloadURL(task.snapshot.ref);item.image=url;image.value=url;if(imageEl){imageEl.src=url;patchElement(imageEl,{src:url})}markDirty();uploadStatus.textContent='✓ Zdjęcie podmienione';setTimeout(()=>window.rafCore760?.selectElement?.(imageEl),80)})}
 }
 
 function moveItem(direction){const i=items.findIndex(x=>x.id===selectedId),j=i+direction;if(i<0||j<0||j>=items.length)return;[items[i],items[j]]=[items[j],items[i]];markDirty();renderGrid(selectedId)}
@@ -99,6 +105,7 @@ function injectCss(){if($('#portfolioFull893Css'))return;const style=document.cr
  body.raf-e3 .portfolioCard{cursor:pointer}.portfolioHidden893{opacity:.34!important;filter:grayscale(.65)}
  #portfolioTile893{border:1px solid #b54cff55;background:#140b1b;margin:12px 0 0;padding:11px;border-radius:11px}
  .portfolioTileTitle893{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}.portfolioTileTitle893 small{color:#d9a4ff;font-weight:900;letter-spacing:.12em}.portfolioTileTitle893 b{font-size:14px}
+ .portfolioPhotoTools893{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:9px 0}.portfolioPhotoTools893 button{min-height:38px;font-weight:800}.portfolioPhotoTools893 #portfolioReplaceImage893{background:#1689d8;border-color:#55b9ff}.portfolioPhotoTools893 #portfolioUpload893{grid-column:1/-1;color:#9ed8ff;font-size:10px;min-height:14px}
  .portfolioTileHelp893{font-size:9px;line-height:1.5;color:#999;margin:9px 0}.portfolioTileActions893{display:grid;grid-template-columns:1fr 1fr;gap:6px}.portfolioDanger893{border-color:#ff4e68!important;color:#ff9bac!important;background:#210b11!important}`;document.head.appendChild(style)}
 
 async function init(){
