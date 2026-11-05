@@ -3,7 +3,7 @@ import {getApps,getApp,initializeApp} from 'https://www.gstatic.com/firebasejs/1
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 import {applyMediaAppearance,mediaConfig} from './media-appearance-v893.js?v=893-parity-1';
-import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-sticky-photo-3';
+import {TEMPLATES752,TEMPLATE_IDS752,mountTemplate,TEMPLATE_BUILD} from './template-collection-v893.js?v=893-sticky-photo-4';
 export {TEMPLATES752,TEMPLATE_IDS752};
 const q=new URLSearchParams(location.search),editor=q.has('editor'),preview=q.get('tplPreview'),db=getDatabase(getApps().length?getApp():initializeApp(firebaseConfig));
 let selected='',generation=0,saved={},legacy;

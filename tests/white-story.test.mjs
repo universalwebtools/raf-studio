@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const id='rojczyk-white',d=buildTemplate(id);
 assert.equal(TEMPLATE_IDS752.length,9);
 assert.equal(TEMPLATE_IDS752[0],id);
-assert.equal(TEMPLATE_BUILD,'893-sticky-photo-3');
+assert.equal(TEMPLATE_BUILD,'893-sticky-photo-4');
 for(const templateId of TEMPLATE_IDS752){
  const x=buildTemplate(templateId);
  assert.equal(x.builder.sectionOrder.length,TEMPLATES752[templateId].sections.length,templateId);
@@ -24,7 +24,7 @@ assert.equal((d.html.match(/class="rw-gallery-item"/g)||[]).length,6);
 assert.ok(d.html.includes('data-raf-element="t6-roj-portfolio-open"'));
 assert.ok(d.html.includes('href="/fotografia/"'));
 const whiteStoryCss=await readFile(path.join(root,'template-white-story-v893.css'),'utf8');
-assert.match(whiteStoryCss,/@media\(min-width:821px\)[\s\S]*\.rw-header\{position:sticky;top:0/);
+assert.match(whiteStoryCss,/@media\(min-width:821px\)[\s\S]*\.rw-header\{position:fixed;top:0/);
 assert.match(whiteStoryCss,/@media\(min-width:821px\)\{[\s\S]*#rafTemplate752\.t6\.t6-roj\{overflow:visible\}/);
 assert.ok(d.html.indexOf('class="rw-header"')<d.html.indexOf('id="rw-top"'),'sticky header must sit outside the Hero section');
 const ids=[...d.html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);

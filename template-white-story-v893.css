@@ -144,7 +144,8 @@ body[data-t6=roj]>.rafHeader900,body[data-t6=roj]>.floating,body[data-t6=roj]>.m
 
 @media(min-width:821px){
  #rafTemplate752.t6.t6-roj{overflow:visible}
- #rafTemplate752.t6.t6-roj .rw-header{position:sticky;top:0;z-index:1000;border-bottom:1px solid #eee}
+ #rafTemplate752.t6.t6-roj .rw-header{position:fixed;top:0;left:0;right:0;width:100%;z-index:1000;border-bottom:1px solid #eee}
+ #rafTemplate752.t6.t6-roj .rw-hero{padding-top:110px}
  #rafTemplate752.t6.t6-roj .rw-section{scroll-margin-top:125px}
 }
 @media(min-width:1600px){#rafTemplate752.t6.t6-roj .rw-hero-grid{min-height:590px}#rafTemplate752.t6.t6-roj .rw-hero-photo{min-height:590px}}
