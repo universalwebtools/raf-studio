@@ -1,7 +1,7 @@
 // RAF.studio — Blueprint guard + editor bindings v8.7.1 WYSIWYG
 import './blueprint-hero-v75.js?v=8.7.0';
 import './blueprint-longform-v751.js?v=8.7.0';
-import './template-engine-v752.js?v=893-sticky-photo-2';
+import './template-engine-v752.js?v=893-sticky-photo-3';
 import {bindTemplateElements} from './template-bindings-v893.js?v=893-image-parity-2';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];

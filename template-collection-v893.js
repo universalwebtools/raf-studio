@@ -1,8 +1,8 @@
 // Nine independent reference-led templates for RAF.studio RESPONSIVE 8.9.3.
 // Each template owns its markup, hierarchy and navigation; only editor bindings are shared.
-import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-sticky-photo-2';
+import {WHITE_STORY_ID,WHITE_STORY,buildWhiteStory,mountWhiteStory} from './template-white-story-v893.js?v=893-sticky-photo-3';
 import {bindTemplateElements} from './template-bindings-v893.js?v=893-image-parity-2';
-export const TEMPLATE_BUILD='893-sticky-photo-2';
+export const TEMPLATE_BUILD='893-sticky-photo-3';
 const asset=n=>'/assets/'+n;
 const A={city:asset('templates/aerial-city.webp'),mountains:asset('templates/mountains.webp'),table:asset('templates/wedding-table.webp'),wedding:asset('templates/wedding-story.webp'),couple:asset('photo-wedding.png'),camera:asset('templates/camera.webp'),film:asset('portal-film.png'),event:asset('photo-event.png'),product:asset('photo-product.png'),session:asset('photo-session.png'),ad:asset('film-ad.png'),filmEvent:asset('film-event.png'),filmSocial:asset('film-social.png'),filmSlow:asset('film-slowmo.png'),portalPhoto:asset('portal-photo.png')};
 
