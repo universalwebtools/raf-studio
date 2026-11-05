@@ -11,7 +11,7 @@ const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const id='rojczyk-white',d=buildTemplate(id);
 assert.equal(TEMPLATE_IDS752.length,9);
 assert.equal(TEMPLATE_IDS752[0],id);
-assert.equal(TEMPLATE_BUILD,'893-white-1');
+assert.equal(TEMPLATE_BUILD,'893-sticky-photo-1');
 for(const templateId of TEMPLATE_IDS752){
  const x=buildTemplate(templateId);
  assert.equal(x.builder.sectionOrder.length,TEMPLATES752[templateId].sections.length,templateId);
@@ -21,6 +21,10 @@ for(const templateId of TEMPLATE_IDS752){
 assert.equal(d.pro.global.bg,'#ffffff');
 assert.equal(d.pro.siteHeader.enabled,false);
 assert.equal((d.html.match(/class="rw-gallery-item"/g)||[]).length,6);
+assert.ok(d.html.includes('data-raf-element="t6-roj-portfolio-open"'));
+assert.ok(d.html.includes('href="/fotografia/"'));
+const whiteStoryCss=await readFile(path.join(root,'template-white-story-v893.css'),'utf8');
+assert.match(whiteStoryCss,/@media\(min-width:821px\)[\s\S]*\.rw-header\{position:fixed;top:0/);
 const ids=[...d.html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
 assert.equal(new Set(ids).size,ids.length,'unique DOM ids');
 for(const m of d.html.matchAll(/href="#([^"]+)"/g))assert.ok(ids.includes(m[1]),'anchor: '+m[1]);
