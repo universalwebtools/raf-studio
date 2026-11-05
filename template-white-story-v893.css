@@ -143,6 +143,7 @@ body[data-t6=roj]>.rafHeader900,body[data-t6=roj]>.floating,body[data-t6=roj]>.m
 #rafTemplate752.t6.t6-roj .rw-lightbox figcaption{text-align:center;font-size:12px;padding-top:15px}
 
 @media(min-width:821px){
+ #rafTemplate752.t6.t6-roj{overflow:visible}
  #rafTemplate752.t6.t6-roj .rw-header{position:sticky;top:0;z-index:1000;border-bottom:1px solid #eee}
  #rafTemplate752.t6.t6-roj .rw-section{scroll-margin-top:125px}
 }
