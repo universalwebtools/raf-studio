@@ -8,7 +8,8 @@ const app=getApp(),db=getDatabase(app),storage=getStorage(app);
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
-let core=null,layers=null,menu=null,layerTimer=null,inspectorTimer=null,cropPreview=null,cropMode=false,augmenting=false;
+let core=null,layers=null,menu=null,layerTimer=null,inspectorTimer=null,cropPreview=null,cropMode=false,augmenting=false,inspectorPointerScroll=false;
+const inspectorScrollPositions=new Map();let activeInspectorId='';
 
 function css(){
  if($('#workspace760css'))return;const s=document.createElement('style');s.id='workspace760css';
@@ -114,7 +115,7 @@ function syncInspector(el){
 }
 function renderInspector(force=false){
  if(!core||augmenting)return;const el=single(),p=$('#rafPanel3');if(!el||!p){$('#v760common')?.remove();return}
- const previous=$('#v760common'),inspectorId=core.id(el),keepScroll=previous?.dataset.id===inspectorId,savedScroll=keepScroll?p.scrollTop:0;
+ const inspectorId=core.id(el);if(activeInspectorId!==inspectorId){activeInspectorId=inspectorId;if(!inspectorScrollPositions.has(inspectorId))inspectorScrollPositions.set(inspectorId,0)}const savedScroll=inspectorScrollPositions.get(inspectorId)??0;
  cropMode=!!cropPreview?.active;if(!force&&syncInspector(el))return;augmenting=true;
  try{
   $('#v760common')?.remove();const box=document.createElement('section');box.id='v760common';box.dataset.id=core.id(el);box.innerHTML=inspectorHtml(el);p.prepend(box);
@@ -134,7 +135,7 @@ function renderInspector(force=false){
   $$('[data-v760]',box).forEach(b=>b.onclick=()=>runAction(b.dataset.v760));
   $('#v893heroImage',box)?.addEventListener('click',()=>core.selectElement(el.querySelector('img[data-home-media="heroMedia"]')));
   if(el instanceof HTMLImageElement)wireCrop(el,box)
- }finally{augmenting=false;requestAnimationFrame(()=>{p.scrollTop=keepScroll?Math.min(savedScroll,Math.max(0,p.scrollHeight-p.clientHeight)):0})}
+ }finally{augmenting=false;requestAnimationFrame(()=>{const max=Math.max(0,p.scrollHeight-p.clientHeight),next=clamp(inspectorScrollPositions.get(inspectorId)??savedScroll,0,max);inspectorScrollPositions.set(inspectorId,next);p.scrollTop=next})}
 }
 function cropValue(box){return{x:Number($('#v760cropX',box).value),y:Number($('#v760cropY',box).value),zoom:Number($('#v760zoom',box).value),fit:$('#v760fit',box).value}}
 function wireCrop(el,box){
@@ -166,13 +167,14 @@ function installEvents(){
  window.addEventListener('raf:v760-edit',()=>{scheduleInspector(true);setTimeout(()=>{$('#v760text,#v760href,#v760x')?.focus();$('#rafPanel3')?.scrollTo({top:0,behavior:'smooth'})},20)});window.addEventListener('raf:v760-deleted',e=>{toast(e.detail?.count===1?'Element przeniesiony do Kosza':(e.detail?.count||0)+' elementy przeniesione do Kosza');scheduleLayers()})
 }
 function installInspectorScroll(){
- if(window.__rafInspectorWheelV2)return;window.__rafInspectorWheelV2=true;
+ if(window.__rafInspectorWheelV3)return;window.__rafInspectorWheelV3=true;const p=$('#rafPanel3');if(p){p.dataset.rafWheel='3';p.addEventListener('pointerdown',e=>{if(e.target===p)inspectorPointerScroll=true},true);p.addEventListener('scroll',()=>{if(!inspectorPointerScroll)return;const id=single()&&core?.id(single());if(id)inspectorScrollPositions.set(id,p.scrollTop)},{passive:true})}window.addEventListener('pointerup',()=>{inspectorPointerScroll=false},true);window.addEventListener('pointercancel',()=>{inspectorPointerScroll=false},true);
  window.addEventListener('wheel',e=>{
   const p=$('#rafPanel3');if(!p||e.ctrlKey||getComputedStyle(p).display==='none')return;
   const path=typeof e.composedPath==='function'?e.composedPath():[],r=p.getBoundingClientRect(),overPanel=path.includes(p)||(e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom);if(!overPanel)return;
   const max=Math.max(0,p.scrollHeight-p.clientHeight);if(!max)return;
-  const raw=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX,unit=e.deltaMode===1?20:e.deltaMode===2?Math.max(1,p.clientHeight):1,delta=raw*unit;if(!delta)return;
-  e.preventDefault();e.stopImmediatePropagation();p.scrollTop=clamp(p.scrollTop+delta,0,max)
+  const unit=e.deltaMode===1?20:e.deltaMode===2?Math.max(1,p.clientHeight):1,delta=e.deltaY*unit;if(!delta)return;
+  const id=single()&&core?.id(single()),current=id?(inspectorScrollPositions.get(id)??p.scrollTop):p.scrollTop,next=clamp(current+delta,0,max);if(id)inspectorScrollPositions.set(id,next);
+  e.preventDefault();e.stopImmediatePropagation();p.scrollTop=next
  },{passive:false,capture:true})
 }
 async function init(){
