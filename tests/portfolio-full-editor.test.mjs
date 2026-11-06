@@ -9,15 +9,15 @@ const [entry,bridge,publish,workspace,app,photo,film,photoRoute,filmRoute]=await
 assert.match(entry,/if\(portfolio\)await import\('\.\/portfolio-full-editor-v893\.js\?v=893-full-subpage-3'\)/);
 assert.doesNotMatch(entry,/if\(portfolio\).*portfolio-editor\.js/);
 for(const module of ['direct-editor-v3.js','editor-core-v760.js','editor-workspace-v760.js','direct-publish-v760.js'])assert.ok(entry.includes(module),`complete stack includes ${module}`);
-assert.match(entry,/editor-workspace-v760\.js\?v=893-scroll-3/);
+assert.match(entry,/editor-workspace-v760\.js\?v=893-hero-video-crop-1/);
 assert.match(workspace,/window\.addEventListener\('wheel'/);
 assert.match(workspace,/stopImmediatePropagation/);
 assert.match(workspace,/\{passive:false,capture:true\}/);
 assert.match(workspace,/overscroll-behavior:contain/);
 assert.match(workspace,/inspectorScrollPositions=new Map/);
 assert.match(workspace,/inspectorScrollPositions\.get\(id\)\?\?p\.scrollTop/);
-for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-scroll-fix-3'));
-for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-scroll-fix-3'));
+for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-hero-video-crop-1'));
+for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-hero-video-crop-1'));
 
 assert.ok(app.includes('portfolio:${type}:${item.id}'),'public cards receive stable IDs');
 for(const suffix of [':image',':category',':title'])assert.ok(app.includes('${stable}'+suffix)||bridge.includes('${esc(base)}'+suffix),`stable portfolio identifier ${suffix}`);
