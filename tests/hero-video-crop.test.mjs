@@ -22,6 +22,7 @@ assert.doesNotMatch(editor,/overlay\.innerHTML='<i>/,'video crop has no section 
 assert.match(editor,/t===host\|\|wrap\?\.contains\?\.\(t\)/,'full-width video crop does not swallow HERO text and buttons');
 assert.match(editor,/function setFrameMode\(full\)/,'frame switching does not rebuild the player');
 assert.match(runtime,/rafHeroEditorPoster61/,'YouTube uses a stable 16:9 working frame in the editor');
+assert.match(runtime,/w\.dataset\.rafSourceUrl=String\(cfg\.url\|\|''\)/,'rendered HERO keeps its source URL for the crop editor');
 assert.match(performance,/if\(EDITOR&&!inPreview\(\)\)\{f\.dataset\.rafEditorSuspended888='1';return\}/,'editor does not reload iframe sources');
 assert.match(workspace,/id="v893heroVideo"/,'selected HERO exposes its video crop editor');
 assert.match(workspace,/rafHeroMediaEditor888\?\.select/);
@@ -29,9 +30,12 @@ assert.match(workspace,/window\.rafHeroImageCrop893=\{select:activateHeroImage/,
 assert.match(workspace,/KADROWANIE ZDJĘCIA HERO/,'HERO photo exposes only its crop controls');
 assert.match(workspace,/Ramka HERO jest zablokowana/,'the inspector explains the fixed HERO frame');
 assert.match(pro,/id="hvFullBleed840"/,'PRO panel exposes the same frame setting');
-assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-media-crop-3/);
+assert.match(pro,/window\.rafPro61Snapshot=\(\)=>cp\(data\)/,'the crop editor can read the current unsaved PRO state');
+assert.match(editor,/async function openVideoEditor\(\)\{await loadCfg\(\)/,'opening the crop editor always refreshes video configuration');
+assert.match(editor,/function active\(\)\{syncCfg\(currentCfg\(\)\);return refreshRefs\(\)\}/,'a visibly rendered HERO video is authoritative');
+assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-config-sync-4/);
 assert.doesNotMatch(entry,/editor-hero-resize-v890/,'generic full-section resize overlay is no longer loaded for HERO video');
-assert.match(index,/public-pro-v61\.js\?v=893-hero-video-stable-2/);
-assert.match(index,/editor-entry\.js\?v=893-hero-media-crop-3/);
+assert.match(index,/public-pro-v61\.js\?v=893-hero-config-sync-4/);
+assert.match(index,/editor-entry\.js\?v=893-hero-config-sync-4/);
 
 console.log('PASS: HERO video supports direct pan/zoom, cover/contain and template/full-section framing with public parity');
