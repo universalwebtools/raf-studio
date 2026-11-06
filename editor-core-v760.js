@@ -42,6 +42,7 @@ function css(){
  'body.raf-e3 [data-v760-inline-edit="1"]{cursor:text!important;user-select:text!important;-webkit-user-select:text!important;caret-color:#22a8ff;outline:2px solid #fff!important;outline-offset:4px}'+
  'body.raf-e3 [data-raf-v72-id].v72grp{box-shadow:0 0 0 1px #b54cff77 inset}'+
  'body.raf-e3 [data-raf-v72-id].v760locked{cursor:not-allowed}'+
+ 'body.raf-crop-active #v72box{display:none!important}body.raf-crop-active img.v72sel[data-home-media="heroMedia"]{outline:none!important}'+
  '#v72box{position:absolute;z-index:1000013;border:2px solid #22a8ff;box-sizing:border-box;pointer-events:none}'+
  '#v72box.multi{border-color:#ad45eb}'+
  '#v72move,#v72rotate,.v760handle{position:absolute;pointer-events:auto;touch-action:none;user-select:none}'+
@@ -490,6 +491,9 @@ function pendingMove(e,el){
 window.addEventListener('pointerdown',e=>{
  editAction=null;
  if(isEditorUi(e.target)){suppressNextClick=false;suppressClickUntil=0;return}
+ // HERO media owns its crop gesture. Do not arm the generic move/resize tool,
+ // because that changes the whole image/video frame instead of the pixels in it.
+ if(e.button===0&&window.rafHeroMediaEditor888?.pointerDown?.(e))return;
  const action=canvasAction(e.target);
  if(action&&e.button===0&&!document.body.classList.contains('raf-crop-active')){
   lastTap=null;disarmMove();suppressNextClick=false;suppressClickUntil=0;
@@ -501,6 +505,12 @@ window.addEventListener('pointerdown',e=>{
  decorate();const el=cand(e);
  if(e.altKey||e.shiftKey){lastTap=null;disarmMove();marq={pid:e.pointerId,sx:e.clientX,sy:e.clientY,startEl:el,moved:false,base:new Set(sel),modifier:true};e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return}
  if(el){
+  if(el instanceof HTMLImageElement&&el.dataset.homeMedia==='heroMedia'){
+   lastTap=null;disarmMove();
+   if(window.rafHeroImageCrop893?.pointerDown?.(e,el))return;
+   if(!sel.has(el)){clear();clearLegacySelection();select(el,false)}
+   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();return
+  }
   const now=performance.now(),second=lastTap?.el===el&&now-lastTap.at<=380;if(moveArm&&moveArm.el!==el)disarmMove();const armed=moveArm?.el===el&&now<moveArm.until;
   if(second||armed){suppressClickUntil=0;suppressNextClick=false;lastTap=null;disarmMove();if(!sel.has(el))select(el,false);pendingMove(e,el)}else{if(!sel.has(el)){clear();clearLegacySelection()}lastTap={el,at:now};suppressClickUntil=now+520;suppressNextClick=true}
   e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();
