@@ -31,11 +31,15 @@ assert.match(workspace,/KADROWANIE ZDJĘCIA HERO/,'HERO photo exposes only its c
 assert.match(workspace,/Ramka HERO jest zablokowana/,'the inspector explains the fixed HERO frame');
 assert.match(pro,/id="hvFullBleed840"/,'PRO panel exposes the same frame setting');
 assert.match(pro,/window\.rafPro61Snapshot=\(\)=>cp\(data\)/,'the crop editor can read the current unsaved PRO state');
+assert.match(pro,/window\.rafPro61AdoptHeroVideo=next=>\{data\.heroVideo=.*merge61\(data\)/,'the crop editor keeps both PRO state stores synchronized');
 assert.match(editor,/async function openVideoEditor\(\)\{await loadCfg\(\)/,'opening the crop editor always refreshes video configuration');
-assert.match(editor,/function active\(\)\{syncCfg\(currentCfg\(\)\);return refreshRefs\(\)\}/,'a visibly rendered HERO video is authoritative');
-assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-config-sync-4/);
+assert.match(editor,/function active\(\)\{if\(!cfg\)syncCfg\(currentCfg\(\),true\);return refreshRefs\(\)\}/,'crop refreshes never replace an active edit with stale PRO state');
+assert.match(editor,/function adoptCfg\(\)\{if\(cfg\)window\.rafPro61AdoptHeroVideo\?\.\(cfg\)\}/,'live crop values become the current editor state');
+assert.match(editor,/refresh:\(\)=>\{if\(!selected\)syncCfg\(currentCfg\(\),true\)/,'background refreshes preserve the selected crop');
+assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-position-lock-5/);
+assert.match(entry,/editor-parity-v888\.js\?v=893-hero-position-lock-5/,'parity rerenders use the synchronized HERO state');
 assert.doesNotMatch(entry,/editor-hero-resize-v890/,'generic full-section resize overlay is no longer loaded for HERO video');
-assert.match(index,/public-pro-v61\.js\?v=893-hero-config-sync-4/);
-assert.match(index,/editor-entry\.js\?v=893-hero-config-sync-4/);
+assert.match(index,/public-pro-v61\.js\?v=893-hero-position-lock-5/);
+assert.match(index,/editor-entry\.js\?v=893-hero-position-lock-5/);
 
 console.log('PASS: HERO video supports direct pan/zoom, cover/contain and template/full-section framing with public parity');
