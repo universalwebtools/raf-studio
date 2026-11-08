@@ -1,6 +1,6 @@
 // RAF.studio — editor/public parity v8.8.9
 import {TEMPLATES752} from './template-engine-v752.js?v=893-sticky-photo-4';
-import {merge61,render61} from './public-pro-v61.js?v=893-hero-position-lock-5';
+import {merge61,render61} from './public-pro-v61.js?v=893-hero-visible-preview-6';
 const EDITOR=new URLSearchParams(location.search).has('editor');
 if(EDITOR){
  const VERSION='8.8.9';

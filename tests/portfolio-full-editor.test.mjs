@@ -16,8 +16,8 @@ assert.match(workspace,/\{passive:false,capture:true\}/);
 assert.match(workspace,/overscroll-behavior:contain/);
 assert.match(workspace,/inspectorScrollPositions=new Map/);
 assert.match(workspace,/inspectorScrollPositions\.get\(id\)\?\?p\.scrollTop/);
-for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-hero-position-lock-5'));
-for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-hero-position-lock-5'));
+for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-hero-visible-preview-6'));
+for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-hero-visible-preview-6'));
 
 assert.ok(app.includes('portfolio:${type}:${item.id}'),'public cards receive stable IDs');
 for(const suffix of [':image',':category',':title'])assert.ok(app.includes('${stable}'+suffix)||bridge.includes('${esc(base)}'+suffix),`stable portfolio identifier ${suffix}`);

@@ -23,7 +23,10 @@ assert.match(editor,/t===host\|\|wrap\?\.contains\?\.\(t\)/,'full-width video cr
 assert.match(editor,/function setFrameMode\(full\)/,'frame switching does not rebuild the player');
 assert.match(runtime,/rafHeroEditorPoster61/,'YouTube uses a stable 16:9 working frame in the editor');
 assert.match(runtime,/w\.dataset\.rafSourceUrl=String\(cfg\.url\|\|''\)/,'rendered HERO keeps its source URL for the crop editor');
+assert.match(runtime,/el\.preload=EDITOR\?'auto':'metadata'/,'native HERO video decodes a visible frame while editing');
 assert.match(performance,/if\(EDITOR&&!inPreview\(\)\)\{f\.dataset\.rafEditorSuspended888='1';return\}/,'editor does not reload iframe sources');
+assert.match(performance,/function previewFrame\(v\)/,'paused native HERO videos seek to a usable preview frame');
+assert.match(performance,/if\(editingHero\(v\)\)resumeVideo\(v,true\)/,'the selected HERO video plays during cropping');
 assert.match(workspace,/id="v893heroVideo"/,'selected HERO exposes its video crop editor');
 assert.match(workspace,/rafHeroMediaEditor888\?\.select/);
 assert.match(workspace,/window\.rafHeroImageCrop893=\{select:activateHeroImage/,'HERO photo has a dedicated crop controller');
@@ -36,10 +39,12 @@ assert.match(editor,/async function openVideoEditor\(\)\{await loadCfg\(\)/,'ope
 assert.match(editor,/function active\(\)\{if\(!cfg\)syncCfg\(currentCfg\(\),true\);return refreshRefs\(\)\}/,'crop refreshes never replace an active edit with stale PRO state');
 assert.match(editor,/function adoptCfg\(\)\{if\(cfg\)window\.rafPro61AdoptHeroVideo\?\.\(cfg\)\}/,'live crop values become the current editor state');
 assert.match(editor,/refresh:\(\)=>\{if\(!selected\)syncCfg\(currentCfg\(\),true\)/,'background refreshes preserve the selected crop');
-assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-position-lock-5/);
-assert.match(entry,/editor-parity-v888\.js\?v=893-hero-position-lock-5/,'parity rerenders use the synchronized HERO state');
+assert.match(editor,/body\.rafHeroCrop888 \[data-raf-section="Hero"\] \.rafHeroVideoWrap61\{opacity:1!important/,'crop mode reveals the raw video above template tint');
+assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-visible-preview-6/);
+assert.match(entry,/editor-parity-v888\.js\?v=893-hero-visible-preview-6/,'parity rerenders use the synchronized HERO state');
+assert.match(entry,/video-performance-v888\.js\?v=893-hero-visible-preview-6/,'the visible native preview governor is cache-busted');
 assert.doesNotMatch(entry,/editor-hero-resize-v890/,'generic full-section resize overlay is no longer loaded for HERO video');
-assert.match(index,/public-pro-v61\.js\?v=893-hero-position-lock-5/);
-assert.match(index,/editor-entry\.js\?v=893-hero-position-lock-5/);
+assert.match(index,/public-pro-v61\.js\?v=893-hero-visible-preview-6/);
+assert.match(index,/editor-entry\.js\?v=893-hero-visible-preview-6/);
 
 console.log('PASS: HERO video supports direct pan/zoom, cover/contain and template/full-section framing with public parity');
