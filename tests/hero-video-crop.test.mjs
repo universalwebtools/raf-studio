@@ -34,9 +34,12 @@ assert.match(runtime,/function heroTransport61\(w,v\)/,'published native HERO vi
 assert.match(runtime,/r\.type='range'/,'published HERO exposes a seek slider');
 assert.match(performance,/if\(v\.dataset\.rafUserPaused61==='1'\)return/,'automatic playback respects an explicit user pause');
 assert.match(performance,/function setUserPaused\(v,on\)/,'the editor has a single authoritative pause lock');
-assert.match(performance,/if\(v\.dataset\.rafUserPaused61==='1'\)\{queueMicrotask/,'late autoplay events are immediately paused again');
+assert.match(performance,/rafHeroUserPaused888/,'the HERO pause survives replacement of the native video element');
+assert.match(performance,/if\(isHeroVideo\(v\)&&heroPaused\(\)\)setUserPaused\(v,true\)/,'a newly rendered HERO video inherits the active pause lock');
+assert.match(performance,/\(isHeroVideo\(v\)&&heroPaused\(\)\)\|\|v\.dataset\.rafUserPaused61==='1'/,'late autoplay events are immediately paused again');
 assert.doesNotMatch(performance,/rafUserPaused61==='1'\)delete v\.dataset\.rafUserPaused61/,'automatic play events cannot clear a user pause');
 assert.match(editor,/governor\?\.setUserPaused/,'the editor pause button uses the playback governor');
+assert.match(editor,/window\.addEventListener\('pointerdown',e=>\{if\(!selected\|\|!e\.target\.closest\?\.\('#rafHeroPlay888'\)\)return/,'pause is captured before editor selection handlers can consume the click');
 assert.match(workspace,/id="v893heroVideo"/,'selected HERO exposes its video crop editor');
 assert.match(workspace,/rafHeroMediaEditor888\?\.select/);
 assert.match(workspace,/window\.rafHeroImageCrop893=\{select:activateHeroImage/,'HERO photo has a dedicated crop controller');
@@ -50,11 +53,11 @@ assert.match(editor,/function active\(\)\{if\(!cfg\)syncCfg\(currentCfg\(\),true
 assert.match(editor,/function adoptCfg\(\)\{if\(cfg\)window\.rafPro61AdoptHeroVideo\?\.\(cfg\)\}/,'live crop values become the current editor state');
 assert.match(editor,/refresh:\(\)=>\{if\(!selected\)syncCfg\(currentCfg\(\),true\)/,'background refreshes preserve the selected crop');
 assert.match(editor,/body\.rafHeroCrop888 \[data-raf-section="Hero"\] \.rafHeroVideoWrap61\{opacity:1!important/,'crop mode reveals the raw video above template tint');
-assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-transport-lock-8/);
-assert.match(entry,/editor-parity-v888\.js\?v=893-hero-transport-lock-8/,'parity rerenders use the synchronized HERO state');
-assert.match(entry,/video-performance-v888\.js\?v=893-hero-transport-lock-8/,'the visible native preview governor is cache-busted');
+assert.match(entry,/editor-hero-media-v888\.js\?v=893-hero-transport-global-9/);
+assert.match(entry,/editor-parity-v888\.js\?v=893-hero-transport-global-9/,'parity rerenders use the synchronized HERO state');
+assert.match(entry,/video-performance-v888\.js\?v=893-hero-transport-global-9/,'the visible native preview governor is cache-busted');
 assert.doesNotMatch(entry,/editor-hero-resize-v890/,'generic full-section resize overlay is no longer loaded for HERO video');
-assert.match(index,/public-pro-v61\.js\?v=893-hero-transport-lock-8/);
-assert.match(index,/editor-entry\.js\?v=893-hero-transport-lock-8/);
+assert.match(index,/public-pro-v61\.js\?v=893-hero-transport-global-9/);
+assert.match(index,/editor-entry\.js\?v=893-hero-transport-global-9/);
 
 console.log('PASS: HERO video supports direct pan/zoom, cover/contain and template/full-section framing with public parity');
