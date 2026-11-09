@@ -58,6 +58,6 @@ assert.match(entry,/editor-parity-v888\.js\?v=893-hero-transport-global-9/,'pari
 assert.match(entry,/video-performance-v888\.js\?v=893-hero-transport-global-9/,'the visible native preview governor is cache-busted');
 assert.doesNotMatch(entry,/editor-hero-resize-v890/,'generic full-section resize overlay is no longer loaded for HERO video');
 assert.match(index,/public-pro-v61\.js\?v=893-hero-transport-global-9/);
-assert.match(index,/editor-entry\.js\?v=893-live-fixes-7/);
+assert.match(index,/editor-entry\.js\?v=893-live-fixes-8/);
 
 console.log('PASS: HERO video supports direct pan/zoom, cover/contain and template/full-section framing with public parity');

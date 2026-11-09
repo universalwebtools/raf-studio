@@ -84,4 +84,4 @@ async function bootCurrent(){
 }
 const explicitArchive=params.get('archive')==='1';
 if(editorMode&&requested!==LATEST&&!explicitArchive){const u=new URL(location.href);u.searchParams.set('ev',LATEST);u.searchParams.set('_editorBuild',CURRENT_BUILD);u.searchParams.delete('archive');history.replaceState(null,'',u.toString())}
-(async()=>{if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}await import('./hero-video-layout-v888.js?v=8.9.3');await import('./video-performance-v888.js?v=893-hero-transport-global-9');await import('./site-v800.js?v=893-live-fixes-7');if(!editorMode)await import('./accordion-runtime-v877.js?v=8.8.3');if(editorMode)await bootCurrent()})();
+(async()=>{if(editorMode&&requested!==LATEST&&explicitArchive){await bootArchived();return}await import('./hero-video-layout-v888.js?v=8.9.3');await import('./video-performance-v888.js?v=893-hero-transport-global-9');await import('./site-v800.js?v=893-live-fixes-8');if(!editorMode)await import('./accordion-runtime-v877.js?v=8.8.3');if(editorMode)await bootCurrent()})();
