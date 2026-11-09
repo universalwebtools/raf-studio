@@ -11,6 +11,13 @@ const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase
 const Q=new URLSearchParams(location.search),EDITOR=Q.get('editor')==='direct'||Q.get('editor')==='1',PREVIEW=Q.has('tplPreview');
 const SUBPAGE_PUBLIC=!EDITOR&&!PREVIEW&&/^\/(?:fotografia|film)(?:\.html|\/)?$/i.test(location.pathname);
 const SUBPAGE_KIND=/^\/fotografia/i.test(location.pathname)?'photo':'film';
+const SUBPAGE_ITEMS=[
+ {label:'Strona główna',href:'/'},
+ {label:'Fotografia',href:'/fotografia/'},
+ {label:'Film',href:'/film/'},
+ {label:'Strefa klienta',href:'https://galeria.raf-studio.pl/'},
+ {label:'Kontakt',href:'/#rw-contact'}
+];
 const PATH=`${WEBSITE_ROOT}/public/${EDITOR?'proV6Draft':'proV6'}/siteHeader`;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -30,19 +37,35 @@ const DEFAULT={
   youtube:{enabled:true,url:'',label:'YouTube'},tiktok:{enabled:true,url:'',label:'TikTok'}
  }
 };
-let cfg=structuredClone(DEFAULT),header=null,badge=null,saveTimer=0,renderTimer=0,unsub=null;
+let cfg=structuredClone(DEFAULT),header=null,badge=null,saveTimer=0,renderTimer=0,unsub=null,subpageGuard=null,subpageGuardTarget=null;
 const deep=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function merge(base,src){if(!deep(src))return structuredClone(base);const out=structuredClone(base);for(const [k,v] of Object.entries(src)){if(k==='items'&&Array.isArray(v)){out.items=base.items.map((x,i)=>({...x,...(v[i]||{})}));continue}if(k==='socials'&&deep(v)){out.socials={};for(const n of Object.keys(base.socials))out.socials[n]={...base.socials[n],...(v[n]||{})};continue}out[k]=deep(v)&&deep(base[k])?merge(base[k],v):v}return out}
 function normalize(x){const o=merge(DEFAULT,x||{});o.enabled=o.enabled!==false;o.position=['absolute','fixed','sticky'].includes(o.position)?o.position:'absolute';o.height=clamp(+o.height||92,52,180);o.padding=clamp(+o.padding||34,0,120);o.opacity=clamp(+o.opacity||0,0,100);o.blur=clamp(+o.blur||0,0,40);o.logoWidth=clamp(+o.logoWidth||105,30,320);o.navSize=clamp(+o.navSize||15,8,40);o.navGap=clamp(+o.navGap||54,0,160);o.socialSize=clamp(+o.socialSize||27,14,70);o.activeIndex=clamp(Math.round(+o.activeIndex||0),0,4);o.mobileBreakpoint=clamp(+o.mobileBreakpoint||820,560,1200);return o}
 function publicSubpageConfig(raw){
  if(!SUBPAGE_PUBLIC)return raw;
- return normalize({...raw,enabled:true,position:'sticky',height:92,padding:36,background:'#ffffff',opacity:100,blur:0,textColor:'#111111',accent:'#111111',logoUrl:'/assets/raf-logo-black.png',logoHref:'/',logoWidth:168,navSize:14,navGap:30,activeIndex:SUBPAGE_KIND==='photo'?1:2,items:[
-  {label:'Strona główna',href:'/',visible:true},
-  {label:'Fotografia',href:'/fotografia/',visible:true},
-  {label:'Film',href:'/film/',visible:true},
-  {label:'Strefa klienta',href:'https://galeria.raf-studio.pl/',visible:true},
-  {label:'Kontakt',href:'/#rw-contact',visible:true}
- ],socials:{instagram:{enabled:false,url:'',label:'Instagram'},facebook:{enabled:false,url:'',label:'Facebook'},youtube:{enabled:false,url:'',label:'YouTube'},tiktok:{enabled:false,url:'',label:'TikTok'}}});
+ return normalize({...raw,enabled:true,position:'sticky',height:92,padding:36,background:'#ffffff',opacity:100,blur:0,textColor:'#111111',accent:'#111111',logoUrl:'/assets/raf-logo-black.png',logoHref:'/',logoWidth:168,navSize:14,navGap:30,activeIndex:SUBPAGE_KIND==='photo'?1:2,items:SUBPAGE_ITEMS.map(x=>({...x,visible:true})),socials:{instagram:{enabled:false,url:'',label:'Instagram'},facebook:{enabled:false,url:'',label:'Facebook'},youtube:{enabled:false,url:'',label:'YouTube'},tiktok:{enabled:false,url:'',label:'TikTok'}}});
+}
+function enforcePublicSubpageHeader(){
+ if(!SUBPAGE_PUBLIC||!header?.isConnected)return;
+ const brand=$('.rafHeaderBrand900',header),img=$('.rafHeaderBrand900 img',header);
+ if(brand&&brand.getAttribute('href')!=='/')brand.setAttribute('href','/');
+ if(img&&img.getAttribute('src')!=='/assets/raf-logo-black.png')img.setAttribute('src','/assets/raf-logo-black.png');
+ $$('.rafHeaderNav900 a',header).forEach((a,i)=>{
+  const item=SUBPAGE_ITEMS[i];if(!item)return;
+  if(a.textContent!==item.label)a.textContent=item.label;
+  if(a.getAttribute('href')!==item.href)a.setAttribute('href',item.href);
+  a.classList.toggle('active',i===(SUBPAGE_KIND==='photo'?1:2));
+  a.removeAttribute('target');
+ });
+}
+function guardPublicSubpageHeader(){
+ if(!SUBPAGE_PUBLIC||!header)return;
+ enforcePublicSubpageHeader();
+ if(subpageGuardTarget===header)return;
+ subpageGuard?.disconnect();subpageGuardTarget=header;
+ let queued=false;
+ subpageGuard=new MutationObserver(()=>{if(queued)return;queued=true;queueMicrotask(()=>{queued=false;enforcePublicSubpageHeader()})});
+ subpageGuard.observe(header,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['href','src','class']});
 }
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function rgba(hex,a){let h=String(hex||'#080808').trim();if(/^#[0-9a-f]{3}$/i.test(h))h='#'+[...h.slice(1)].map(x=>x+x).join('');const m=h.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);if(!m)return h;return`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${clamp(a,0,100)/100})`}
@@ -82,6 +105,7 @@ function render(){injectCss();cfg=publicSubpageConfig(normalize(cfg));ensureAnch
  const nav=cfg.items.map((x,i)=>x.visible===false?'':`<a data-raf-element="headerNav${i}" data-raf-free="1" class="${i===cfg.activeIndex?'active':''}" href="${esc(x.href||'#')}" data-header-index="${i}">${esc(x.label||'')}</a>`).join('');
  const socials=Object.entries(cfg.socials).map(([name,s])=>s.enabled===false?'':`<a data-raf-element="headerSocial${name[0].toUpperCase()+name.slice(1)}" data-raf-free="1" href="${esc(socialHref(s))}" ${s.url?'target="_blank" rel="noopener"':''} aria-label="${esc(s.label||name)}" data-social="${name}">${svgIcon(name)}</a>`).join('');
  header.innerHTML=`<a class="rafHeaderBrand900" data-raf-element="headerLogoLink" data-raf-free="1" href="${esc(cfg.logoHref||'/')}"><img data-raf-element="headerLogo" data-raf-free="1" src="${esc(cfg.logoUrl||'')}" alt="RAF.studio"><span class="rafHeaderLogoText900">RAF.studio</span></a><div class="rafHeaderNav900">${nav}</div><div class="rafHeaderSocial900">${socials}</div><button class="rafHeaderToggle900" type="button" aria-label="Menu" data-raf-element="headerMobileMenu">☰</button>`;
+ guardPublicSubpageHeader();
  $$('svg',header).forEach(svg=>{svg.dataset.rafHeaderIcon='1';svg.removeAttribute('data-raf-free');svg.removeAttribute('data-raf-v7-id');svg.removeAttribute('data-raf-v72-id');svg.removeAttribute('data-raf-v7-public-id');for(const p of ['position','left','top','width','max-width','height','scale','rotate','transform','translate','z-index'])svg.style.removeProperty(p)});
  const img=$('.rafHeaderBrand900 img',header),txt=$('.rafHeaderLogoText900',header);if(!cfg.logoUrl){img.style.display='none';txt.style.display='block'}else img.addEventListener('error',()=>{img.style.display='none';txt.style.display='block'},{once:true});
  $('.rafHeaderToggle900',header).onclick=e=>{e.preventDefault();e.stopPropagation();header.classList.toggle('open')};

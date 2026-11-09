@@ -16,7 +16,7 @@ assert.match(workspace,/\{passive:false,capture:true\}/);
 assert.match(workspace,/overscroll-behavior:contain/);
 assert.match(workspace,/inspectorScrollPositions=new Map/);
 assert.match(workspace,/inspectorScrollPositions\.get\(id\)\?\?p\.scrollTop/);
-for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-live-fixes-6'));
+for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-live-fixes-7'));
 for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-live-fixes-6'));
 
 assert.ok(app.includes('portfolio:${type}:${item.id}'),'public cards receive stable IDs');
@@ -28,6 +28,9 @@ assert.match(app,/x\.visible!==false&&usableImage\(x\.image\)/,'empty photograph
 assert.match(app,/photoFallback\(item\)/,'broken known photography tiles receive a local fallback');
 assert.match(siteHeader,/SUBPAGE_PUBLIC/,'public photography and film pages force a usable header');
 assert.match(siteHeader,/logoUrl:'\/assets\/raf-logo-black\.png'/);
+assert.match(siteHeader,/guardPublicSubpageHeader\(\)/,'published subpage links are guarded against stale free-layout overrides');
+assert.match(siteHeader,/label:'Fotografia',href:'\/fotografia\/'/);
+assert.match(siteHeader,/label:'Film',href:'\/film\/'/);
 assert.match(bridge,/id="portfolioAdd893"|add\.id='portfolioAdd893'/);
 assert.match(bridge,/id="portfolioTile893"|box\.id='portfolioTile893'/);
 assert.match(bridge,/window\.rafCore760\?\.refresh/);
