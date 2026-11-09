@@ -1,0 +1,31 @@
+name: RAF Studio - daily Firebase backup
+on:
+  schedule:
+    - cron: '20 2 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Download public website data
+        shell: bash
+        run: |
+          set -euo pipefail
+          stamp="$(date -u +%Y-%m-%d_%H-%M-%S)"
+          mkdir -p backup
+          curl --fail --silent --show-error --retry 3 \
+            'https://raf-studio-strona-default-rtdb.europe-west1.firebasedatabase.app/website/public.json' \
+            -o "backup/raf-studio-${stamp}.json"
+          test "$(cat "backup/raf-studio-${stamp}.json")" != "null"
+          python -m json.tool "backup/raf-studio-${stamp}.json" >/dev/null
+          gzip -9 "backup/raf-studio-${stamp}.json"
+      - name: Keep backup for 30 days
+        uses: actions/upload-artifact@v4
+        with:
+          name: raf-studio-daily-${{ github.run_id }}
+          path: backup/*.json.gz
+          retention-days: 30
+          if-no-files-found: error

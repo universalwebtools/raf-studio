@@ -29,7 +29,7 @@ let pendingWrite=null,saveInFlight=Promise.resolve(),saveVersion=0;
 let undo=[],redo=[],lastAt=0,renderingClones=false,migrationDirty=false;
 
 const TYPO_KEYS=['fontFamily','fontSize','fontWeight','fontStyle','lineHeight','letterSpacing','color','textAlign','textTransform','textDecoration','fontKerning'];
-function baseCfg(){return{x:0,y:0,width:null,height:null,scale:1,rotate:0,z:0,hidden:false,deleted:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null,fontFamily:null,fontSize:null,fontWeight:null,fontStyle:null,lineHeight:null,letterSpacing:null,color:null,textAlign:null,textTransform:null,textDecoration:null,fontKerning:null}}
+function baseCfg(){return{x:0,y:0,width:null,height:null,scale:1,rotate:0,z:0,hidden:false,deleted:false,deletedAt:0,purged:false,locked:false,group:'',label:'',crop:null,src:'',text:null,href:null,fontFamily:null,fontSize:null,fontWeight:null,fontStyle:null,lineHeight:null,letterSpacing:null,color:null,textAlign:null,textTransform:null,textDecoration:null,fontKerning:null}}
 function css(){
  if($('#core760css'))return;
  const s=document.createElement('style');s.id='core760css';
@@ -429,10 +429,10 @@ function toggleLocked(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...se
 function toggleHidden(){if(!sel.size)return;const on=!cfg(id([...sel][0]),[...sel][0]).hidden;patchSelected({hidden:on})}
 function deleteSelected(){
  if(!sel.size)return 0;const count=sel.size;commit();
- sel.forEach(el=>{const c=ownCfg(id(el),el);c.deleted=true;c.hidden=true;apply(el)});
- save();clear();window.dispatchEvent(new CustomEvent('raf:v760-deleted',{detail:{count}}));return count
+ const ids=[];sel.forEach(el=>{const c=ownCfg(id(el),el);c.deleted=true;c.hidden=true;c.deletedAt=Date.now();c.purged=false;ids.push(id(el));apply(el)});
+ save();clear();window.dispatchEvent(new CustomEvent('raf:v760-deleted',{detail:{count,ids}}));return count
 }
-function restoreDeleted(el){if(!el)return false;commit();const c=ownCfg(id(el),el);c.deleted=false;c.hidden=false;apply(el);save();select(el,false);window.dispatchEvent(new CustomEvent('raf:v760-restored',{detail:{id:id(el)}}));return true}
+function restoreDeleted(el){if(!el)return false;commit();const c=ownCfg(id(el),el);c.deleted=false;c.hidden=false;c.deletedAt=0;c.purged=false;apply(el);save();select(el,false);window.dispatchEvent(new CustomEvent('raf:v760-restored',{detail:{id:id(el)}}));return true}
 function zOrder(mode){if(!sel.size)return;const values=Object.values(layout[dev()]||{}).map(x=>Number(x.z)||0),max=Math.max(0,...values),min=Math.min(0,...values);patchSelected({z:mode==='front'?max+1:min-1})}
 function resetTransform(){patchSelected({x:0,y:0,width:null,height:null,scale:1,rotate:0,imageFrame:null})}
 function rename(label){patchSelected({label:String(label||'').slice(0,80)})}

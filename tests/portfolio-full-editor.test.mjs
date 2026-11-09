@@ -16,7 +16,7 @@ assert.match(workspace,/\{passive:false,capture:true\}/);
 assert.match(workspace,/overscroll-behavior:contain/);
 assert.match(workspace,/inspectorScrollPositions=new Map/);
 assert.match(workspace,/inspectorScrollPositions\.get\(id\)\?\?p\.scrollTop/);
-for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-live-fixes-8'));
+for(const page of [photo,film])assert.ok(page.includes('editor-entry.js?v=893-center-2'));
 for(const route of [photoRoute,filmRoute])assert.ok(route.includes('rafSubpage=893-live-fixes-6'));
 
 assert.ok(app.includes('portfolio:${type}:${item.id}'),'public cards receive stable IDs');
