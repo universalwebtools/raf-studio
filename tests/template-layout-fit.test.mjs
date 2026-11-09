@@ -10,9 +10,12 @@ assert.equal(phone.text,'OBRAZ, KTÓRY ZOSTAJE.');assert.equal(phone.color,'#777
 assert.deepEqual(fitTemplateLayout(layout,'section:Hero','desktop',{...hero,width:2560}),layout.desktop['section:Hero']);
 assert.deepEqual(fitTemplateLayout(layout,'tx:heroT','desktop',{...hero,hero:false}),layout.desktop['tx:heroT']);
 assert.deepEqual(fitTemplateLayout(layout,'tx:heroT','mobile',{...hero,family:'cam'}),layout.desktop['tx:heroT']);
+layout.desktop['section:T6-roj-about']={width:2545,height:678,x:0,y:0,scale:1,background:'#000'};
+assert.deepEqual(fitTemplateLayout(layout,'section:T6-roj-about','desktop',{...hero,hero:false,width:1348}),{width:null,height:null,x:0,y:0,scale:1,rotate:0,background:'#000'});
+assert.deepEqual(fitTemplateLayout(layout,'section:T6-roj-about','desktop',{...hero,hero:false,width:2560}),layout.desktop['section:T6-roj-about']);
 layout.mobile={'tx:heroT':{x:8,scale:1.1}};
 assert.equal(fitTemplateLayout(layout,'tx:heroT','mobile',hero).x,8);
 assert.equal(fitTemplateLayout(layout,'tx:heroT','mobile',hero).scale,1.1);
 layout.mobile['section:Hero']={width:360,height:700,x:0,y:0,scale:1};
 assert.deepEqual(fitTemplateLayout(layout,'section:Hero','mobile',hero),layout.mobile['section:Hero']);
-console.log('PASS: oversized published hero reflows on desktop/phone; content, wide-screen design, explicit device settings and other templates preserved.');
+console.log('PASS: oversized White Story hero and sections reflow; content, wide-screen design, explicit device settings and other templates preserved.');

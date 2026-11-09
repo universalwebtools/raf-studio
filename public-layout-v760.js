@@ -3,7 +3,7 @@ import {applyImageFrame} from './image-frame-v893.js?v=893-crop-1';
 import {initializeApp,getApps,getApp} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
 import {getDatabase,ref,onValue} from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
 import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
-import {fitTemplateLayout} from './template-layout-fit-v893.js?v=8.9.3-public-flow-2';
+import {fitTemplateLayout} from './template-layout-fit-v893.js?v=893-live-fixes-6';
 
 const Q=new URLSearchParams(location.search);
 if(!Q.has('editor')&&!Q.has('tplPreview')){

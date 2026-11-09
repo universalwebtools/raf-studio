@@ -9,6 +9,8 @@ import {firebaseConfig,WEBSITE_ROOT} from './firebase-config.js';
 
 const app=getApps().length?getApp():initializeApp(firebaseConfig),db=getDatabase(app);
 const Q=new URLSearchParams(location.search),EDITOR=Q.get('editor')==='direct'||Q.get('editor')==='1',PREVIEW=Q.has('tplPreview');
+const SUBPAGE_PUBLIC=!EDITOR&&!PREVIEW&&/^\/(?:fotografia|film)(?:\.html|\/)?$/i.test(location.pathname);
+const SUBPAGE_KIND=/^\/fotografia/i.test(location.pathname)?'photo':'film';
 const PATH=`${WEBSITE_ROOT}/public/${EDITOR?'proV6Draft':'proV6'}/siteHeader`;
 const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
@@ -32,6 +34,16 @@ let cfg=structuredClone(DEFAULT),header=null,badge=null,saveTimer=0,renderTimer=
 const deep=v=>v&&typeof v==='object'&&!Array.isArray(v);
 function merge(base,src){if(!deep(src))return structuredClone(base);const out=structuredClone(base);for(const [k,v] of Object.entries(src)){if(k==='items'&&Array.isArray(v)){out.items=base.items.map((x,i)=>({...x,...(v[i]||{})}));continue}if(k==='socials'&&deep(v)){out.socials={};for(const n of Object.keys(base.socials))out.socials[n]={...base.socials[n],...(v[n]||{})};continue}out[k]=deep(v)&&deep(base[k])?merge(base[k],v):v}return out}
 function normalize(x){const o=merge(DEFAULT,x||{});o.enabled=o.enabled!==false;o.position=['absolute','fixed','sticky'].includes(o.position)?o.position:'absolute';o.height=clamp(+o.height||92,52,180);o.padding=clamp(+o.padding||34,0,120);o.opacity=clamp(+o.opacity||0,0,100);o.blur=clamp(+o.blur||0,0,40);o.logoWidth=clamp(+o.logoWidth||105,30,320);o.navSize=clamp(+o.navSize||15,8,40);o.navGap=clamp(+o.navGap||54,0,160);o.socialSize=clamp(+o.socialSize||27,14,70);o.activeIndex=clamp(Math.round(+o.activeIndex||0),0,4);o.mobileBreakpoint=clamp(+o.mobileBreakpoint||820,560,1200);return o}
+function publicSubpageConfig(raw){
+ if(!SUBPAGE_PUBLIC)return raw;
+ return normalize({...raw,enabled:true,position:'sticky',height:92,padding:36,background:'#ffffff',opacity:100,blur:0,textColor:'#111111',accent:'#111111',logoUrl:'/assets/raf-logo-black.png',logoHref:'/',logoWidth:168,navSize:14,navGap:30,activeIndex:SUBPAGE_KIND==='photo'?1:2,items:[
+  {label:'Strona główna',href:'/',visible:true},
+  {label:'Fotografia',href:'/fotografia/',visible:true},
+  {label:'Film',href:'/film/',visible:true},
+  {label:'Strefa klienta',href:'https://galeria.raf-studio.pl/',visible:true},
+  {label:'Kontakt',href:'/#rw-contact',visible:true}
+ ],socials:{instagram:{enabled:false,url:'',label:'Instagram'},facebook:{enabled:false,url:'',label:'Facebook'},youtube:{enabled:false,url:'',label:'YouTube'},tiktok:{enabled:false,url:'',label:'TikTok'}}});
+}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function rgba(hex,a){let h=String(hex||'#080808').trim();if(/^#[0-9a-f]{3}$/i.test(h))h='#'+[...h.slice(1)].map(x=>x+x).join('');const m=h.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i);if(!m)return h;return`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${clamp(a,0,100)/100})`}
 function svgIcon(name){
@@ -60,7 +72,7 @@ function targetFor(i){const selectors=[
  ][i]||[];for(const sel of selectors){const el=$(sel);if(el&&!el.closest('.rafHeader900'))return el}return null}
 function ensureAnchors(){if(document.body.dataset.t6)return;['raf-oferta','raf-portfolio','raf-opinie','raf-blog','raf-kontakt'].forEach((id,i)=>{const t=targetFor(i);if(t&&!document.getElementById(id))t.id=id})}
 function socialHref(s){return String(s?.url||'').trim()||'#'}
-function render(){injectCss();cfg=normalize(cfg);ensureAnchors();
+function render(){injectCss();cfg=publicSubpageConfig(normalize(cfg));ensureAnchors();
  if(!header){header=document.createElement('nav');header.className='nav rafHeader900';header.setAttribute('aria-label','Główne menu RAF.studio');document.body.prepend(header)}
  // Header shell is layout-native. Only visible leaf controls are free-editable.
  for(const a of ['data-raf-element','data-raf-free','data-raf-v7-id','data-raf-v72-id','data-raf-v7-public-id'])header.removeAttribute(a);
