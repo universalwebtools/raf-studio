@@ -151,23 +151,28 @@
     const track = $('.shorts__track', feed);
     const items = $$('.short', feed);
     if (!items.length) return;
-    let sound = false; // dźwięk po pierwszym dotknięciu (wymóg przeglądarek)
+    // Dźwięk zawsze włączony. Jeśli przeglądarka zablokuje start z dźwiękiem
+    // (zanim ktoś dotknie strony), film rusza bez dźwięku, a dźwięk włącza się
+    // sam przy pierwszym dotknięciu, kliknięciu lub klawiszu.
     let current = null;
+    let blocked = false;
     const load = (el) => { const v = $('video', el); if (v && !v.src) { v.src = el.dataset.src; v.preload = 'auto'; } return v; };
-    const setMute = () => items.forEach((el) => {
-      const v = $('video', el); v.muted = !sound;
-      const b = $('.short__mute', el); b.textContent = sound ? '🔊' : '🔇';
-      b.setAttribute('aria-label', sound ? 'Wycisz' : 'Włącz dźwięk');
-      b.classList.toggle('is-hint', !sound && el === current);
-    });
     const play = (el) => {
       const v = load(el);
-      v.muted = !sound;
+      v.muted = false;
       v.play().then(() => el.classList.remove('is-paused')).catch(() => {
-        // Przeglądarka nie pozwala na dźwięk bez interakcji – startujemy bez dźwięku.
-        sound = false; setMute(); v.muted = true; v.play().catch(() => el.classList.add('is-paused'));
+        blocked = true;
+        v.muted = true;
+        v.play().catch(() => el.classList.add('is-paused'));
       });
     };
+    const unlock = () => {
+      if (!blocked) return;
+      blocked = false;
+      items.forEach((el) => { $('video', el).muted = false; });
+      if (current && $('video', current).paused) play(current);
+    };
+    ['pointerdown', 'keydown', 'touchend'].forEach((ev) => document.addEventListener(ev, unlock, { capture: true }));
     const activate = (el) => {
       if (el === current) return;
       current = el;
@@ -175,7 +180,7 @@
       $$('.film video').forEach((v) => v.pause());
       play(el);
       const next = items[items.indexOf(el) + 1]; if (next) load(next); // wczytaj z wyprzedzeniem
-      setMute(); updateNav();
+      updateNav();
       if (history.replaceState) history.replaceState(null, '', '#' + el.dataset.id);
     };
     const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting && en.intersectionRatio > 0.6) activate(en.target); }), { root: track, threshold: [0.6] });
@@ -183,11 +188,9 @@
       io.observe(el);
       const v = $('video', el);
       v.addEventListener('click', () => {
-        if (!sound) { sound = true; setMute(); if (v.paused) play(el); return; } // pierwsze dotknięcie włącza dźwięk
-        if (v.paused) { v.play(); el.classList.remove('is-paused'); } else { v.pause(); el.classList.add('is-paused'); }
+        if (v.paused) { v.muted = false; v.play(); el.classList.remove('is-paused'); } else { v.pause(); el.classList.add('is-paused'); }
       });
       v.addEventListener('timeupdate', () => { $('.short__progress span', el).style.width = (v.currentTime / (v.duration || 1)) * 100 + '%'; });
-      $('.short__mute', el).addEventListener('click', () => { sound = !sound; setMute(); if (sound && v.paused) play(el); });
     });
     const go = (d) => { const i = items.indexOf(current) + d; if (items[i]) track.scrollTo({ top: items[i].offsetTop, behavior: 'smooth' }); };
     // Odtwarzacz wypełnia ekran pod nagłówkiem strony i tytułem sekcji.

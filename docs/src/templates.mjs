@@ -247,7 +247,6 @@ function shortsFeed(ctx, c, films) {
         <video playsinline loop preload="none"${f.image?.src ? ` poster="${esc(url(f.image.src))}"` : ''} aria-label="${esc(f.title)}"></video>
         <span class="short__state" aria-hidden="true"></span>
         <div class="short__info"><span class="short__count">${k + 1} / ${films.length}</span><h2${ed(ctx, `portfolio.films.${i}.title`)}>${esc(f.title)}</h2></div>
-        <button type="button" class="short__mute" aria-label="Włącz dźwięk">🔇</button>
         <div class="short__progress"><span></span></div>
       </div>
     </article>`;
