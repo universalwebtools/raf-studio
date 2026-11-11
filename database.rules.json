@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "website": {
+      "public": {
+        ".read": true,
+        ".write": "auth != null && auth.uid === 'HAiGZhbpGShsvxJFJ0QlDmvaryG2'"
+      }
+    }
+  }
+}
