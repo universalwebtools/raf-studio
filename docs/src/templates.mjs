@@ -40,6 +40,7 @@ function header(ctx, { overlay }) {
   const links = [
     ['uslugi/', 'Oferta'],
     ['portfolio/', 'Portfolio'],
+    ...((ctx.data.portfolio.films || []).length ? [['filmy/', 'Filmy']] : []),
     ['o-mnie/', 'O mnie'],
     ['blog/', 'Dziennik'],
     ['kontakt/', 'Kontakt'],
@@ -198,10 +199,54 @@ function filmCard(ctx, f, { large = false } = {}) {
   </figure>`;
 }
 
-const filmsGrid = (ctx, films) => `<div class="films">${films.map((f) => filmCard(ctx, f)).join('')}</div>
+const filmsGrid = (ctx, films, { reels = false } = {}) => `<div class="films${reels ? ' films--reels' : ''}">${films.map((f) => filmCard(ctx, f)).join('')}</div>
   ${films.some((f) => !f.file) ? '<p class="films__note">Filmy z YouTube i Vimeo wczytują się dopiero po kliknięciu.</p>' : ''}`;
 
 const visibleFilms = (data) => (data.portfolio.films || []).filter((f) => filmSource(f));
+
+/* ---------- Kolekcje filmów (rolki, gmina, straż, reklama) ---------- */
+const collections = (data) => (data.portfolio.filmCollections || []).filter((c) => visibleFilms(data).some((f) => f.collection === c.id));
+const collectionFilms = (data, id) => visibleFilms(data).filter((f) => f.collection === id);
+
+function collectionBlock(ctx, c, { limit = 0, alt = false } = {}) {
+  const all = collectionFilms(ctx.data, c.id);
+  const films = limit ? all.slice(0, limit) : all;
+  const i = ctx.data.portfolio.filmCollections.indexOf(c);
+  return `<section class="section${alt ? ' section--alt' : ''}" id="${esc(c.id)}">
+  <div class="wrap">
+    <div class="section__head section__head--row">
+      <div><h2${ed(ctx, `portfolio.filmCollections.${i}.title`)}>${esc(c.title)}</h2>${c.lead ? `<p class="lead"${ed(ctx, `portfolio.filmCollections.${i}.lead`)}>${esc(c.lead)}</p>` : ''}</div>
+      ${limit && all.length > films.length ? `<a class="btn btn--dark" href="${url(`filmy/${c.id}/`)}">Wszystkie (${all.length})</a>` : ''}
+    </div>
+    ${filmsGrid(ctx, films, { reels: c.vertical })}
+  </div>
+</section>`;
+}
+
+function filmsPage(ctx) {
+  const p = ctx.data.portfolio;
+  return `${pageHead(ctx, { kicker: 'Filmy', title: p.filmsTitle || 'Filmy', lead: p.filmsLead, path: 'portfolio' })}
+${collectionNav(ctx)}
+${collections(ctx.data).map((c, k) => collectionBlock(ctx, c, { limit: c.vertical ? 8 : 6, alt: k % 2 === 1 })).join('')}
+${cta(ctx)}`;
+}
+
+function collectionNav(ctx, current = '') {
+  const list = collections(ctx.data);
+  return list.length > 1 ? `<nav class="wrap filters filters--nav" aria-label="Kategorie filmów">
+    <a href="${url('filmy/')}"${current ? '' : ' class="is-on"'}>Wszystkie</a>
+    ${list.map((c) => `<a href="${url(`filmy/${c.id}/`)}"${current === c.id ? ' class="is-on"' : ''}>${esc(c.title)}</a>`).join('')}
+  </nav>` : '';
+}
+
+function collectionPage(ctx, c) {
+  const photos = c.photoCategory ? ctx.data.portfolio.items.filter((it) => it.category === c.photoCategory) : [];
+  return `${pageHead(ctx, { kicker: 'Filmy', title: c.title, lead: c.lead })}
+${collectionNav(ctx, c.id)}
+<section class="section section--tight"><div class="wrap">${filmsGrid(ctx, collectionFilms(ctx.data, c.id), { reels: c.vertical })}</div></section>
+${photos.length ? `<section class="section section--alt"><div class="wrap"><div class="section__head"><h2>Zdjęcia</h2></div>${portfolioGrid(ctx, photos)}</div></section>` : ''}
+${cta(ctx)}`;
+}
 
 function postCards(ctx, posts) {
   return `<div class="posts">${posts.map((p) => {
@@ -404,12 +449,7 @@ function portfolioPage(ctx) {
   const { portfolio } = ctx.data;
   return `${pageHead(ctx, { kicker: 'Realizacje', title: portfolio.title, lead: portfolio.lead, path: 'portfolio' })}
 <section class="section section--tight"><div class="wrap">${portfolioGrid(ctx, portfolio.items, { filters: true })}</div></section>
-${visibleFilms(ctx.data).length ? `<section class="section section--alt" id="filmy">
-  <div class="wrap">
-    <div class="section__head"><h2>Filmy</h2><p class="lead">Ślubne opowieści, relacje z wydarzeń i materiały dla marek.</p></div>
-    ${filmsGrid(ctx, visibleFilms(ctx.data))}
-  </div>
-</section>` : ''}
+${collections(ctx.data).map((c, k) => collectionBlock(ctx, c, { limit: c.vertical ? 4 : 3, alt: k % 2 === 0 })).join('')}
 ${cta(ctx)}`;
 }
 
@@ -619,6 +659,8 @@ export function routes(data, { preview = false, base = '', noindex = false, v = 
     mk('uslugi/', (ctx) => layout(ctx, { title: t('Oferta – fotografia, film i dron w Bielsku-Białej'), description: home.offer.lead + ' ' + services.map((s) => s.title).join(', ') + '.', body: servicesPage(ctx) })),
     ...services.map((s) => mk(`uslugi/${s.slug}/`, (ctx) => layout(ctx, { title: s.seoTitle || t(s.title), description: s.seoDescription || s.short, overlay: true, image: s.image, body: servicePage(ctx, s), jsonld: [crumbs([['Oferta', 'uslugi/'], [s.title, `uslugi/${s.slug}/`]])] }))),
     mk('portfolio/', (ctx) => layout(ctx, { title: t('Portfolio – fotografia i film'), description: portfolio.lead, body: portfolioPage(ctx) })),
+    ...(collections(data).length ? [mk('filmy/', (ctx) => layout(ctx, { title: t(portfolio.filmsTitle || 'Filmy'), description: portfolio.filmsLead || portfolio.lead, body: filmsPage(ctx) }))] : []),
+    ...collections(data).map((c) => mk(`filmy/${c.id}/`, (ctx) => layout(ctx, { title: c.seoTitle || t(c.title), description: c.seoDescription || c.lead || '', body: collectionPage(ctx, c), image: collectionFilms(data, c.id)[0]?.image }))),
     mk('o-mnie/', (ctx) => layout(ctx, { title: t('O mnie'), description: home.about.paragraphs[0], image: home.about.image, body: aboutPage(ctx) })),
     mk('blog/', (ctx) => layout(ctx, { title: t('Dziennik'), description: home.journal.title, body: blogPage(ctx) })),
     ...blog.filter((p) => p.published || preview).map((p) => mk(`blog/${p.slug}/`, (ctx) => layout(ctx, {

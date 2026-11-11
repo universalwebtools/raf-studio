@@ -6,6 +6,7 @@
     "Pary",
     "Sesje",
     "Eventy",
+    "Straż pożarna",
     "Firmy i instytucje",
     "Motoryzacja"
   ],
@@ -165,7 +166,7 @@
     {
       "id": "osp-00",
       "title": "Jednostka OSP przed remizą",
-      "category": "Firmy i instytucje",
+      "category": "Straż pożarna",
       "image": {
         "src": "media/portfolio/osp-00.webp",
         "small": "media/portfolio/osp-00-800.webp",
@@ -177,13 +178,37 @@
     {
       "id": "osp-01",
       "title": "OSP – zdjęcie grupowe",
-      "category": "Firmy i instytucje",
+      "category": "Straż pożarna",
       "image": {
         "src": "media/portfolio/osp-01.webp",
         "small": "media/portfolio/osp-01-800.webp",
         "x": 50,
         "y": 50,
         "alt": "Zdjęcie grupowe jednostki OSP przed remizą"
+      }
+    },
+    {
+      "id": "osp-02",
+      "title": "Remiza z lotu ptaka",
+      "category": "Straż pożarna",
+      "image": {
+        "src": "media/portfolio/osp-02.webp",
+        "small": "media/portfolio/osp-02-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Remiza OSP z wozami i jednostką – ujęcie z drona"
+      }
+    },
+    {
+      "id": "osp-023",
+      "title": "OSP – zdjęcie jednostki",
+      "category": "Straż pożarna",
+      "image": {
+        "src": "media/portfolio/osp-023.webp",
+        "small": "media/portfolio/osp-023-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Strażacy i młodzież przed wozami bojowymi"
       }
     },
     {
@@ -682,6 +707,7 @@
   "films": [
     {
       "title": "XXIX Lato w Jasienicy – podsumowanie",
+      "collection": "gmina-jasienica",
       "category": "Eventy",
       "url": "",
       "file": "media/filmy/lato-jasienica-podsumowanie.mp4",
@@ -693,7 +719,125 @@
       }
     },
     {
-      "title": "OSP – powitanie nowego wozu",
+      "title": "Lato w Jasienicy 2026 – sobota",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lato-2026-sobota.mp4",
+      "image": {
+        "src": "media/filmy/lato-2026-sobota.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Lato w Jasienicy 2026 – sobota"
+      }
+    },
+    {
+      "title": "XXX Lato w Jasienicy – koncerty",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lato-jasienica-koncerty.mp4",
+      "image": {
+        "src": "media/filmy/lato-jasienica-koncerty.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: XXX Lato w Jasienicy – koncerty"
+      }
+    },
+    {
+      "title": "Dożynki gminne 2026",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/dozynki-2026.mp4",
+      "image": {
+        "src": "media/filmy/dozynki-2026.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Dożynki gminne 2026"
+      }
+    },
+    {
+      "title": "Dożynki 2025 – Mazańcowice",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/dozynki-mazancowice-2025.mp4",
+      "image": {
+        "src": "media/filmy/dozynki-mazancowice-2025.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Dożynki 2025 – Mazańcowice"
+      }
+    },
+    {
+      "title": "Korowód dożynkowy",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/korowod-dozynkowy.mp4",
+      "image": {
+        "src": "media/filmy/korowod-dozynkowy.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Korowód dożynkowy"
+      }
+    },
+    {
+      "title": "Korowód dożynkowy – Rudzica 2026",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/korowod-rudzica.mp4",
+      "image": {
+        "src": "media/filmy/korowod-rudzica.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Korowód dożynkowy – Rudzica 2026"
+      }
+    },
+    {
+      "title": "WOŚP w Jasienicy",
+      "collection": "gmina-jasienica",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/wosp-jasienica.mp4",
+      "image": {
+        "src": "media/filmy/wosp-jasienica.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: WOŚP w Jasienicy"
+      }
+    },
+    {
+      "title": "OSP Roztropice – jubileusz 100-lecia jednostki",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/osp-roztropice-100-lecie.mp4",
+      "image": {
+        "src": "media/filmy/osp-roztropice-100-lecie.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: OSP Roztropice – jubileusz 100-lecia jednostki"
+      }
+    },
+    {
+      "title": "OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/osp-wieszczeta-nowy-samochod.mp4",
+      "image": {
+        "src": "media/filmy/osp-wieszczeta-nowy-samochod.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)"
+      }
+    },
+    {
+      "title": "OSP – powitanie nowego wozu Scania",
+      "collection": "straz-pozarna",
       "category": "Eventy",
       "url": "",
       "file": "media/filmy/osp-nowy-woz.mp4",
@@ -701,11 +845,64 @@
         "src": "media/filmy/osp-nowy-woz.webp",
         "x": 50,
         "y": 50,
-        "alt": "Kadr z filmu: OSP – powitanie nowego wozu"
+        "alt": "Kadr z filmu: OSP – powitanie nowego wozu Scania"
+      }
+    },
+    {
+      "title": "Uroczystość strażacka",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/osp-uroczystosc.mp4",
+      "image": {
+        "src": "media/filmy/osp-uroczystosc.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Uroczystość strażacka"
+      }
+    },
+    {
+      "title": "Zawody strażackie",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/zawody-strazackie.mp4",
+      "image": {
+        "src": "media/filmy/zawody-strazackie.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Zawody strażackie"
+      }
+    },
+    {
+      "title": "Żaczki – sobota",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/zaczki-sobota.mp4",
+      "image": {
+        "src": "media/filmy/zaczki-sobota.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Żaczki – sobota"
+      }
+    },
+    {
+      "title": "Żaczki – skrót",
+      "collection": "straz-pozarna",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/zaczki.mp4",
+      "image": {
+        "src": "media/filmy/zaczki.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Żaczki – skrót"
       }
     },
     {
       "title": "Złote auto – film motoryzacyjny",
+      "collection": "reklama",
       "category": "Reklama",
       "url": "",
       "file": "media/filmy/zloty-samochod.mp4",
@@ -718,6 +915,7 @@
     },
     {
       "title": "Los Landecos Paintball – film promocyjny",
+      "collection": "reklama",
       "category": "Reklama",
       "url": "",
       "file": "media/filmy/los-landecos-paintball.mp4",
@@ -730,6 +928,7 @@
     },
     {
       "title": "Dach w Jaworzu – realizacja z drona",
+      "collection": "reklama",
       "category": "Reklama",
       "url": "",
       "file": "media/filmy/dachy-penkala-jaworze.mp4",
@@ -741,56 +940,49 @@
       }
     },
     {
-      "title": "WOŚP w Jasienicy",
-      "category": "Eventy",
-      "url": "",
-      "file": "media/filmy/wosp-jasienica.mp4",
-      "image": {
-        "src": "media/filmy/wosp-jasienica.webp",
-        "x": 50,
-        "y": 50,
-        "alt": "Kadr z filmu: WOŚP w Jasienicy"
-      }
-    },
-    {
-      "title": "Korowód dożynkowy – Rudzica 2026",
-      "category": "Eventy",
-      "url": "",
-      "file": "media/filmy/korowod-rudzica.mp4",
-      "image": {
-        "src": "media/filmy/korowod-rudzica.webp",
-        "x": 50,
-        "y": 50,
-        "alt": "Kadr z filmu: Korowód dożynkowy – Rudzica 2026"
-      }
-    },
-    {
-      "title": "XXX Lato w Jasienicy – koncerty",
-      "category": "Eventy",
-      "url": "",
-      "file": "media/filmy/lato-jasienica-koncerty.mp4",
-      "image": {
-        "src": "media/filmy/lato-jasienica-koncerty.webp",
-        "x": 50,
-        "y": 50,
-        "alt": "Kadr z filmu: XXX Lato w Jasienicy – koncerty"
-      }
-    },
-    {
-      "title": "Salon groomerski – rolka",
+      "title": "Penkala – realizacja dekarska",
+      "collection": "reklama",
       "category": "Reklama",
       "url": "",
-      "file": "media/filmy/groomer-reel.mp4",
+      "file": "media/filmy/adrian-penkala.mp4",
       "image": {
-        "src": "media/filmy/groomer-reel.webp",
+        "src": "media/filmy/adrian-penkala.webp",
         "x": 50,
         "y": 50,
-        "alt": "Kadr z filmu: Salon groomerski – rolka"
+        "alt": "Kadr z filmu: Penkala – realizacja dekarska"
+      }
+    },
+    {
+      "title": "LKS – derby (zwiastun)",
+      "collection": "rolki",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lks-derby-trailer.mp4",
+      "image": {
+        "src": "media/filmy/lks-derby-trailer.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: LKS – derby (zwiastun)"
       },
       "vertical": true
     },
     {
-      "title": "Copa de Roztropice 2026 – rolka",
+      "title": "LKS – derby",
+      "collection": "rolki",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lks-derby.mp4",
+      "image": {
+        "src": "media/filmy/lks-derby.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: LKS – derby"
+      },
+      "vertical": true
+    },
+    {
+      "title": "Copa de Roztropice 2026",
+      "collection": "rolki",
       "category": "Eventy",
       "url": "",
       "file": "media/filmy/copa-roztropice.mp4",
@@ -798,9 +990,77 @@
         "src": "media/filmy/copa-roztropice.webp",
         "x": 50,
         "y": 50,
-        "alt": "Kadr z filmu: Copa de Roztropice 2026 – rolka"
+        "alt": "Kadr z filmu: Copa de Roztropice 2026"
       },
       "vertical": true
+    },
+    {
+      "title": "Salon groomerski – strzyżenie",
+      "collection": "rolki",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/groomer-reel.mp4",
+      "image": {
+        "src": "media/filmy/groomer-reel.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Salon groomerski – strzyżenie"
+      },
+      "vertical": true
+    },
+    {
+      "title": "Salon groomerski – suszenie",
+      "collection": "rolki",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/groomer-suszenie.mp4",
+      "image": {
+        "src": "media/filmy/groomer-suszenie.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Salon groomerski – suszenie"
+      },
+      "vertical": true
+    }
+  ],
+  "filmsTitle": "Filmy",
+  "filmsLead": "Relacje z wydarzeń, filmy dla straży pożarnej, reklamy i rolki do social mediów.",
+  "filmCollections": [
+    {
+      "id": "rolki",
+      "title": "Rolki",
+      "lead": "Krótkie, pionowe formy na Instagram, TikTok i Facebook – sport, wydarzenia i lokalne marki.",
+      "vertical": true,
+      "photoCategory": "",
+      "seoTitle": "Rolki i krótkie filmy do social mediów – Bielsko-Biała | RAF.studio",
+      "seoDescription": "Pionowe rolki na Instagram, TikTok i Facebook: sport, wydarzenia i lokalne firmy. Realizacje RAF.studio."
+    },
+    {
+      "id": "gmina-jasienica",
+      "title": "Gmina Jasienica",
+      "lead": "Lato w Jasienicy, dożynki, korowody i finały WOŚP – relacje filmowe z wydarzeń w gminie.",
+      "vertical": false,
+      "photoCategory": "",
+      "seoTitle": "Filmy z wydarzeń Gminy Jasienica – Lato w Jasienicy, dożynki, WOŚP | RAF.studio",
+      "seoDescription": "Relacje filmowe z wydarzeń w Gminie Jasienica: Lato w Jasienicy, dożynki gminne, korowody i finały WOŚP."
+    },
+    {
+      "id": "straz-pozarna",
+      "title": "Straż pożarna",
+      "lead": "Jubileusze jednostek, przywitania nowych wozów, zawody i Żaczki – filmy i zdjęcia dla OSP.",
+      "vertical": false,
+      "photoCategory": "Straż pożarna",
+      "seoTitle": "Filmy i zdjęcia dla OSP – jubileusze, nowe wozy, zawody | RAF.studio",
+      "seoDescription": "Filmy dla jednostek Ochotniczej Straży Pożarnej: jubileusze, przywitania nowych samochodów, zawody strażackie i Żaczki."
+    },
+    {
+      "id": "reklama",
+      "title": "Reklama i firmy",
+      "lead": "Filmy promocyjne dla lokalnych firm i marek – także z ujęciami z drona.",
+      "vertical": false,
+      "photoCategory": "",
+      "seoTitle": "Filmy reklamowe dla firm – Bielsko-Biała | RAF.studio",
+      "seoDescription": "Filmy promocyjne i reklamowe dla lokalnych firm: motoryzacja, paintball, firmy dekarskie i usługi."
     }
   ]
 }

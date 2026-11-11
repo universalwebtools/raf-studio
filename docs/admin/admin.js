@@ -289,7 +289,8 @@ const SITE_FIELDS = [
 const FILM_FIELDS = [
   T('title', 'Tytuł filmu'),
   T('url', 'Link do filmu (YouTube lub Vimeo)', { type: 'url', placeholder: 'https://www.youtube.com/watch?v=…', help: 'Wklej zwykły link do filmu. Pierwszy film z listy pokazuje się też na stronie głównej.' }),
-  T('category', 'Kategoria (np. Ślub, Event, Reklama)'),
+  { key: 'collection', label: 'Sekcja na stronie Filmy', type: 'select', options: () => [['', '— brak —'], ...(data.portfolio.filmCollections || []).map((c) => [c.id, c.title])] },
+  T('category', 'Kategoria (np. Eventy, Reklama)', { help: 'Według kategorii filmy trafiają na podstrony usług.' }),
   IMG('image', 'Miniatura (kadr z filmu)'),
   T('file', 'Plik wideo na stronie (zamiast linku)', { placeholder: 'media/filmy/…mp4', help: 'Wypełnione = film odtwarzany prosto ze strony. Nowe pliki wideo wymagają kompresji – podeślij film, a dodam go.' }),
   { key: 'vertical', label: 'Film pionowy (rolka / reels)', type: 'checkbox' },
@@ -310,7 +311,14 @@ function panels() {
     changed(); renderSide(); openPanel(`service-${data.services.length - 1}`);
   } });
   list.push({ id: 'portfolio', group: 'Portfolio', label: 'Zdjęcia portfolio', base: 'portfolio', page: 'portfolio/', custom: renderPortfolio });
-  list.push({ id: 'films', group: 'Portfolio', label: 'Filmy', base: 'portfolio.films', page: 'portfolio/', fields: [
+  list.push({ id: 'film-collections', group: 'Portfolio', label: 'Sekcje filmów', base: 'portfolio.filmCollections', page: 'filmy/', fields: [
+    { key: '', type: 'groups', label: 'Sekcje', itemLabel: 'Sekcja', newItem: { id: 'nowa-sekcja', title: 'Nowa sekcja', lead: '', vertical: false, photoCategory: '' }, fields: [
+      T('title', 'Nazwa'), TA('lead', 'Opis', { rows: 2 }), T('id', 'Adres', { slug: true, help: 'raf-studio.pl/filmy/…/' }),
+      { key: 'vertical', label: 'Filmy pionowe (rolki)', type: 'checkbox' },
+      { key: 'photoCategory', label: 'Pokaż też zdjęcia z kategorii', type: 'select', options: () => [['', '— brak —'], ...data.portfolio.categories.map((c) => [c, c])] },
+    ] },
+  ] });
+  list.push({ id: 'films', group: 'Portfolio', label: 'Filmy', base: 'portfolio.films', page: 'filmy/', fields: [
     { key: '', type: 'groups', label: 'Filmy', itemLabel: 'Film', newItem: { title: '', url: '', category: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: FILM_FIELDS,
       help: 'Filmy pojawiają się w portfolio, na podstronie „Historie w ruchu” i (pierwszy) na stronie głównej. Odtwarzacz wczytuje się dopiero po kliknięciu.' },
   ] });

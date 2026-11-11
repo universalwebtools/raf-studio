@@ -310,3 +310,16 @@ p { margin: 0 0 1em; }
 
 /* Kadr startowy nagłówka – osobny na telefon */
 .hero__media picture img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Kolekcje filmów */
+.section__head--row { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; flex-wrap: wrap; }
+.section__head--row .lead { margin-bottom: 0; }
+.filters--nav { margin-top: -10px; margin-bottom: 10px; }
+.filters--nav a { border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 9px 18px; font: 500 14px var(--font); text-decoration: none; }
+.filters--nav a.is-on, .filters--nav a:hover { background: var(--ink); color: #fff; border-color: var(--ink); }
+.films--reels { grid-template-columns: repeat(auto-fill, minmax(min(100%, 210px), 1fr)); gap: 16px; }
+.films--reels .film__play { aspect-ratio: 9 / 16; }
+.films--reels .film__icon { width: 58px; height: 58px; margin: -29px 0 0 -29px; }
+.films--reels .film__icon::after { left: 23px; top: 17px; border-left-width: 16px; border-top-width: 12px; border-bottom-width: 12px; }
+.films--reels figcaption { flex-direction: column; gap: 2px; }
+@media (max-width: 700px) { .films--reels { grid-template-columns: 1fr 1fr; gap: 10px; } }

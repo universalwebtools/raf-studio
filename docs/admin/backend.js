@@ -145,7 +145,7 @@ async function onlineBackend(ui) {
       for (const [p, text] of Object.entries(pages)) entries.push({ path: `docs/${p}`, mode: '100644', type: 'blob', content: text });
 
       // Usuń podstrony, które zniknęły (np. usunięty wpis lub zmieniony adres usługi).
-      const generated = /^docs\/(uslugi|blog)\/[^/]+\/index\.html$/;
+      const generated = /^docs\/(uslugi|blog|filmy)\/[^/]+\/index\.html$/;
       for (const t of tree.tree) if (generated.test(t.path) && !(t.path.slice(5) in pages)) entries.push({ path: t.path, mode: '100644', type: 'blob', sha: null });
 
       // Nowe zdjęcia – tylko te, których strona faktycznie używa.
