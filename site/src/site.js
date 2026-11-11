@@ -112,8 +112,8 @@
 
   // Filmy: odtwarzacz YouTube/Vimeo wczytywany dopiero po kliknięciu.
   document.addEventListener('click', (e) => {
-    const b = e.target.closest('.film__play');
-    if (!b || window.RAF_PREVIEW) return;
+    const b = e.target.closest('button.film__play');
+    if (!b || window.RAF_PREVIEW || !(b.dataset.video || b.dataset.embed)) return;
     let f;
     if (b.dataset.video) {
       f = document.createElement('video');

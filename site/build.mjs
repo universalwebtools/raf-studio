@@ -6,6 +6,7 @@ import { readFile, writeFile, mkdir, rm, cp } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 export const CONTENT = join(ROOT, 'content');
@@ -30,9 +31,11 @@ export async function build() {
   // Świeży import szablonów przy każdym buildzie (podczas pracy z edytorem).
   const { renderSite } = await import(pathToFileURL(join(ROOT, 'src/templates.mjs')).href + `?t=${t0}`);
   const data = await loadContent();
+  // Wersja = skrót treści CSS i JS; zmienia się tylko, gdy te pliki się zmienią.
+  const v = createHash('sha1').update(await readFile(join(ROOT, 'src/style.css'))).update(await readFile(join(ROOT, 'src/site.js'))).digest('hex').slice(0, 8);
 
   await rm(DIST, { recursive: true, force: true });
-  const files = renderSite(data, { base: BASE, noindex: NOINDEX });
+  const files = renderSite(data, { base: BASE, noindex: NOINDEX, v });
   for (const [path, text] of Object.entries(files)) await write(join(DIST, path), text);
 
   if (!BASE) await write(join(DIST, 'CNAME'), new URL(data.site.url).host + '\n');
@@ -40,7 +43,7 @@ export async function build() {
   // Ustawienia dla edytora online: adres bazowy i repozytorium, do którego publikuje.
   const [owner, name] = (process.env.REPO || 'universalwebtools/raf-studio').split('/');
   const repo = { owner, name, branch: process.env.BRANCH || 'main' };
-  await write(join(DIST, 'site-config.json'), JSON.stringify({ base: BASE, noindex: NOINDEX, repo }) + '\n');
+  await write(join(DIST, 'site-config.json'), JSON.stringify({ base: BASE, noindex: NOINDEX, repo, v }) + '\n');
 
   await cp(join(ROOT, 'src/style.css'), join(DIST, 'style.css'));
   await cp(join(ROOT, 'src/site.js'), join(DIST, 'site.js'));

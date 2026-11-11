@@ -13,6 +13,9 @@ export const formatDate = (iso) => {
 
 // BASE: prefiks adresów – pusty na raf-studio.pl, np. '/raf-studio-podglad' na stronie testowej.
 let BASE = '';
+// Wersja plików CSS/JS – zmienia się przy każdej zmianie, żeby przeglądarki nie używały starych kopii.
+let ASSET_V = '';
+const asset = (p) => url(p) + (ASSET_V ? `?v=${ASSET_V}` : '');
 const abs = (p) => '/' + String(p || '').replace(/^\/+/, '');
 const url = (p) => BASE + abs(p);
 
@@ -585,7 +588,7 @@ ${ctx.noindex ? '<meta name="robots" content="noindex,nofollow">\n' : ''}<title>
 <link rel="apple-touch-icon" href="${url(`apple-touch-icon.png`)}">
 <link rel="manifest" href="${url(`site.webmanifest`)}">
 <link rel="preload" href="${url(`fonts/inter-latin.woff2`)}" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="${url(`style.css`)}">
+<link rel="stylesheet" href="${asset(`style.css`)}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
 <body${overlay ? ' class="has-overlay"' : ''}>
@@ -593,16 +596,16 @@ ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 ${header(ctx, { overlay })}
 <main id="tresc">${body}</main>
 ${footer(ctx)}
-<script src="${url(`site.js`)}" defer></script>
+<script src="${asset(`site.js`)}" defer></script>
 ${statsScript(ctx)}</body>
 </html>`;
 }
 
 /* ---------- Lista wszystkich podstron ---------- */
 
-export function routes(data, { preview = false, base = '', noindex = false } = {}) {
+export function routes(data, { preview = false, base = '', noindex = false, v = '' } = {}) {
   const { site, home, services, portfolio, blog } = data;
-  const mk = (path, fn) => ({ path, render: () => { BASE = base; return fn({ data, path, preview, noindex }); } });
+  const mk = (path, fn) => ({ path, render: () => { BASE = base; ASSET_V = v; return fn({ data, path, preview, noindex }); } });
   const t = (s) => `${s} | ${site.name}`;
   const crumbs = (items) => ({
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',
@@ -627,19 +630,19 @@ export function routes(data, { preview = false, base = '', noindex = false } = {
   return list;
 }
 
-export function notFound(data, { base = '' } = {}) {
-  BASE = base;
+export function notFound(data, { base = '', v = '' } = {}) {
+  BASE = base; ASSET_V = v;
   const ctx = { data, path: '404.html', preview: false };
   return layout(ctx, { title: `Nie znaleziono | ${data.site.name}`, description: '', body: notFoundPage() }).replace('<head>', '<head>\n<meta name="robots" content="noindex">');
 }
 
 // Wszystkie pliki generowane z treści: { "ścieżka/pliku": "zawartość" }.
 // Używane przez build.mjs (Node) i przez przycisk „Opublikuj” w edytorze (przeglądarka).
-export function renderSite(data, { base = '', noindex = false } = {}) {
+export function renderSite(data, { base = '', noindex = false, v = '' } = {}) {
   const files = {};
-  const pages = routes(data, { base, noindex });
+  const pages = routes(data, { base, noindex, v });
   for (const r of pages) files[r.path + 'index.html'] = r.render();
-  files['404.html'] = notFound(data, { base });
+  files['404.html'] = notFound(data, { base, v });
   const siteUrl = data.site.url.replace(/\/$/, '');
   const today = new Date().toISOString().slice(0, 10);
 

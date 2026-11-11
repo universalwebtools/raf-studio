@@ -141,7 +141,7 @@ async function onlineBackend(ui) {
 
       const entries = [];
       for (const f of CONTENT_FILES) entries.push({ path: `site/content/${f}.json`, mode: '100644', type: 'blob', content: JSON.stringify(data[f], null, 2) + '\n' });
-      const pages = renderSite(data, { base: cfg.base, noindex: cfg.noindex });
+      const pages = renderSite(data, { base: cfg.base, noindex: cfg.noindex, v: cfg.v });
       for (const [p, text] of Object.entries(pages)) entries.push({ path: `docs/${p}`, mode: '100644', type: 'blob', content: text });
 
       // Usuń podstrony, które zniknęły (np. usunięty wpis lub zmieniony adres usługi).
