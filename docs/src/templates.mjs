@@ -436,7 +436,10 @@ ${ctx.noindex ? '<meta name="robots" content="noindex,nofollow">\n' : ''}<title>
 <meta property="og:image" content="${esc(share)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#0b0b0c">
-<link rel="icon" href="${url(`favicon.png`)}">
+<link rel="icon" href="${url(`favicon.ico`)}" sizes="48x48">
+<link rel="icon" href="${url(`icon-192.png`)}" type="image/png" sizes="192x192">
+<link rel="apple-touch-icon" href="${url(`apple-touch-icon.png`)}">
+<link rel="manifest" href="${url(`site.webmanifest`)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
