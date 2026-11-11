@@ -132,8 +132,19 @@
     holder.className = 'film__play';
     holder.append(f);
     b.closest('.film')?.classList.add('is-playing');
+    stopOtherFilms(f);
     b.replaceWith(holder);
   });
+
+  // Tylko jeden film naraz: start jednego zatrzymuje pozostałe.
+  function stopOtherFilms(current) {
+    $$('.film video').forEach((v) => { if (v !== current && !v.paused) v.pause(); });
+    // YouTube/Vimeo nie da się zapauzować z zewnątrz – przeładowanie odtwarzacza go zatrzymuje.
+    $$('.film iframe').forEach((fr) => { if (fr !== current) fr.src = fr.src; });
+  }
+  document.addEventListener('play', (e) => {
+    if (e.target.matches?.('.film video')) stopOtherFilms(e.target);
+  }, true);
 
   // Delikatne pojawianie się sekcji
   if ('IntersectionObserver' in window && !reduce) {
