@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Edytor RAF.studio</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="../favicon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<header class="top">
+  <div class="top__brand"><img src="../media/logo-black.png" alt=""><span>Edytor</span></div>
+  <div class="top__devices" role="group" aria-label="Podgląd na urządzeniu">
+    <button type="button" data-device="desktop" class="is-on" title="Komputer">🖥 Komputer</button>
+    <button type="button" data-device="tablet" title="Tablet">Tablet</button>
+    <button type="button" data-device="mobile" title="Telefon">📱 Telefon</button>
+  </div>
+  <div class="top__actions">
+    <span class="status" id="status">Wczytywanie…</span>
+    <button type="button" class="btn btn--ghost" id="undo" disabled title="Ctrl+Z">↶ Cofnij</button>
+    <a class="btn btn--ghost" id="openPage" href="../" target="_blank" rel="noopener">Otwórz stronę ↗</a>
+    <button type="button" class="btn btn--primary" id="save" disabled title="Ctrl+S">Zapisz</button>
+  </div>
+</header>
+<div class="app">
+  <nav class="side" id="side" aria-label="Sekcje"></nav>
+  <section class="panel" id="panel" aria-live="polite"></section>
+  <section class="preview" id="previewWrap">
+    <div class="preview__bar"><span id="previewPath">/</span><span class="hint">Kliknij tekst lub zdjęcie w podglądzie, żeby je edytować</span></div>
+    <div class="preview__stage"><iframe id="preview" title="Podgląd strony"></iframe></div>
+  </section>
+</div>
+<script type="module" src="admin.js"></script>
+</body>
+</html>

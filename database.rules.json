@@ -4,6 +4,10 @@
       "public": {
         ".read": true,
         ".write": "auth != null && auth.uid === 'HAiGZhbpGShsvxJFJ0QlDmvaryG2'"
+      },
+      "private": {
+        ".read": "auth != null && auth.uid === 'HAiGZhbpGShsvxJFJ0QlDmvaryG2'",
+        ".write": "auth != null && auth.uid === 'HAiGZhbpGShsvxJFJ0QlDmvaryG2'"
       }
     }
   }

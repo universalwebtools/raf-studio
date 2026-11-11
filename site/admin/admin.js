@@ -1,7 +1,8 @@
 // Edytor RAF.studio – edycja treści z podglądem na żywo.
-import { routes } from '/src/templates.mjs';
+import { routes, renderSite } from '../src/templates.mjs';
+import { createBackend, SITE_BASE } from './backend.js';
 
-const FILES = ['site', 'home', 'services', 'portfolio', 'blog'];
+let backend;
 const $ = (s, r = document) => r.querySelector(s);
 const h = (tag, attrs = {}, ...kids) => {
   const el = document.createElement(tag);
@@ -67,21 +68,23 @@ function undo() {
   renderSide(); renderPanel(); renderPreview(); updateStatus();
   toast('Cofnięto ostatnią zmianę');
 }
+let saving = false;
 async function save() {
+  if (saving) return;
   commitHistory();
+  saving = true;
   saveBtn.disabled = true;
   updateStatus('Zapisywanie…');
   try {
-    const res = await fetch('/api/save', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: snap() });
-    const out = await res.json();
-    if (!out.ok) throw new Error(out.error || 'Błąd zapisu');
-    savedSnap = snap();
-    updateStatus(`✓ Zapisano · ${out.pages} podstron gotowych`, 'ok');
-    setTimeout(() => updateStatus(), 4000);
+    const before = snap();
+    const msg = await backend.save(JSON.parse(before), renderSite, (m) => updateStatus(m));
+    savedSnap = before;
+    updateStatus(msg, 'ok');
+    setTimeout(() => updateStatus(), 6000);
   } catch (e) {
     updateStatus('Nie udało się zapisać: ' + e.message, 'err');
     saveBtn.disabled = false;
-  }
+  } finally { saving = false; }
 }
 function toast(msg, err) {
   const t = h('div', { class: 'toast' + (err ? ' is-err' : '') }, msg);
@@ -91,13 +94,12 @@ function toast(msg, err) {
 /* ---------- Wgrywanie zdjęć ---------- */
 async function upload(file) {
   if (!file.type.startsWith('image/')) throw new Error('To nie jest zdjęcie: ' + file.name);
-  updateStatus(`Wgrywanie ${file.name}…`);
-  const res = await fetch('/api/upload?name=' + encodeURIComponent(file.name), { method: 'POST', body: file });
-  const out = await res.json();
-  if (!out.ok) throw new Error(out.error || 'Błąd wgrywania');
+  updateStatus(`Przygotowanie ${file.name}…`);
+  const src = await backend.upload(file);
   updateStatus();
-  return out.src;
+  return src;
 }
+const media = (src) => (src ? backend.mediaUrl(src) : '');
 const pickFiles = (multiple) => new Promise((ok) => {
   const inp = h('input', { type: 'file', accept: 'image/*', multiple });
   inp.addEventListener('change', () => ok([...inp.files]));
@@ -138,7 +140,7 @@ function fieldImage(path, f) {
   let img = get(path);
   if (!img) { img = { src: '', x: 50, y: 50, alt: '' }; set(path, img); }
   const dot = h('div', { class: 'img__dot' });
-  const pic = h('img', { src: img.src ? '/' + img.src : '', alt: '' });
+  const pic = h('img', { src: media(img.src), alt: '' });
   const placeDot = () => { dot.style.display = img.src ? '' : 'none'; dot.style.left = (img.x ?? 50) + '%'; dot.style.top = (img.y ?? 50) + '%'; };
   // Kropka musi leżeć na faktycznym obrazie (object-fit: contain zostawia marginesy).
   const frame = h('div', { class: 'img__frame', title: 'Kliknij, aby ustawić najważniejszy punkt zdjęcia' }, pic, dot);
@@ -160,7 +162,7 @@ function fieldImage(path, f) {
     fitDot(); changed();
   });
   const replace = async (file) => {
-    try { img.src = await upload(file); img.x = 50; img.y = 50; pic.src = '/' + img.src; changed(); toast('Zdjęcie wgrane'); }
+    try { img.src = await upload(file); img.x = 50; img.y = 50; pic.src = media(img.src); changed(); toast('Zdjęcie wgrane'); }
     catch (e) { toast(e.message, true); updateStatus(); }
   };
   const box = h('div', { class: 'img', 'data-path': path },
@@ -327,7 +329,7 @@ function renderPortfolio(panel) {
     const open = openPortfolioItem === i;
     return h('div', { class: 'pf__item' + (open ? ' is-open' : ''), 'data-path': `portfolio.items.${i}` },
       h('div', { class: 'pf__thumb', onclick: () => { openPortfolioItem = open ? -1 : i; renderPanel(); } },
-        h('img', { src: '/' + it.image.src, alt: '', loading: 'lazy', style: `object-position:${it.image.x}% ${it.image.y}%` }), h('span', {}, it.category || '—')),
+        h('img', { src: media(it.image.src), alt: '', loading: 'lazy', style: `object-position:${it.image.x}% ${it.image.y}%` }), h('span', {}, it.category || '—')),
       h('div', { class: 'pf__meta' }, h('b', {}, it.title || 'Bez tytułu'), listTools('portfolio.items', i, pf.items)),
       open && h('div', { class: 'pf__edit' }, renderFields(`portfolio.items.${i}`, [
         T('title', 'Podpis'),
@@ -404,16 +406,16 @@ function focusPath(path) {
 
 /* ---------- Podgląd ---------- */
 const iframe = $('#preview');
-const PREVIEW_HEAD = `<base href="${location.origin}/"><script>window.RAF_PREVIEW=true</script><style>
+const PREVIEW_HEAD = `<base href="${location.origin}${SITE_BASE}/"><script>window.RAF_PREVIEW=true</script><style>
 [data-edit]{cursor:pointer}[data-edit]:hover{outline:2px dashed #2563eb;outline-offset:4px}
 .reveal{opacity:1!important;transform:none!important}.is-hl{outline:3px solid #2563eb!important;outline-offset:4px}</style>`;
-const PREVIEW_SCRIPT = `<script>
+const PREVIEW_SCRIPT = `<script>var BASE_LEN=${SITE_BASE.length};
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-edit]');
   if(el){e.preventDefault();e.stopPropagation();parent.postMessage({type:'edit',path:el.dataset.edit},'*');return;}
   var a=e.target.closest('a');
   if(a){var h=a.getAttribute('href')||'';
-    if(h.charAt(0)==='/'&&h.charAt(1)!=='/'&&!/\\.(webp|jpe?g|png|mp4)$/i.test(h)){e.preventDefault();parent.postMessage({type:'nav',path:h.replace(/^\\//,'')},'*');}
+    if(h.charAt(0)==='/'&&h.charAt(1)!=='/'&&!/\\.(webp|jpe?g|png|mp4)$/i.test(h)){e.preventDefault();parent.postMessage({type:'nav',path:h.slice(BASE_LEN).replace(/^\\//,'')},'*');}
     else if(h&&h.charAt(0)!=='#'){e.preventDefault();}}
 },true);
 document.addEventListener('submit',function(e){e.preventDefault();},true);
@@ -422,14 +424,14 @@ let previewTimer;
 function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 250); }
 function renderPreview({ resetScroll = false } = {}) {
   clearTimeout(previewTimer);
-  const all = routes(data, { preview: true });
+  const all = routes(data, { preview: true, base: SITE_BASE });
   const route = all.find((r) => r.path === previewPath) || all[0];
   previewPath = route.path;
   $('#previewPath').textContent = '/' + route.path;
-  $('#openPage').href = '/' + route.path;
+  $('#openPage').href = SITE_BASE + '/' + route.path;
   let html;
   try { html = route.render(); } catch (e) { console.error(e); return; }
-  html = html.replace('<head>', '<head>' + PREVIEW_HEAD).replace('</body>', PREVIEW_SCRIPT + '</body>');
+  html = backend.previewHtml(html).replace('<head>', '<head>' + PREVIEW_HEAD).replace('</body>', PREVIEW_SCRIPT + '</body>');
   const y = resetScroll ? 0 : (iframe.contentWindow?.scrollY || 0);
   iframe.onload = () => { iframe.contentWindow.scrollTo(0, y); };
   iframe.srcdoc = html;
@@ -468,13 +470,58 @@ addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') { e.preventDefault(); if (!saveBtn.disabled) save(); }
   if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z' && !e.target.matches('input,textarea')) { e.preventDefault(); undo(); }
 });
-addEventListener('beforeunload', (e) => { if (snap() !== savedSnap) { e.preventDefault(); e.returnValue = ''; } });
+addEventListener('beforeunload', (e) => { if (snap() !== savedSnap || backend?.hasPending()) { e.preventDefault(); e.returnValue = ''; } });
+
+/* ---------- Okna logowania (tryb online) ---------- */
+function modal(content) {
+  const box = h('div', { class: 'modal' }, h('div', { class: 'modal__card' }, content));
+  document.body.append(box);
+  return box;
+}
+const ui = {
+  _err: '', _tokErr: '',
+  askLogin() {
+    return new Promise((ok) => {
+      const form = h('form', { class: 'modal__form', onsubmit: (e) => { e.preventDefault(); const d = Object.fromEntries(new FormData(form)); box.remove(); ok(d); } },
+        h('img', { src: '../media/logo-black.png', alt: 'RAF.studio', class: 'modal__logo' }),
+        h('h2', {}, 'Edytor strony'),
+        h('p', { class: 'sub' }, 'Zaloguj się kontem administratora strony.'),
+        ui._err && h('p', { class: 'modal__err' }, ui._err),
+        h('label', {}, 'E-mail', h('input', { name: 'email', type: 'email', autocomplete: 'username', required: true })),
+        h('label', {}, 'Hasło', h('input', { name: 'password', type: 'password', autocomplete: 'current-password', required: true })),
+        h('button', { class: 'btn btn--primary', type: 'submit' }, 'Zaloguj'));
+      ui._err = '';
+      const box = modal(form);
+      form.querySelector('input').focus();
+    });
+  },
+  loginError(msg) { ui._err = msg; },
+  askToken() {
+    return new Promise((ok) => {
+      const form = h('form', { class: 'modal__form', onsubmit: (e) => { e.preventDefault(); const v = new FormData(form).get('token'); box.remove(); ok(String(v)); } },
+        h('h2', {}, 'Połącz edytor z GitHubem'),
+        h('p', { class: 'sub' }, 'Jednorazowo wklej klucz dostępu do repozytorium strony. Zapisze się bezpiecznie na koncie administratora – na innych urządzeniach wystarczy już tylko zalogować się.'),
+        ui._tokErr && h('p', { class: 'modal__err' }, ui._tokErr),
+        h('label', {}, 'Klucz GitHub (zaczyna się od github_pat_…)', h('input', { name: 'token', type: 'password', autocomplete: 'off', required: true, spellcheck: false })),
+        h('button', { class: 'btn btn--primary', type: 'submit' }, 'Połącz'));
+      ui._tokErr = '';
+      const box = modal(form);
+      form.querySelector('input').focus();
+    });
+  },
+  tokenError(msg) { ui._tokErr = msg; },
+};
 
 (async () => {
   try {
-    const loaded = await Promise.all(FILES.map((f) => fetch(`/content/${f}.json`, { cache: 'no-store' }).then((r) => r.json())));
-    FILES.forEach((f, i) => { data[f] = loaded[i]; });
-  } catch (e) { updateStatus('Nie udało się wczytać treści', 'err'); return; }
+    backend = await createBackend(ui);
+    updateStatus('Wczytywanie treści…');
+    data = await backend.load();
+  } catch (e) { console.error(e); updateStatus(e.message || 'Nie udało się wczytać treści', 'err'); return; }
+  saveBtn.textContent = backend.saveLabel;
+  if (backend.user) {
+    $('.top__actions').prepend(h('button', { type: 'button', class: 'btn btn--ghost btn--small', title: 'Wyloguj', onclick: () => { if (snap() === savedSnap || confirm('Masz nieopublikowane zmiany. Wylogować mimo to?')) backend.logout(); } }, '⎋ ' + backend.user));
+  }
   savedSnap = lastSnap = snap();
   let start = 'home.hero';
   try { start = localStorage.getItem('raf-editor-panel') || start; } catch {}

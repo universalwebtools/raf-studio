@@ -95,3 +95,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
   .app { grid-template-columns: 180px 1fr; }
   .preview { display: none; }
 }
+
+.modal { position: fixed; inset: 0; z-index: 20; background: rgba(20,20,20,.45); backdrop-filter: blur(4px); display: grid; place-items: center; padding: 20px; }
+.modal__card { background: #fff; border-radius: 14px; width: min(420px, 100%); padding: 30px; box-shadow: 0 20px 60px rgba(0,0,0,.2); }
+.modal__form { display: grid; gap: 14px; }
+.modal__form h2 { margin: 0; font-size: 22px; }
+.modal__form .sub { margin: -6px 0 4px; color: var(--muted); }
+.modal__form label { display: grid; gap: 6px; font-weight: 600; font-size: 13px; }
+.modal__form input { border: 1px solid var(--line); border-radius: 8px; padding: 11px 12px; font-weight: 400; }
+.modal__form input:focus { outline: 2px solid var(--blue); outline-offset: -1px; }
+.modal__form .btn { height: 44px; justify-content: center; margin-top: 4px; }
+.modal__logo { height: 30px; justify-self: start; margin-bottom: 6px; }
+.modal__err { margin: 0; color: var(--err); background: #fef2f2; border-radius: 8px; padding: 9px 12px; }
