@@ -1,1 +1,0 @@
-Deployment marker for the full-page sticky White Story header correction.

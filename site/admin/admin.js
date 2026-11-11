@@ -252,6 +252,7 @@ const SERVICE_FIELDS = [
   P('paragraphs', 'Opis usługi'),
   { key: 'includes', label: 'W ramach realizacji', type: 'lines' },
   { key: 'portfolioCategory', label: 'Zdjęcia z portfolio na tej podstronie', type: 'select', options: () => [['', 'Wszystkie kategorie'], ...data.portfolio.categories.map((c) => [c, c])] },
+  { key: 'showFilms', label: 'Pokaż na tej podstronie filmy z portfolio', type: 'checkbox' },
   T('slug', 'Adres podstrony', { slug: true, help: 'Np. fotografia-slubna → raf-studio.pl/uslugi/fotografia-slubna/' }),
   T('seoTitle', 'Tytuł w Google', { max: 65 }),
   TA('seoDescription', 'Opis w Google', { rows: 3, max: 160 }),
@@ -269,13 +270,26 @@ const POST_FIELDS = [
 
 const SITE_FIELDS = [
   T('name', 'Nazwa'), T('tagline', 'Hasło pod logo'),
-  T('email', 'E-mail', { type: 'email' }), T('phone', 'Telefon', { placeholder: 'np. 600 000 000' }),
+  T('email', 'E-mail', { type: 'email' }),
+  T('formEmail', 'E-mail do formularza (opcjonalnie)', { type: 'email', help: 'Na ten adres trafiają zapytania z formularza. Puste = adres wyżej. Przy pierwszym zapytaniu FormSubmit wyśle na ten adres e-mail z prośbą o aktywację – trzeba kliknąć link.' }),
+  T('phone', 'Telefon', { placeholder: 'np. 600 000 000' }),
   T('instagram', 'Instagram (link)', { type: 'url' }), T('facebook', 'Facebook (link)', { type: 'url' }), T('youtube', 'YouTube (link)', { type: 'url' }),
   T('gallery', 'Strefa klienta (link)', { type: 'url' }),
   T('city', 'Miasto'), T('region', 'Obszar działania (tekst)'),
   { key: 'areaServed', label: 'Obszar działania dla Google', type: 'lines' },
   T('seoTitle', 'Tytuł strony głównej w Google', { max: 65 }), TA('seoDescription', 'Opis strony głównej w Google', { rows: 3, max: 160 }),
   T('copyright', 'Tekst w stopce'),
+  { type: 'note', text: 'Dane firmy do polityki prywatności (administrator danych):' },
+  T('legalName', 'Pełna nazwa firmy / imię i nazwisko', { placeholder: 'np. RAF.studio Rafał Kukla' }),
+  T('address', 'Adres firmy'), T('nip', 'NIP'),
+  T('goatcounter', 'Statystyki GoatCounter – kod strony', { placeholder: 'np. rafstudio', help: 'Kod z adresu panelu GoatCounter (rafstudio.goatcounter.com → rafstudio). Puste = statystyki wyłączone.' }),
+];
+
+const FILM_FIELDS = [
+  T('title', 'Tytuł filmu'),
+  T('url', 'Link do filmu (YouTube lub Vimeo)', { type: 'url', placeholder: 'https://www.youtube.com/watch?v=…', help: 'Wklej zwykły link do filmu. Pierwszy film z listy pokazuje się też na stronie głównej.' }),
+  T('category', 'Kategoria (np. Ślub, Event, Reklama)'),
+  IMG('image', 'Własna miniatura (opcjonalnie)'),
 ];
 
 function panels() {
@@ -293,6 +307,10 @@ function panels() {
     changed(); renderSide(); openPanel(`service-${data.services.length - 1}`);
   } });
   list.push({ id: 'portfolio', group: 'Portfolio', label: 'Zdjęcia portfolio', base: 'portfolio', page: 'portfolio/', custom: renderPortfolio });
+  list.push({ id: 'films', group: 'Portfolio', label: 'Filmy', base: 'portfolio.films', page: 'portfolio/', fields: [
+    { key: '', type: 'groups', label: 'Filmy', itemLabel: 'Film', newItem: { title: '', url: '', category: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: FILM_FIELDS,
+      help: 'Filmy pojawiają się w portfolio, na podstronie „Historie w ruchu” i (pierwszy) na stronie głównej. Odtwarzacz wczytuje się dopiero po kliknięciu.' },
+  ] });
   data.blog.forEach((p, i) => list.push({
     id: `post-${i}`, group: 'Dziennik', label: (p.published ? '' : '◌ ') + (p.title || 'Nowy wpis'), base: `blog.${i}`, page: `blog/${p.slug}/`, fields: POST_FIELDS,
     danger: () => { if (confirm(`Usunąć wpis „${p.title}”?`)) { data.blog.splice(i, 1); changed({ rerender: true }); renderSide(); openPanel('home.journal'); } },

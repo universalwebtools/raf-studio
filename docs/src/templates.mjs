@@ -86,8 +86,36 @@ function footer(ctx) {
 </footer>`;
 }
 
+// Formularz wysyłany przez FormSubmit.co na adres z ustawień (działa też bez JavaScriptu).
+function contactForm(ctx) {
+  const { site, services } = ctx.data;
+  const to = site.formEmail || site.email;
+  if (!to) return '';
+  const thanks = site.url.replace(/\/$/, '') + '/kontakt/dziekujemy/';
+  return `<form class="form" method="POST" action="https://formsubmit.co/${esc(to)}" data-contact-form data-endpoint="https://formsubmit.co/ajax/${esc(to)}">
+      <input type="hidden" name="_subject" value="Nowe zapytanie ze strony ${esc(site.name)}">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="${esc(thanks)}">
+      <div class="form__hp" aria-hidden="true"><label>Nie wypełniaj<input name="_honey" tabindex="-1" autocomplete="off"></label></div>
+      <label>Twoje imię<input name="Imię" autocomplete="name" required maxlength="100"></label>
+      <div class="form__row">
+        <label>Adres e-mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+        <label>Telefon <small>(opcjonalnie)</small><input name="Telefon" type="tel" autocomplete="tel" maxlength="30"></label>
+      </div>
+      <div class="form__row">
+        <label>Interesuje mnie<select name="Usługa">${services.map((s) => `<option>${esc(s.title)}</option>`).join('')}<option>Coś innego</option></select></label>
+        <label>Planowany termin<input name="Termin" type="date"></label>
+      </div>
+      <label>Kilka słów o pomyśle<textarea name="Wiadomość" rows="4" required maxlength="5000"></textarea></label>
+      <label class="form__consent"><input type="checkbox" required> <span>Zgadzam się na wykorzystanie moich danych do odpowiedzi na zapytanie. Więcej w <a href="${url(`polityka-prywatnosci/`)}">polityce prywatności</a>.</span></label>
+      <button class="btn btn--dark" type="submit">Wyślij zapytanie</button>
+      <p class="form__status" role="status" aria-live="polite"></p>
+    </form>`;
+}
+
 function contactBlock(ctx, { heading = true } = {}) {
-  const { site, home, services } = ctx.data;
+  const { site, home } = ctx.data;
   const c = home.contact;
   return `<section class="contact" id="kontakt">
   <div class="wrap contact__grid">
@@ -101,17 +129,7 @@ function contactBlock(ctx, { heading = true } = {}) {
         <li><span>Obszar</span>${esc(site.region)}</li>
       </ul>
     </div>
-    <form class="form" data-contact-form data-email="${esc(site.email)}">
-      <label>Twoje imię<input name="name" autocomplete="name" required></label>
-      <label>Adres e-mail<input name="email" type="email" autocomplete="email" required></label>
-      <div class="form__row">
-        <label>Interesuje mnie<select name="service">${services.map((s) => `<option>${esc(s.title)}</option>`).join('')}<option>Coś innego</option></select></label>
-        <label>Planowany termin<input name="date" type="date"></label>
-      </div>
-      <label>Kilka słów o pomyśle<textarea name="message" rows="4" required></textarea></label>
-      <button class="btn btn--dark" type="submit">Wyślij zapytanie</button>
-      <p class="form__note">Formularz przygotuje wiadomość w Twoim programie pocztowym. Dane są używane wyłącznie do odpowiedzi na zapytanie – <a href="${url(`polityka-prywatnosci/`)}">polityka prywatności</a>.</p>
-    </form>
+    ${contactForm(ctx)}
   </div>
 </section>`;
 }
@@ -143,6 +161,36 @@ function portfolioGrid(ctx, items, { filters = false } = {}) {
       </figure>`;
     }).join('')}</div>`;
 }
+
+/* ---------- Filmy (YouTube / Vimeo, wczytywane dopiero po kliknięciu) ---------- */
+export function videoInfo(link) {
+  const s = String(link || '').trim();
+  let m = s.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/)|youtu\.be\/)([\w-]{11})/);
+  if (m) return { type: 'youtube', id: m[1], embed: `https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&rel=0&modestbranding=1`, thumb: `https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg` };
+  m = s.match(/vimeo\.com\/(?:video\/)?(\d+)(?:\/([\da-f]+))?/);
+  if (m) return { type: 'vimeo', id: m[1], embed: `https://player.vimeo.com/video/${m[1]}?autoplay=1&dnt=1${m[2] ? `&h=${m[2]}` : ''}`, thumb: '' };
+  return null;
+}
+
+function filmCard(ctx, f, { large = false } = {}) {
+  const i = ctx.data.portfolio.films.indexOf(f);
+  const v = videoInfo(f.url);
+  if (!v) return '';
+  const poster = f.image?.src
+    ? img(ctx, f.image, { path: `portfolio.films.${i}.image`, sizes: large ? '(max-width:800px) 100vw, 50vw' : '(max-width:700px) 100vw, 33vw' })
+    : v.thumb ? `<img src="${esc(v.thumb)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<div class="ph"></div>';
+  return `<figure class="film${large ? ' film--large' : ''}">
+    <button type="button" class="film__play" data-embed="${esc(v.embed)}" aria-label="Odtwórz film: ${esc(f.title)}">
+      ${poster}<span class="film__icon" aria-hidden="true"></span>
+    </button>
+    <figcaption><strong${ed(ctx, `portfolio.films.${i}.title`)}>${esc(f.title)}</strong>${f.category ? `<small>${esc(f.category)}</small>` : ''}</figcaption>
+  </figure>`;
+}
+
+const filmsGrid = (ctx, films) => `<div class="films">${films.map((f) => filmCard(ctx, f)).join('')}</div>
+  <p class="films__note">Filmy odtwarzają się z serwisu YouTube lub Vimeo dopiero po kliknięciu.</p>`;
+
+const visibleFilms = (data) => (data.portfolio.films || []).filter((f) => videoInfo(f.url));
 
 function postCards(ctx, posts) {
   return `<div class="posts">${posts.map((p) => {
@@ -254,7 +302,9 @@ function homePage(ctx) {
 
 <section class="section">
   <div class="wrap split__grid">
-    <div class="split__img split__img--wide">${img(ctx, h.film.image, { path: 'home.film.image', sizes: '(max-width:800px) 100vw, 50vw' })}</div>
+    ${visibleFilms(ctx.data)[0]
+      ? filmCard(ctx, visibleFilms(ctx.data)[0], { large: true })
+      : `<div class="split__img split__img--wide">${img(ctx, h.film.image, { path: 'home.film.image', sizes: '(max-width:800px) 100vw, 50vw' })}</div>`}
     <div class="split__copy">
       <h2${ed(ctx, 'home.film.title')}>${esc(h.film.title)}</h2>
       ${paras(ctx, h.film.paragraphs, 'home.film.paragraphs')}
@@ -301,6 +351,7 @@ function servicePage(ctx, s) {
   const i = ctx.data.services.indexOf(s);
   const p = `services.${i}`;
   const related = ctx.data.portfolio.items.filter((it) => s.portfolioCategory ? it.category === s.portfolioCategory : true).slice(0, 3);
+  const films = s.showFilms ? visibleFilms(ctx.data) : [];
   return `
 <section class="svc-hero">
   ${img(ctx, s.image, { path: `${p}.image`, cls: 'svc-hero__img', eager: true })}
@@ -320,6 +371,12 @@ function servicePage(ctx, s) {
     </aside>
   </div>
 </section>
+${films.length ? `<section class="section">
+  <div class="wrap">
+    <div class="section__head"><h2>Filmy</h2></div>
+    ${filmsGrid(ctx, films)}
+  </div>
+</section>` : ''}
 <section class="section section--alt">
   <div class="wrap">
     <div class="section__head"><h2>Z portfolio</h2></div>
@@ -334,6 +391,12 @@ function portfolioPage(ctx) {
   const { portfolio } = ctx.data;
   return `${pageHead(ctx, { kicker: 'Realizacje', title: portfolio.title, lead: portfolio.lead, path: 'portfolio' })}
 <section class="section section--tight"><div class="wrap">${portfolioGrid(ctx, portfolio.items, { filters: true })}</div></section>
+${visibleFilms(ctx.data).length ? `<section class="section section--alt" id="filmy">
+  <div class="wrap">
+    <div class="section__head"><h2>Filmy</h2><p class="lead">Ślubne opowieści, relacje z wydarzeń i materiały dla marek.</p></div>
+    ${filmsGrid(ctx, visibleFilms(ctx.data))}
+  </div>
+</section>` : ''}
 ${cta(ctx)}`;
 }
 
@@ -381,6 +444,71 @@ function contactPage(ctx) {
   return `${pageHead(ctx, { kicker: c.kicker, title: c.title, path: 'home.contact' })}${contactBlock(ctx, { heading: false })}`;
 }
 
+function thanksPage() {
+  return `<section class="pagehead pagehead--center"><div class="wrap">
+    <p class="kicker">Wiadomość wysłana</p><h1>Dziękuję za wiadomość!</h1>
+    <p class="lead">Odpowiem najszybciej, jak to możliwe – zwykle w ciągu jednego dnia roboczego.</p>
+    <p><a class="btn btn--dark" href="${url(`portfolio/`)}">Zobacz portfolio</a></p>
+  </div></section>`;
+}
+
+function privacyPage(ctx) {
+  const { site } = ctx.data;
+  const films = visibleFilms(ctx.data).length > 0;
+  const stats = !!String(site.goatcounter || '').trim();
+  const admin = [site.legalName || site.name, site.address, site.nip && `NIP: ${site.nip}`].filter(Boolean).map(esc).join(', ');
+  const mail = site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : 'adres e-mail podany w zakładce Kontakt';
+  return `${pageHead(ctx, { kicker: 'Dokument', title: 'Polityka prywatności', lead: 'Jakie dane przetwarzamy, gdy odwiedzasz stronę lub wysyłasz zapytanie, po co i jak długo – oraz jakie masz prawa.' })}
+<section class="section section--tight"><div class="wrap wrap--narrow prose">
+<p><small>Obowiązuje od 11 listopada 2026 r. Dotyczy strony ${esc(new URL(site.url).host)}.</small></p>
+
+<h2>1. Administrator danych</h2>
+<p>Administratorem danych osobowych jest ${admin}. W sprawach dotyczących danych osobowych napisz na ${mail}.</p>
+
+<h2>2. Jakie dane przetwarzamy</h2>
+<ul>
+<li><strong>Formularz kontaktowy i e-mail:</strong> imię, adres e-mail, opcjonalnie telefon, wybrana usługa, planowany termin i treść wiadomości.</li>
+<li><strong>Współpraca:</strong> dane potrzebne do przygotowania oferty, wykonania usługi i rozliczeń, jeśli zapytanie zamieni się w zlecenie.</li>
+<li><strong>Dane techniczne:</strong> adres IP, typ przeglądarki i adres odwiedzanej podstrony – zapisywane automatycznie w logach serwera przez dostawcę hostingu.</li>
+</ul>
+
+<h2>3. Cele i podstawy prawne</h2>
+<ul>
+<li>odpowiedź na zapytanie i przygotowanie oferty – art. 6 ust. 1 lit. b RODO (działania przed zawarciem umowy);</li>
+<li>pozostała korespondencja – art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes: komunikacja);</li>
+<li>wykonanie umowy i obowiązki księgowe – art. 6 ust. 1 lit. b i c RODO;</li>
+<li>ustalenie, dochodzenie lub obrona roszczeń – art. 6 ust. 1 lit. f RODO;</li>
+<li>bezpieczeństwo strony${stats ? ' i anonimowe statystyki odwiedzin' : ''} – art. 6 ust. 1 lit. f RODO.</li>
+</ul>
+
+<h2>4. Formularz kontaktowy</h2>
+<p>Wiadomość z formularza jest przekazywana na naszą skrzynkę e-mail za pośrednictwem usługi FormSubmit (formsubmit.co). Dalej przechowujemy ją w skrzynce pocztowej tak jak zwykły e-mail. Podanie danych jest dobrowolne, ale bez adresu e-mail nie możemy odpowiedzieć.</p>
+
+<h2>5. Cookies</h2>
+<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}</p>
+${films ? `<h2>6. Filmy z YouTube i Vimeo</h2>
+<p>Filmy są osadzone z serwisów YouTube (Google) i Vimeo. Odtwarzacz wczytuje się dopiero po kliknięciu przycisku odtwarzania – dopiero wtedy serwis otrzymuje Twój adres IP i może zapisać własne cookies zgodnie ze swoją polityką prywatności. Miniatury niektórych filmów mogą być pobierane z serwerów YouTube podczas wyświetlania strony.</p>` : ''}
+<h2>${films ? 7 : 6}. Odbiorcy danych</h2>
+<p>Dane mogą trafić do dostawców usług, z których korzystamy: hostingu strony (GitHub, Inc.), przekazywania wiadomości z formularza (FormSubmit), poczty e-mail${films ? ', serwisów wideo (Google, Vimeo) – po kliknięciu filmu' : ''}${stats ? ', statystyk (GoatCounter)' : ''}, a także do biura rachunkowego, jeśli dojdzie do współpracy. Część z tych firm ma siedzibę poza Europejskim Obszarem Gospodarczym (m.in. w USA); przekazanie odbywa się na podstawie decyzji Komisji Europejskiej (EU-US Data Privacy Framework) lub standardowych klauzul umownych.</p>
+
+<h2>${films ? 8 : 7}. Jak długo przechowujemy dane</h2>
+<ul>
+<li>zapytania, które nie zakończyły się współpracą – do 12 miesięcy od ostatniego kontaktu;</li>
+<li>dane związane z umową – przez okres przedawnienia roszczeń i wymagany przepisami podatkowymi (zwykle 5 lat od końca roku podatkowego);</li>
+<li>logi serwera – zgodnie z zasadami dostawcy hostingu.</li>
+</ul>
+
+<h2>${films ? 9 : 8}. Twoje prawa</h2>
+<p>Masz prawo dostępu do swoich danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przeniesienia oraz wniesienia sprzeciwu wobec przetwarzania opartego na prawnie uzasadnionym interesie. Możesz też złożyć skargę do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa, uodo.gov.pl).</p>
+
+<h2>${films ? 10 : 9}. Strefa klienta</h2>
+<p>Prywatne galerie dla klientów${site.gallery ? ` (<a href="${esc(site.gallery)}">${esc(new URL(site.gallery).host)}</a>)` : ''} działają jako osobna usługa – informacje o przetwarzaniu danych w galerii klient otrzymuje razem z dostępem do niej.</p>
+
+<h2>${films ? 11 : 10}. Zmiany</h2>
+<p>Gdy zmienimy sposób przetwarzania danych (np. dodamy nowe narzędzie), zaktualizujemy ten dokument i datę jego obowiązywania.</p>
+</div></section>`;
+}
+
 function notFoundPage() {
   return `<section class="pagehead pagehead--center"><div class="wrap">
     <p class="kicker">404</p><h1>Tej strony tu nie ma.</h1>
@@ -414,9 +542,17 @@ function businessJsonLd(data) {
   };
 }
 
+/* ---------- Statystyki odwiedzin (GoatCounter – bez cookies) ---------- */
+function statsScript(ctx) {
+  const code = String(ctx.data.site.goatcounter || '').trim().toLowerCase();
+  if (!code || ctx.preview || ctx.noindex || !/^[a-z0-9-]+$/.test(code)) return '';
+  return `<script data-goatcounter="https://${code}.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>\n`;
+}
+
 /* ---------- Szkielet dokumentu ---------- */
 
-function layout(ctx, { title, description, body, image, overlay = false, jsonld = [] }) {
+function layout(ctx, { title, description, body, image, overlay = false, jsonld = [], hidden = false }) {
+  if (hidden) ctx = { ...ctx, noindex: true };
   const { site } = ctx.data;
   const canonical = site.url + '/' + ctx.path;
   const share = site.url + abs(image?.src || site.shareImage);
@@ -440,9 +576,7 @@ ${ctx.noindex ? '<meta name="robots" content="noindex,nofollow">\n' : ''}<title>
 <link rel="icon" href="${url(`icon-192.png`)}" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="${url(`apple-touch-icon.png`)}">
 <link rel="manifest" href="${url(`site.webmanifest`)}">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preload" href="${url(`fonts/inter-latin.woff2`)}" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${url(`style.css`)}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
@@ -452,7 +586,7 @@ ${header(ctx, { overlay })}
 <main id="tresc">${body}</main>
 ${footer(ctx)}
 <script src="${url(`site.js`)}" defer></script>
-</body>
+${statsScript(ctx)}</body>
 </html>`;
 }
 
@@ -479,6 +613,8 @@ export function routes(data, { preview = false, base = '', noindex = false } = {
       jsonld: [{ '@context': 'https://schema.org', '@type': 'BlogPosting', headline: p.title, datePublished: p.date, image: site.url + abs(p.image?.src), author: { '@type': 'Person', name: 'Rafał – RAF.studio' }, publisher: { '@id': site.url + '/#firma' } }],
     }))),
     mk('kontakt/', (ctx) => layout(ctx, { title: t('Kontakt – zapytaj o termin'), description: home.contact.text, body: contactPage(ctx) })),
+    mk('kontakt/dziekujemy/', (ctx) => layout(ctx, { title: t('Dziękujemy za wiadomość'), description: '', hidden: true, body: thanksPage(ctx) })),
+    mk('polityka-prywatnosci/', (ctx) => layout(ctx, { title: t('Polityka prywatności'), description: 'Jak RAF.studio przetwarza dane osobowe osób odwiedzających stronę i wysyłających zapytania.', body: privacyPage(ctx) })),
   ];
   return list;
 }
@@ -498,10 +634,26 @@ export function renderSite(data, { base = '', noindex = false } = {}) {
   files['404.html'] = notFound(data, { base });
   const siteUrl = data.site.url.replace(/\/$/, '');
   const today = new Date().toISOString().slice(0, 10);
+
+  // Stare adresy (poprzednia wersja strony) → nowe podstrony.
+  const REDIRECTS = {
+    'fotografia/index.html': 'uslugi/', 'fotografia.html': 'uslugi/', 'film/index.html': 'uslugi/film/', 'film.html': 'uslugi/film/',
+    'realizacja.html': 'portfolio/', 'privacy.html': 'polityka-prywatnosci/', 'polityka-prywatnosci.html': 'polityka-prywatnosci/',
+    'edytorstrony.html': 'admin/', 'admin.html': 'admin/', 'mobile-editor.html': 'admin/',
+  };
+  for (const [from, to] of Object.entries(REDIRECTS)) {
+    const target = `${base}/${to}`;
+    files[from] = `<!doctype html><html lang="pl"><head><meta charset="utf-8"><title>Przekierowanie</title>
+<meta name="robots" content="noindex"><link rel="canonical" href="${siteUrl}/${to}">
+<meta http-equiv="refresh" content="0; url=${target}"><script>location.replace(${JSON.stringify(target)}+location.hash)</script></head>
+<body><a href="${target}">Przejdź do nowej strony</a></body></html>
+`;
+  }
+
+  const listed = pages.filter((r) => !r.path.startsWith('kontakt/dziekujemy'));
   files['sitemap.xml'] = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${pages.map((r) => `  <url><loc>${siteUrl}/${r.path}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
-  <url><loc>${siteUrl}/polityka-prywatnosci/</loc></url>
+${listed.map((r) => `  <url><loc>${siteUrl}/${r.path}</loc><lastmod>${today}</lastmod></url>`).join('\n')}
 </urlset>
 `;
   files['robots.txt'] = noindex ? 'User-agent: *\nDisallow: /\n' : `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`;

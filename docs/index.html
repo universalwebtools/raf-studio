@@ -18,9 +18,7 @@
 <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/style.css">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://raf-studio.pl/#firma","name":"RAF.studio","url":"https://raf-studio.pl/","image":"https://raf-studio.pl/media/hero-taniec.webp","logo":"https://raf-studio.pl/media/logo-black.png","description":"RAF Studio – fotografia i film w Bielsku-Białej i okolicach. Fotografia ślubna, sesje, wnętrza, ujęcia z drona i filmy dla ludzi oraz marek.","email":"hello@raf-studio.pl","address":{"@type":"PostalAddress","addressLocality":"Bielsko-Biała","addressCountry":"PL"},"areaServed":["Bielsko-Biała","Cieszyn","Śląsk","Beskidy"],"sameAs":[],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Oferta","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Fotografia ślubna","url":"https://raf-studio.pl/uslugi/fotografia-slubna/"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Sesje blisko Was","url":"https://raf-studio.pl/uslugi/sesje/"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Wnętrza i architektura","url":"https://raf-studio.pl/uslugi/wnetrza-i-architektura/"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Perspektywa z góry","url":"https://raf-studio.pl/uslugi/dron/"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Historie w ruchu","url":"https://raf-studio.pl/uslugi/film/"}}]}}</script>
 </head>
@@ -230,16 +228,25 @@
         <li><span>Obszar</span>Bielsko-Biała · Cieszyn · Śląsk · realizacje wyjazdowe</li>
       </ul>
     </div>
-    <form class="form" data-contact-form data-email="hello@raf-studio.pl">
-      <label>Twoje imię<input name="name" autocomplete="name" required></label>
-      <label>Adres e-mail<input name="email" type="email" autocomplete="email" required></label>
+    <form class="form" method="POST" action="https://formsubmit.co/hello@raf-studio.pl" data-contact-form data-endpoint="https://formsubmit.co/ajax/hello@raf-studio.pl">
+      <input type="hidden" name="_subject" value="Nowe zapytanie ze strony RAF.studio">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <input type="hidden" name="_next" value="https://raf-studio.pl/kontakt/dziekujemy/">
+      <div class="form__hp" aria-hidden="true"><label>Nie wypełniaj<input name="_honey" tabindex="-1" autocomplete="off"></label></div>
+      <label>Twoje imię<input name="Imię" autocomplete="name" required maxlength="100"></label>
       <div class="form__row">
-        <label>Interesuje mnie<select name="service"><option>Fotografia ślubna</option><option>Sesje blisko Was</option><option>Wnętrza i architektura</option><option>Perspektywa z góry</option><option>Historie w ruchu</option><option>Coś innego</option></select></label>
-        <label>Planowany termin<input name="date" type="date"></label>
+        <label>Adres e-mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
+        <label>Telefon <small>(opcjonalnie)</small><input name="Telefon" type="tel" autocomplete="tel" maxlength="30"></label>
       </div>
-      <label>Kilka słów o pomyśle<textarea name="message" rows="4" required></textarea></label>
+      <div class="form__row">
+        <label>Interesuje mnie<select name="Usługa"><option>Fotografia ślubna</option><option>Sesje blisko Was</option><option>Wnętrza i architektura</option><option>Perspektywa z góry</option><option>Historie w ruchu</option><option>Coś innego</option></select></label>
+        <label>Planowany termin<input name="Termin" type="date"></label>
+      </div>
+      <label>Kilka słów o pomyśle<textarea name="Wiadomość" rows="4" required maxlength="5000"></textarea></label>
+      <label class="form__consent"><input type="checkbox" required> <span>Zgadzam się na wykorzystanie moich danych do odpowiedzi na zapytanie. Więcej w <a href="/polityka-prywatnosci/">polityce prywatności</a>.</span></label>
       <button class="btn btn--dark" type="submit">Wyślij zapytanie</button>
-      <p class="form__note">Formularz przygotuje wiadomość w Twoim programie pocztowym. Dane są używane wyłącznie do odpowiedzi na zapytanie – <a href="/polityka-prywatnosci/">polityka prywatności</a>.</p>
+      <p class="form__status" role="status" aria-live="polite"></p>
     </form>
   </div>
 </section></main>

@@ -80,14 +80,51 @@
     $('.lb__close', box).focus();
   });
 
-  // Formularz kontaktowy → wiadomość e-mail
-  $$('[data-contact-form]').forEach((form) => form.addEventListener('submit', (e) => {
+  // Formularz kontaktowy → e-mail przez FormSubmit (bez przeładowania strony).
+  // Bez JavaScriptu formularz wysyła się zwykłym POST-em i wraca na stronę z podziękowaniem.
+  $$('[data-contact-form]').forEach((form) => form.addEventListener('submit', async (e) => {
+    if (window.RAF_PREVIEW) { e.preventDefault(); return; }
     e.preventDefault();
-    const d = Object.fromEntries(new FormData(form));
-    const subject = `Zapytanie: ${d.service}${d.date ? ` – ${d.date}` : ''}`;
-    const body = `Imię: ${d.name}\nE-mail: ${d.email}\nUsługa: ${d.service}\nTermin: ${d.date || '-'}\n\n${d.message}`;
-    location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const status = $('.form__status', form);
+    const btn = $('button[type=submit]', form);
+    const data = new FormData(form);
+    if (data.get('_honey')) return; // pułapka na boty
+    data.set('_replyto', data.get('email'));
+    btn.disabled = true;
+    status.className = 'form__status';
+    status.textContent = 'Wysyłanie…';
+    try {
+      const res = await fetch(form.dataset.endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data });
+      const out = await res.json().catch(() => ({}));
+      if (!res.ok || String(out.success) !== 'true') throw new Error(out.message || 'Błąd wysyłki');
+      form.classList.add('is-sent');
+      status.classList.add('is-ok');
+      status.textContent = 'Dziękuję! Wiadomość dotarła – odpowiem najszybciej, jak to możliwe.';
+    } catch (err) {
+      status.classList.add('is-err');
+      const mail = form.action.split('/').pop();
+      status.innerHTML = '';
+      status.append('Nie udało się wysłać wiadomości. Spróbuj ponownie albo napisz bezpośrednio na ');
+      const a = document.createElement('a'); a.href = 'mailto:' + mail; a.textContent = mail; status.append(a, '.');
+      btn.disabled = false;
+    }
   }));
+
+  // Filmy: odtwarzacz YouTube/Vimeo wczytywany dopiero po kliknięciu.
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('.film__play');
+    if (!b || window.RAF_PREVIEW) return;
+    const f = document.createElement('iframe');
+    f.src = b.dataset.embed;
+    f.title = b.getAttribute('aria-label') || 'Film';
+    f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+    f.allowFullscreen = true;
+    const holder = document.createElement('div');
+    holder.className = 'film__play';
+    holder.append(f);
+    b.closest('.film')?.classList.add('is-playing');
+    b.replaceWith(holder);
+  });
 
   // Delikatne pojawianie się sekcji
   if ('IntersectionObserver' in window && !reduce) {

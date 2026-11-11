@@ -1,1 +1,0 @@
-Deployment marker for the desktop sticky navigation and Photography CTA update.

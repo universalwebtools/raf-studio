@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://raf-studio.pl/sitemap.xml

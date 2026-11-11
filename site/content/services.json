@@ -24,7 +24,8 @@
       "Prywatna galeria online do pobrania i udostępnienia"
     ],
     "seoTitle": "Fotograf ślubny Bielsko-Biała – reportaż ślubny | RAF.studio",
-    "seoDescription": "Fotografia ślubna w Bielsku-Białej, Cieszynie i na Śląsku. Naturalny reportaż ślubny, sesje plenerowe i film ślubny od RAF.studio."
+    "seoDescription": "Fotografia ślubna w Bielsku-Białej, Cieszynie i na Śląsku. Naturalny reportaż ślubny, sesje plenerowe i film ślubny od RAF.studio.",
+    "showFilms": false
   },
   {
     "slug": "sesje",
@@ -51,7 +52,8 @@
       "Gotowe pliki w prywatnej galerii"
     ],
     "seoTitle": "Sesje zdjęciowe Bielsko-Biała – rodzinne, narzeczeńskie, wizerunkowe | RAF.studio",
-    "seoDescription": "Sesje zdjęciowe w Bielsku-Białej i Beskidach: narzeczeńskie, rodzinne, portretowe i wizerunkowe. Naturalnie i bez pośpiechu."
+    "seoDescription": "Sesje zdjęciowe w Bielsku-Białej i Beskidach: narzeczeńskie, rodzinne, portretowe i wizerunkowe. Naturalnie i bez pośpiechu.",
+    "showFilms": false
   },
   {
     "slug": "wnetrza-i-architektura",
@@ -77,7 +79,8 @@
       "Pliki gotowe do ogłoszeń i na stronę"
     ],
     "seoTitle": "Fotografia wnętrz i nieruchomości Bielsko-Biała | RAF.studio",
-    "seoDescription": "Profesjonalne zdjęcia wnętrz, nieruchomości i architektury w Bielsku-Białej i na Śląsku. Do ogłoszeń, na stronę i do social mediów."
+    "seoDescription": "Profesjonalne zdjęcia wnętrz, nieruchomości i architektury w Bielsku-Białej i na Śląsku. Do ogłoszeń, na stronę i do social mediów.",
+    "showFilms": false
   },
   {
     "slug": "dron",
@@ -102,7 +105,8 @@
       "Połączenie z materiałem z ziemi"
     ],
     "seoTitle": "Zdjęcia i filmy z drona Bielsko-Biała | RAF.studio",
-    "seoDescription": "Zdjęcia i filmy z drona w Bielsku-Białej i na Śląsku: nieruchomości, inwestycje, wydarzenia i krajobrazy."
+    "seoDescription": "Zdjęcia i filmy z drona w Bielsku-Białej i na Śląsku: nieruchomości, inwestycje, wydarzenia i krajobrazy.",
+    "showFilms": false
   },
   {
     "slug": "film",
@@ -128,6 +132,7 @@
       "Montaż, dźwięk i korekcja barwna"
     ],
     "seoTitle": "Film ślubny i film reklamowy Bielsko-Biała | RAF.studio",
-    "seoDescription": "Filmy ślubne, relacje z wydarzeń i filmy reklamowe w Bielsku-Białej i na Śląsku. Montaż, dźwięk i kolor dopasowane do historii."
+    "seoDescription": "Filmy ślubne, relacje z wydarzeń i filmy reklamowe w Bielsku-Białej i na Śląsku. Montaż, dźwięk i kolor dopasowane do historii.",
+    "showFilms": true
   }
 ]

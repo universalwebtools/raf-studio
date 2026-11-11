@@ -1,3 +1,0 @@
-RAF.studio RESPONSIVE 8.9.3
-Deployment marker for editor click navigation and public text-selection protection.
-Source merge: 65387711b6c005335c962f565bc158ba18476f43

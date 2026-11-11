@@ -1,3 +1,7 @@
+/* Inter (SIL Open Font License 1.1) – hostowana na stronie, bez Google Fonts */
+@font-face { font-family: Inter; font-style: normal; font-display: swap; font-weight: 100 900; src: url(fonts/inter-latin-ext.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: Inter; font-style: normal; font-display: swap; font-weight: 100 900; src: url(fonts/inter-latin.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
 /* RAF.studio – nowa strona */
 :root {
   --ink: #141414;
@@ -262,3 +266,40 @@ p { margin: 0 0 1em; }
   .article__body { font-size: 17px; }
   .svc__text p { font-size: 17px; }
 }
+
+/* Formularz – dodatki */
+.form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form label small { color: var(--muted); font-weight: 400; }
+.form__consent { display: flex !important; grid-template-columns: none; gap: 10px !important; align-items: flex-start; font-weight: 400 !important; font-size: 13px !important; color: var(--muted); }
+.form__consent input { width: 18px !important; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--ink); }
+.form__status { margin: 0; font-size: 15px; }
+.form__status:empty { display: none; }
+.form__status.is-ok { color: #15803d; font-weight: 600; }
+.form__status.is-err { color: #b91c1c; }
+.form.is-sent > :not(.form__status) { display: none; }
+.form.is-sent .form__status { font-size: 18px; padding: 30px 0; text-align: center; }
+.form button[disabled] { opacity: .6; cursor: progress; }
+
+/* Filmy */
+.films { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 22px; }
+.film { margin: 0; }
+.film__play { position: relative; display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; padding: 0; border-radius: var(--radius); overflow: hidden; background: var(--dark); cursor: pointer; }
+.film__play img, .film__play .ph, .film iframe { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border: 0; }
+.film__play img { transition: transform .6s, opacity .3s; opacity: .9; }
+.film__play:hover img { transform: scale(1.03); opacity: 1; }
+.film__icon { position: absolute; left: 50%; top: 50%; width: 74px; height: 74px; margin: -37px 0 0 -37px; border-radius: 50%; background: rgba(255,255,255,.92); box-shadow: 0 8px 30px rgba(0,0,0,.3); transition: transform .25s; }
+.film__icon::after { content: ""; position: absolute; left: 30px; top: 23px; border-left: 20px solid var(--ink); border-top: 14px solid transparent; border-bottom: 14px solid transparent; }
+.film__play:hover .film__icon { transform: scale(1.08); }
+.film figcaption { display: flex; justify-content: space-between; gap: 10px; padding: 12px 2px 0; }
+.film figcaption strong { font-weight: 600; }
+.film figcaption small { color: var(--muted); }
+.film--large figcaption { display: none; }
+.film.is-playing .film__play { cursor: default; }
+.films__note { margin-top: 18px; font-size: 13px; color: var(--muted); }
+.split .film--large, .section .film--large { align-self: center; }
+
+/* Tekst prawny */
+.prose h2 { font-size: clamp(22px, 2.6vw, 28px); margin: 44px 0 12px; }
+.prose p, .prose li { color: var(--ink-2); }
+.prose ul { padding-left: 20px; display: grid; gap: 8px; }
+.prose a { text-decoration: underline; }
