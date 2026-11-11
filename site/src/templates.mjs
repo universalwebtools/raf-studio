@@ -242,7 +242,9 @@ function homePage(ctx) {
   return `
 <section class="hero">
   <div class="hero__media">
-    ${img(ctx, h.hero.image, { path: 'home.hero.image', cls: 'hero__poster', eager: true })}
+    ${h.hero.imageMobile?.src
+      ? `<picture class="hero__poster"><source media="(max-width: 899px)" srcset="${esc(url(h.hero.imageMobile.src))}">${img(ctx, h.hero.image, { path: 'home.hero.image', eager: true })}</picture>`
+      : img(ctx, h.hero.image, { path: 'home.hero.image', cls: 'hero__poster', eager: true })}
     ${h.hero.video ? `<video class="hero__video" muted loop playsinline preload="none" aria-hidden="true"
       data-src="${esc(url(h.hero.video))}" data-src-mobile="${esc(url(h.hero.videoMobile || h.hero.video))}"
       style="object-position:${h.hero.image?.x ?? 50}% ${h.hero.image?.y ?? 50}%"></video>` : ''}

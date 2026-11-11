@@ -230,7 +230,7 @@ const IMG = (key = 'image', label = 'Zdjęcie') => ({ key, label, type: 'image' 
 const P = (key = 'paragraphs', label = 'Akapity') => ({ key, label, type: 'paragraphs' });
 
 const HOME = [
-  ['hero', 'Nagłówek z wideo', [T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł', { max: 40 }), TA('lead', 'Opis', { rows: 3 }), T('cta', 'Tekst przycisku'), IMG('image', 'Zdjęcie (widoczne zanim wczyta się wideo)'), { type: 'note', text: 'Wideo w tle: media/hero-1600.mp4 (komputer) i media/hero-854.mp4 (telefon). Wymianę wideo zrobię dla Ciebie – podmienię i skompresuję plik.' }]],
+  ['hero', 'Nagłówek z wideo', [T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł', { max: 40 }), TA('lead', 'Opis', { rows: 3 }), T('cta', 'Tekst przycisku'), IMG('image', 'Zdjęcie (widoczne zanim wczyta się wideo)'), { type: 'note', text: 'Wideo w tle: media/hero-1080.mp4 (komputer, Full HD) i media/hero-mobile.mp4 (telefon, pionowe). To montaż najlepszych ujęć z Twoich filmów – nowy montaż przygotuję dla Ciebie.' }]],
   ['about', 'O mnie', [T('title', 'Tytuł'), P(), IMG('image', 'Portret'), T('cta', 'Tekst przycisku')]],
   ['offer', 'Oferta (nagłówek)', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), { type: 'note', text: 'Karty usług edytujesz w grupie „Usługi” po lewej.' }]],
   ['approach', 'Zaufanie (ciemna sekcja)', [T('title', 'Tytuł'), P(), IMG()]],

@@ -8,10 +8,16 @@
       "src": "media/hero-poster.webp",
       "x": 50,
       "y": 50,
-      "alt": "Kadr z filmu RAF.studio"
+      "alt": "Festyn z lotu ptaka – kadr z filmu RAF.studio"
     },
-    "video": "media/hero-1600.mp4",
-    "videoMobile": "media/hero-854.mp4"
+    "video": "media/hero-1080.mp4",
+    "videoMobile": "media/hero-mobile.mp4",
+    "imageMobile": {
+      "src": "media/hero-poster-mobile.webp",
+      "x": 50,
+      "y": 50,
+      "alt": ""
+    }
   },
   "about": {
     "title": "Za aparatem. Blisko Was.",
