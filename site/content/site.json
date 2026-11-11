@@ -1,0 +1,25 @@
+{
+  "name": "RAF.studio",
+  "tagline": "Fotografia & film",
+  "url": "https://raf-studio.pl",
+  "city": "Bielsko-Biała",
+  "region": "Bielsko-Biała · Cieszyn · Śląsk · realizacje wyjazdowe",
+  "areaServed": [
+    "Bielsko-Biała",
+    "Cieszyn",
+    "Śląsk",
+    "Beskidy"
+  ],
+  "email": "hello@raf-studio.pl",
+  "phone": "",
+  "instagram": "",
+  "facebook": "",
+  "youtube": "",
+  "gallery": "https://galeria.raf-studio.pl/",
+  "logoLight": "media/logo-white.png",
+  "logoDark": "media/logo-black.png",
+  "seoTitle": "RAF Studio – Fotografia i Film | Bielsko-Biała",
+  "seoDescription": "RAF Studio – fotografia i film w Bielsku-Białej i okolicach. Fotografia ślubna, sesje, wnętrza, ujęcia z drona i filmy dla ludzi oraz marek.",
+  "shareImage": "media/hero-taniec.webp",
+  "copyright": "© RAF.studio. Fotografia, film i historie blisko ludzi."
+}

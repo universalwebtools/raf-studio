@@ -1,0 +1,119 @@
+{
+  "hero": {
+    "kicker": "Fotografia & film",
+    "title": "Obraz, który zostaje.",
+    "lead": "Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.",
+    "cta": "Poznaj ofertę",
+    "image": {
+      "src": "media/hero-poster.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Kadr z filmu RAF.studio"
+    },
+    "video": "media/hero-1600.mp4",
+    "videoMobile": "media/hero-854.mp4"
+  },
+  "about": {
+    "title": "Za aparatem. Blisko Was.",
+    "paragraphs": [
+      "Cześć, jestem Rafał. W RAF.studio łączę fotografię z filmem. Najbardziej lubię te momenty, których nie da się zaplanować: krótkie spojrzenie, wspólny śmiech, światło wpadające przez okno.",
+      "Nie musicie umieć pozować. Zaczynamy od rozmowy, poznajemy Wasz pomysł i szukamy miejsca, w którym poczujecie się swobodnie. Dalej wystarczy po prostu być razem.",
+      "Pracuję na Śląsku i w Beskidach, a z dobrymi historiami chętnie ruszam dalej. Zależy mi na zdjęciach i filmach, które pozostaną Wasze także wtedy, gdy zmieni się moda."
+    ],
+    "image": {
+      "src": "media/portret.webp",
+      "x": 41,
+      "y": 30,
+      "alt": "Rafał – fotograf i filmowiec RAF.studio"
+    },
+    "cta": "Porozmawiajmy"
+  },
+  "offer": {
+    "title": "Wybierz swoją historię",
+    "lead": "Fotografia, film i perspektywa z góry. Jeden kontakt, spójny obraz."
+  },
+  "approach": {
+    "title": "Dobre zdjęcia zaczynają się od zaufania.",
+    "paragraphs": [
+      "Ważna jest nie tylko gotowa galeria. Liczy się też to, jak czujecie się w trakcie spotkania. Dlatego zostawiam czas na rozmowę, podpowiadam i nie przyspieszam chwil, które potrzebują spokoju.",
+      "Od pierwszego pomysłu po ostatni kadr dbam o jasne ustalenia i spójny efekt. Wy przeżywacie swój dzień. Ja szukam opowieści, która z niego zostanie."
+    ],
+    "image": {
+      "src": "media/zaufanie.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Sesja ślubna przy samochodzie"
+    }
+  },
+  "statement": [
+    {
+      "title": "Foto",
+      "text": "Chwile zapisane w kadrach",
+      "link": "uslugi/fotografia-slubna/"
+    },
+    {
+      "title": "Film",
+      "text": "Historie, które mają swój rytm",
+      "link": "uslugi/film/"
+    }
+  ],
+  "promise": {
+    "title": "Od pierwszej rozmowy do gotowej historii",
+    "items": [
+      "Rozmowa o Waszych oczekiwaniach",
+      "Wspólny wybór miejsca i światła",
+      "Spokojne wskazówki podczas sesji",
+      "Staranna selekcja i obróbka",
+      "Fotografia oraz materiały filmowe",
+      "Gotowe pliki w prywatnej galerii"
+    ]
+  },
+  "portfolio": {
+    "title": "Kadry, do których wracamy",
+    "lead": "Małe gesty, wielkie dni i miejsca z własnym charakterem.",
+    "count": 6
+  },
+  "film": {
+    "title": "Nie tylko obraz. Także głos, ruch i emocje.",
+    "paragraphs": [
+      "Są rzeczy, których nie opowie pojedyncze zdjęcie. Drżący głos podczas przysięgi, śmiech przy stole, ruch sukni na wietrze. Film pozwala zatrzymać je razem.",
+      "Tworzę ślubne opowieści, relacje z wydarzeń i materiały dla marek. Dopasowuję rytm montażu, dźwięk i kolor do konkretnej historii, żeby oglądało się ją z przyjemnością."
+    ],
+    "image": {
+      "src": "media/film-slub.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Kadr z filmu ślubnego"
+    }
+  },
+  "process": {
+    "title": "Prosta droga do pięknych wspomnień.",
+    "steps": [
+      {
+        "title": "Poznajmy się",
+        "text": "Napiszcie o terminie, miejscu i pomyśle. Ustalimy zakres oraz odpowiemy na pytania."
+      },
+      {
+        "title": "Spotkajmy się",
+        "text": "Przygotujemy plan, który daje swobodę. W dniu zdjęć możecie skupić się na sobie."
+      },
+      {
+        "title": "Wróćcie do tych chwil",
+        "text": "Po selekcji i opracowaniu otrzymacie gotową galerię lub film w uzgodnionym terminie."
+      }
+    ]
+  },
+  "reviews": {
+    "title": "Słowa, które zostają",
+    "items": []
+  },
+  "journal": {
+    "label": "Z dziennika RAF.studio",
+    "title": "Zanim spotkamy się na zdjęciach"
+  },
+  "contact": {
+    "kicker": "Zróbmy pierwszy krok",
+    "title": "Co możemy dla Ciebie stworzyć?",
+    "text": "Napisz o terminie, miejscu i tym, na czym najbardziej Ci zależy. Wspólnie ustalimy szczegóły."
+  }
+}

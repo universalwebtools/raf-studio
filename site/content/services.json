@@ -1,0 +1,133 @@
+[
+  {
+    "slug": "fotografia-slubna",
+    "title": "Fotografia ślubna",
+    "short": "Od cichych przygotowań po ostatni taniec. Reportaż, w którym jest miejsce na ludzi, detale i niespodzianki.",
+    "image": {
+      "src": "media/slub-reportaz.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Para młoda na spacerze w polu"
+    },
+    "portfolioCategory": "Śluby",
+    "intro": "Reportaż ślubny bez sztywnego pozowania. Jestem obok przez cały dzień i zbieram to, co naprawdę się wydarzyło.",
+    "paragraphs": [
+      "Ślub to dzień, który mija bardzo szybko. Moim zadaniem jest zatrzymać go tak, żeby po latach można było do niego wrócić: do emocji przy przygotowaniach, do wzruszeń podczas ceremonii i do energii na parkiecie.",
+      "Przed ślubem spotykamy się, żeby poznać plan dnia, miejsca i osoby, które są dla Was najważniejsze. Dzięki temu w dniu ślubu mogę działać spokojnie i dyskretnie.",
+      "Fotografię łatwo połączyć z filmem ślubnym. Jeden zespół, spójna kolorystyka i jedna rozmowa zamiast dwóch."
+    ],
+    "includes": [
+      "Spotkanie przed ślubem i omówienie planu dnia",
+      "Reportaż: przygotowania, ceremonia, przyjęcie",
+      "Sesja w plenerze w dniu ślubu lub w innym terminie",
+      "Staranna selekcja i obróbka zdjęć",
+      "Prywatna galeria online do pobrania i udostępnienia"
+    ],
+    "seoTitle": "Fotograf ślubny Bielsko-Biała – reportaż ślubny | RAF.studio",
+    "seoDescription": "Fotografia ślubna w Bielsku-Białej, Cieszynie i na Śląsku. Naturalny reportaż ślubny, sesje plenerowe i film ślubny od RAF.studio."
+  },
+  {
+    "slug": "sesje",
+    "title": "Sesje blisko Was",
+    "short": "Portrety, rodzinne spotkania i małe wielkie okazje. Bez pośpiechu, w miejscu, w którym czujecie się dobrze.",
+    "image": {
+      "src": "media/sesje.webp",
+      "x": 50,
+      "y": 45,
+      "alt": "Sesja zdjęciowa w plenerze"
+    },
+    "portfolioCategory": "Sesje",
+    "intro": "Sesje narzeczeńskie, rodzinne, portretowe i wizerunkowe. Bez pozowania na siłę, w Waszym tempie.",
+    "paragraphs": [
+      "Najlepsze zdjęcia powstają wtedy, gdy zapominacie o aparacie. Dlatego sesja zaczyna się od rozmowy i wyboru miejsca, w którym naprawdę dobrze się czujecie: w górach, w mieście albo po prostu w domu.",
+      "Podpowiadam, jak stanąć i gdzie spojrzeć, ale nie ustawiam każdego kadru. Zależy mi na naturalnych gestach i prawdziwych emocjach.",
+      "Sesja wizerunkowa sprawdzi się też dla firm i specjalistów, którzy potrzebują spójnych zdjęć na stronę i do social mediów."
+    ],
+    "includes": [
+      "Rozmowa o pomyśle i wybór miejsca",
+      "Pomoc w doborze stylizacji i pory dnia",
+      "Sesja w plenerze, w mieście lub w domu",
+      "Selekcja i obróbka zdjęć",
+      "Gotowe pliki w prywatnej galerii"
+    ],
+    "seoTitle": "Sesje zdjęciowe Bielsko-Biała – rodzinne, narzeczeńskie, wizerunkowe | RAF.studio",
+    "seoDescription": "Sesje zdjęciowe w Bielsku-Białej i Beskidach: narzeczeńskie, rodzinne, portretowe i wizerunkowe. Naturalnie i bez pośpiechu."
+  },
+  {
+    "slug": "wnetrza-i-architektura",
+    "title": "Wnętrza i architektura",
+    "short": "Światło, proporcje i charakter miejsca. Zdjęcia przestrzeni gotowe do oferty sprzedaży, wynajmu lub prezentacji marki.",
+    "image": {
+      "src": "media/slub-detale.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Detale wnętrza"
+    },
+    "portfolioCategory": "Miejsca",
+    "intro": "Zdjęcia wnętrz i budynków, które pokazują przestrzeń taką, jaka jest: jasną, uporządkowaną i z charakterem.",
+    "paragraphs": [
+      "Dobre zdjęcia wnętrz sprzedają i wynajmują szybciej. Pracuję ze światłem zastanym i dodatkowym oświetleniem, pilnuję prostych linii i naturalnych kolorów.",
+      "Fotografuję mieszkania, domy, lokale usługowe, hotele i restauracje. Na życzenie dodaję krótki film lub ujęcia z drona, które pokazują otoczenie budynku."
+    ],
+    "includes": [
+      "Zdjęcia wnętrz i bryły budynku",
+      "Korekcja perspektywy i kolorów",
+      "Opcjonalnie film prezentacyjny",
+      "Opcjonalnie ujęcia z drona",
+      "Pliki gotowe do ogłoszeń i na stronę"
+    ],
+    "seoTitle": "Fotografia wnętrz i nieruchomości Bielsko-Biała | RAF.studio",
+    "seoDescription": "Profesjonalne zdjęcia wnętrz, nieruchomości i architektury w Bielsku-Białej i na Śląsku. Do ogłoszeń, na stronę i do social mediów."
+  },
+  {
+    "slug": "dron",
+    "title": "Perspektywa z góry",
+    "short": "Krajobraz, inwestycja lub wyjątkowe miejsce. Ujęcia, które dodają historii przestrzeni i nowego punktu widzenia.",
+    "image": {
+      "src": "media/dron-miasto.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Ujęcie z drona nad miastem"
+    },
+    "portfolioCategory": "Miejsca",
+    "intro": "Zdjęcia i filmy z drona: inwestycje, nieruchomości, wydarzenia i krajobrazy.",
+    "paragraphs": [
+      "Widok z góry pokazuje skalę, otoczenie i kontekst, których nie widać z ziemi. Sprawdza się przy prezentacji działek i inwestycji, hoteli, wydarzeń plenerowych, a także w filmach ślubnych.",
+      "Ujęcia z drona łatwo połączyć z fotografią i filmem z ziemi, dzięki czemu cały materiał jest spójny."
+    ],
+    "includes": [
+      "Zdjęcia i film z powietrza",
+      "Planowanie lotu i sprawdzenie stref",
+      "Montaż i korekcja barwna",
+      "Połączenie z materiałem z ziemi"
+    ],
+    "seoTitle": "Zdjęcia i filmy z drona Bielsko-Biała | RAF.studio",
+    "seoDescription": "Zdjęcia i filmy z drona w Bielsku-Białej i na Śląsku: nieruchomości, inwestycje, wydarzenia i krajobrazy."
+  },
+  {
+    "slug": "film",
+    "title": "Historie w ruchu",
+    "short": "Obrazy, głosy i dźwięki, do których chce się wracać. Film ślubny, relacja z wydarzenia lub opowieść o marce.",
+    "image": {
+      "src": "media/film-slub.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Kadr z filmu"
+    },
+    "portfolioCategory": "",
+    "intro": "Film ślubny, relacje z wydarzeń, reklamy i content do social mediów.",
+    "paragraphs": [
+      "Są rzeczy, których nie opowie pojedyncze zdjęcie. Drżący głos podczas przysięgi, śmiech przy stole, ruch sukni na wietrze. Film pozwala zatrzymać je razem.",
+      "Dla marek tworzę krótkie filmy reklamowe, relacje z eventów i materiały do social mediów, także w zwolnionym tempie. Dopasowuję rytm montażu, dźwięk i kolor do konkretnej historii."
+    ],
+    "includes": [
+      "Film ślubny i krótki teledysk",
+      "Relacje z wydarzeń i eventów firmowych",
+      "Filmy reklamowe i produktowe",
+      "Krótkie formy do social mediów, slow motion",
+      "Montaż, dźwięk i korekcja barwna"
+    ],
+    "seoTitle": "Film ślubny i film reklamowy Bielsko-Biała | RAF.studio",
+    "seoDescription": "Filmy ślubne, relacje z wydarzeń i filmy reklamowe w Bielsku-Białej i na Śląsku. Montaż, dźwięk i kolor dopasowane do historii."
+  }
+]

@@ -1,0 +1,60 @@
+[
+  {
+    "slug": "sesja-bez-pospiechu",
+    "title": "Sesja bez pośpiechu. Co warto ustalić wcześniej?",
+    "date": "2026-10-20",
+    "excerpt": "Kilka prostych decyzji pozwala zostawić więcej miejsca na naturalność.",
+    "image": {
+      "src": "media/slub-detale.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Detale"
+    },
+    "published": true,
+    "paragraphs": [
+      "Najlepsze sesje to te, podczas których nikt nie patrzy na zegarek. Żeby tak było, kilka rzeczy warto ustalić wcześniej.",
+      "Pora dnia. Miękkie światło godzinę–dwie przed zachodem słońca wybacza najwięcej i daje ciepłe kolory. W środku dnia lepiej sprawdzają się miejsca z cieniem.",
+      "Stylizacja. Wybierzcie ubrania, w których czujecie się sobą. Spokojne, dopasowane do siebie kolory wyglądają na zdjęciach lepiej niż duże wzory i logotypy.",
+      "Miejsce. Nie musi być spektakularne. Ważniejsze, żebyście czuli się w nim swobodnie i mieli przestrzeń, by się przejść, usiąść, pobyć razem.",
+      "Plan B. W górach pogoda potrafi zaskoczyć. Ustalmy wcześniej termin zapasowy albo miejsce pod dachem."
+    ]
+  },
+  {
+    "slug": "plan-dnia-slubu",
+    "title": "Plan dnia, w którym jest miejsce na Was",
+    "date": "2026-10-05",
+    "excerpt": "Nie każda chwila musi być zaplanowana co do minuty.",
+    "image": {
+      "src": "media/slub-blisko.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Para młoda"
+    },
+    "published": true,
+    "paragraphs": [
+      "Dobry plan dnia ślubu nie zabiera spontaniczności. Daje jej miejsce.",
+      "Zostawcie zapas czasu na przygotowania. To właśnie tam powstaje wiele spokojnych, intymnych kadrów, a nerwowe spoglądanie na zegarek widać na zdjęciach.",
+      "Zaplanujcie 15–20 minut tylko dla siebie po ceremonii lub w trakcie przyjęcia. Krótki spacer w dobrym świetle to często najpiękniejsze zdjęcia całego dnia.",
+      "Powiedzcie mi wcześniej, kto jest dla Was ważny. Babcia, przyjaciel z dzieciństwa, świadkowa. Dzięki temu nie przegapię żadnej ważnej osoby."
+    ]
+  },
+  {
+    "slug": "jak-znalezc-miejsce-na-plener",
+    "title": "Jak znaleźć miejsce na plener?",
+    "date": "2026-09-18",
+    "excerpt": "Najlepsze tło to takie, w którym czujecie się swobodnie.",
+    "image": {
+      "src": "media/gory.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Góry"
+    },
+    "published": true,
+    "paragraphs": [
+      "Beskidy, jezioro, stare miasto czy pole za domem? Wybór miejsca na plener zaczyna się od pytania, co Was łączy.",
+      "Pomyślcie o miejscach, które coś dla Was znaczą: gdzie się poznaliście, gdzie lubicie spacerować, dokąd wracacie.",
+      "Sprawdźcie dojazd i to, czy potrzebna jest zgoda na zdjęcia. Niektóre zamki, parki i obiekty prywatne wymagają wcześniejszej rezerwacji.",
+      "Nie bójcie się prostych miejsc. Łąka w dobrym świetle potrafi wyglądać lepiej niż najbardziej znana panorama."
+    ]
+  }
+]

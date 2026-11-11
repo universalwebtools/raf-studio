@@ -1,0 +1,156 @@
+{
+  "title": "Portfolio",
+  "lead": "Małe gesty, wielkie dni i miejsca z własnym charakterem.",
+  "categories": [
+    "Śluby",
+    "Sesje",
+    "Eventy",
+    "Produkt",
+    "Miejsca"
+  ],
+  "items": [
+    {
+      "id": "p2",
+      "title": "Śluby / reportaż",
+      "category": "Śluby",
+      "image": {
+        "src": "media/slub-reportaz.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Reportaż ślubny"
+      }
+    },
+    {
+      "id": "p3",
+      "title": "Sesje",
+      "category": "Sesje",
+      "image": {
+        "src": "media/sesje.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja w plenerze"
+      }
+    },
+    {
+      "id": "p4",
+      "title": "Sylwetki o zachodzie",
+      "category": "Śluby",
+      "image": {
+        "src": "media/slub-sylwetki.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda pod światło, czarno-białe"
+      }
+    },
+    {
+      "id": "p12",
+      "title": "Dobre zdjęcia zaczynają się od zaufania",
+      "category": "Sesje",
+      "image": {
+        "src": "media/zaufanie.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja z samochodem"
+      }
+    },
+    {
+      "id": "p1",
+      "title": "Sesja sportowa",
+      "category": "Sesje",
+      "image": {
+        "src": "media/sesja-sportowa.webp",
+        "x": 50,
+        "y": 40,
+        "alt": "Sesja sportowa na siłowni"
+      }
+    },
+    {
+      "id": "p13",
+      "title": "Energia spotkań",
+      "category": "Eventy",
+      "image": {
+        "src": "media/hero-taniec.webp",
+        "x": 50,
+        "y": 40,
+        "alt": "Taniec podczas festynu"
+      }
+    },
+    {
+      "id": "p5",
+      "title": "Detale przyjęcia",
+      "category": "Śluby",
+      "image": {
+        "src": "media/slub-detale.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Detale przyjęcia weselnego"
+      }
+    },
+    {
+      "id": "p7",
+      "title": "Blisko siebie",
+      "category": "Śluby",
+      "image": {
+        "src": "media/slub-blisko.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda"
+      }
+    },
+    {
+      "id": "p8",
+      "title": "Chwila dla siebie",
+      "category": "Sesje",
+      "image": {
+        "src": "media/sesja-chwila.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja"
+      }
+    },
+    {
+      "id": "p6",
+      "title": "Poza miastem",
+      "category": "Miejsca",
+      "image": {
+        "src": "media/gory.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Góry"
+      }
+    },
+    {
+      "id": "p9",
+      "title": "Wieczór firmowy",
+      "category": "Eventy",
+      "image": {
+        "src": "media/event-energia.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Event"
+      }
+    },
+    {
+      "id": "p10",
+      "title": "Produkt",
+      "category": "Produkt",
+      "image": {
+        "src": "media/produkt.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Fotografia produktowa"
+      }
+    },
+    {
+      "id": "p11",
+      "title": "Z góry",
+      "category": "Miejsca",
+      "image": {
+        "src": "media/dron-miasto.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Miasto z drona"
+      }
+    }
+  ]
+}
