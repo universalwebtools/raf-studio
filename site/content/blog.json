@@ -5,10 +5,11 @@
     "date": "2026-10-20",
     "excerpt": "Kilka prostych decyzji pozwala zostawić więcej miejsca na naturalność.",
     "image": {
-      "src": "media/slub-detale.webp",
+      "src": "media/portfolio/zareczyny-60.webp",
+      "small": "media/portfolio/zareczyny-60-800.webp",
       "x": 50,
       "y": 50,
-      "alt": "Detale"
+      "alt": "Pierścionek zaręczynowy w złotym świetle"
     },
     "published": true,
     "paragraphs": [
@@ -25,10 +26,11 @@
     "date": "2026-10-05",
     "excerpt": "Nie każda chwila musi być zaplanowana co do minuty.",
     "image": {
-      "src": "media/slub-blisko.webp",
+      "src": "media/portfolio/slub-105.webp",
+      "small": "media/portfolio/slub-105-800.webp",
       "x": 50,
       "y": 50,
-      "alt": "Para młoda"
+      "alt": "Bukiet panny młodej"
     },
     "published": true,
     "paragraphs": [
@@ -44,10 +46,11 @@
     "date": "2026-09-18",
     "excerpt": "Najlepsze tło to takie, w którym czujecie się swobodnie.",
     "image": {
-      "src": "media/gory.webp",
+      "src": "media/portfolio/zareczyny-64.webp",
+      "small": "media/portfolio/zareczyny-64-800.webp",
       "x": 50,
       "y": 50,
-      "alt": "Góry"
+      "alt": "Para na łące o zachodzie słońca"
     },
     "published": true,
     "paragraphs": [

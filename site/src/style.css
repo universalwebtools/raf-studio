@@ -303,3 +303,7 @@ p { margin: 0 0 1em; }
 .prose p, .prose li { color: var(--ink-2); }
 .prose ul { padding-left: 20px; display: grid; gap: 8px; }
 .prose a { text-decoration: underline; }
+
+/* Filmy z plików na stronie */
+.film video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }
+.film--vertical .film__play img { object-position: 50% 30%; }

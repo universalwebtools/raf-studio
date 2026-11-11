@@ -1,67 +1,154 @@
 {
   "title": "Portfolio",
-  "lead": "Małe gesty, wielkie dni i miejsca z własnym charakterem.",
+  "lead": "Śluby, pary, sesje, wydarzenia i materiały dla firm. Wybrane realizacje RAF.studio.",
   "categories": [
     "Śluby",
+    "Pary",
     "Sesje",
     "Eventy",
-    "Produkt",
-    "Miejsca"
+    "Firmy i instytucje",
+    "Motoryzacja"
   ],
   "items": [
     {
-      "id": "p2",
-      "title": "Śluby / reportaż",
+      "id": "slub-00",
+      "title": "Ślub z Audi RS",
       "category": "Śluby",
       "image": {
-        "src": "media/slub-reportaz.webp",
+        "src": "media/portfolio/slub-00.webp",
+        "small": "media/portfolio/slub-00-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Reportaż ślubny"
+        "alt": "Para młoda i samochód ślubny Audi RS"
       }
     },
     {
-      "id": "p3",
-      "title": "Sesje",
+      "id": "zareczyny-51",
+      "title": "Złota godzina",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-51.webp",
+        "small": "media/portfolio/zareczyny-51-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "panienski-02",
+      "title": "Wieczór panieński",
       "category": "Sesje",
       "image": {
-        "src": "media/sesje.webp",
+        "src": "media/portfolio/panienski-02.webp",
+        "small": "media/portfolio/panienski-02-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Sesja w plenerze"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
       }
     },
     {
-      "id": "p4",
-      "title": "Sylwetki o zachodzie",
+      "id": "fitness-14",
+      "title": "Sesja fitness",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-14.webp",
+        "small": "media/portfolio/fitness-14-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "zareczyny-38",
+      "title": "Zaręczyny",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-38.webp",
+        "small": "media/portfolio/zareczyny-38-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "groomer-34",
+      "title": "Salon groomerski",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/groomer-34.webp",
+        "small": "media/portfolio/groomer-34-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Groomerka podczas strzyżenia psa w salonie"
+      }
+    },
+    {
+      "id": "slub-129",
+      "title": "Welon i Audi RS",
       "category": "Śluby",
       "image": {
-        "src": "media/slub-sylwetki.webp",
+        "src": "media/portfolio/slub-129.webp",
+        "small": "media/portfolio/slub-129-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Para młoda pod światło, czarno-białe"
+        "alt": "Para młoda i samochód ślubny Audi RS"
       }
     },
     {
-      "id": "p12",
-      "title": "Dobre zdjęcia zaczynają się od zaufania",
-      "category": "Sesje",
+      "id": "zareczyny-28",
+      "title": "Pod światło",
+      "category": "Pary",
       "image": {
-        "src": "media/zaufanie.webp",
+        "src": "media/portfolio/zareczyny-28.webp",
+        "small": "media/portfolio/zareczyny-28-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Sesja z samochodem"
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
       }
     },
     {
-      "id": "p1",
-      "title": "Sesja sportowa",
+      "id": "panienski-14",
+      "title": "Wianki",
       "category": "Sesje",
       "image": {
-        "src": "media/sesja-sportowa.webp",
+        "src": "media/portfolio/panienski-14.webp",
+        "small": "media/portfolio/panienski-14-800.webp",
         "x": 50,
-        "y": 40,
-        "alt": "Sesja sportowa na siłowni"
+        "y": 50,
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
+      }
+    },
+    {
+      "id": "ev-1",
+      "title": "XXIX Lato w Jasienicy",
+      "category": "Eventy",
+      "image": {
+        "src": "media/uslugi-eventy.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Publiczność podczas festynu Lato w Jasienicy"
+      }
+    },
+    {
+      "id": "ev-2",
+      "title": "Koncert pod sceną",
+      "category": "Eventy",
+      "image": {
+        "src": "media/uslugi-film.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Koncert na scenie plenerowej"
+      }
+    },
+    {
+      "id": "ev-3",
+      "title": "Festyn z lotu ptaka",
+      "category": "Eventy",
+      "image": {
+        "src": "media/uslugi-dron.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Festyn z drona"
       }
     },
     {
@@ -76,82 +163,644 @@
       }
     },
     {
-      "id": "p5",
-      "title": "Detale przyjęcia",
-      "category": "Śluby",
+      "id": "osp-00",
+      "title": "Jednostka OSP przed remizą",
+      "category": "Firmy i instytucje",
       "image": {
-        "src": "media/slub-detale.webp",
+        "src": "media/portfolio/osp-00.webp",
+        "small": "media/portfolio/osp-00-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Detale przyjęcia weselnego"
+        "alt": "Zdjęcie grupowe jednostki OSP przed remizą"
       }
     },
     {
-      "id": "p7",
-      "title": "Blisko siebie",
-      "category": "Śluby",
+      "id": "osp-01",
+      "title": "OSP – zdjęcie grupowe",
+      "category": "Firmy i instytucje",
       "image": {
-        "src": "media/slub-blisko.webp",
+        "src": "media/portfolio/osp-01.webp",
+        "small": "media/portfolio/osp-01-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Para młoda"
+        "alt": "Zdjęcie grupowe jednostki OSP przed remizą"
       }
     },
     {
-      "id": "p8",
-      "title": "Chwila dla siebie",
+      "id": "slub-78",
+      "title": "W drodze na ślub",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-78.webp",
+        "small": "media/portfolio/slub-78-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-87",
+      "title": "Para młoda",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-87.webp",
+        "small": "media/portfolio/slub-87-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-90",
+      "title": "Chwila w aucie",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-90.webp",
+        "small": "media/portfolio/slub-90-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-105",
+      "title": "Bukiet",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-105.webp",
+        "small": "media/portfolio/slub-105-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-138",
+      "title": "Welon",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-138.webp",
+        "small": "media/portfolio/slub-138-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-153",
+      "title": "Panna młoda",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-153.webp",
+        "small": "media/portfolio/slub-153-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-21",
+      "title": "Ślubne Audi RS7",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-21.webp",
+        "small": "media/portfolio/slub-21-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "slub-36",
+      "title": "Detale samochodu",
+      "category": "Śluby",
+      "image": {
+        "src": "media/portfolio/slub-36.webp",
+        "small": "media/portfolio/slub-36-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para młoda i samochód ślubny Audi RS"
+      }
+    },
+    {
+      "id": "zareczyny-02",
+      "title": "Na spacer",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-02.webp",
+        "small": "media/portfolio/zareczyny-02-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-11",
+      "title": "Taniec w trawie",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-11.webp",
+        "small": "media/portfolio/zareczyny-11-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-16",
+      "title": "Lekkość",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-16.webp",
+        "small": "media/portfolio/zareczyny-16-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-29",
+      "title": "Blisko",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-29.webp",
+        "small": "media/portfolio/zareczyny-29-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-58",
+      "title": "Spojrzenie",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-58.webp",
+        "small": "media/portfolio/zareczyny-58-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-60",
+      "title": "Pierścionek",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-60.webp",
+        "small": "media/portfolio/zareczyny-60-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "zareczyny-64",
+      "title": "Zachód słońca",
+      "category": "Pary",
+      "image": {
+        "src": "media/portfolio/zareczyny-64.webp",
+        "small": "media/portfolio/zareczyny-64-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Para podczas sesji narzeczeńskiej w złotym świetle"
+      }
+    },
+    {
+      "id": "panienski-00",
+      "title": "Przyjaciółki",
       "category": "Sesje",
       "image": {
-        "src": "media/sesja-chwila.webp",
+        "src": "media/portfolio/panienski-00.webp",
+        "small": "media/portfolio/panienski-00-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Sesja"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
       }
     },
     {
-      "id": "p6",
-      "title": "Poza miastem",
-      "category": "Miejsca",
+      "id": "panienski-06",
+      "title": "Wieczór panieński",
+      "category": "Sesje",
       "image": {
-        "src": "media/gory.webp",
+        "src": "media/portfolio/panienski-06.webp",
+        "small": "media/portfolio/panienski-06-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Góry"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
       }
     },
     {
-      "id": "p9",
-      "title": "Wieczór firmowy",
-      "category": "Eventy",
+      "id": "panienski-09",
+      "title": "Taniec na łące",
+      "category": "Sesje",
       "image": {
-        "src": "media/event-energia.webp",
+        "src": "media/portfolio/panienski-09.webp",
+        "small": "media/portfolio/panienski-09-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Event"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
       }
     },
     {
-      "id": "p10",
-      "title": "Produkt",
-      "category": "Produkt",
+      "id": "panienski-11",
+      "title": "Wieczór panieński",
+      "category": "Sesje",
       "image": {
-        "src": "media/produkt.webp",
+        "src": "media/portfolio/panienski-11.webp",
+        "small": "media/portfolio/panienski-11-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Fotografia produktowa"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
       }
     },
     {
-      "id": "p11",
-      "title": "Z góry",
-      "category": "Miejsca",
+      "id": "panienski-15",
+      "title": "W kwiatach",
+      "category": "Sesje",
       "image": {
-        "src": "media/dron-miasto.webp",
+        "src": "media/portfolio/panienski-15.webp",
+        "small": "media/portfolio/panienski-15-800.webp",
         "x": 50,
         "y": 50,
-        "alt": "Miasto z drona"
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
+      }
+    },
+    {
+      "id": "panienski-18",
+      "title": "Razem",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/panienski-18.webp",
+        "small": "media/portfolio/panienski-18-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
+      }
+    },
+    {
+      "id": "panienski-21",
+      "title": "Zabawa",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/panienski-21.webp",
+        "small": "media/portfolio/panienski-21-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Wieczór panieński – dziewczyny w wiankach i białych sukienkach"
+      }
+    },
+    {
+      "id": "fitness-01",
+      "title": "Portret w studio",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-01.webp",
+        "small": "media/portfolio/fitness-01-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "fitness-07",
+      "title": "Sesja fitness",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-07.webp",
+        "small": "media/portfolio/fitness-07-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "fitness-19",
+      "title": "Trening",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-19.webp",
+        "small": "media/portfolio/fitness-19-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "fitness-28",
+      "title": "Sesja fitness",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-28.webp",
+        "small": "media/portfolio/fitness-28-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "fitness-56",
+      "title": "Portret",
+      "category": "Sesje",
+      "image": {
+        "src": "media/portfolio/fitness-56.webp",
+        "small": "media/portfolio/fitness-56-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja fitness na siłowni"
+      }
+    },
+    {
+      "id": "groomer-01",
+      "title": "Salon groomerski",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/groomer-01.webp",
+        "small": "media/portfolio/groomer-01-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Groomerka podczas strzyżenia psa w salonie"
+      }
+    },
+    {
+      "id": "groomer-07",
+      "title": "Po strzyżeniu",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/groomer-07.webp",
+        "small": "media/portfolio/groomer-07-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Groomerka podczas strzyżenia psa w salonie"
+      }
+    },
+    {
+      "id": "groomer-24",
+      "title": "Groomerka i pies",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/groomer-24.webp",
+        "small": "media/portfolio/groomer-24-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Groomerka podczas strzyżenia psa w salonie"
+      }
+    },
+    {
+      "id": "groomer-36",
+      "title": "Strzyżenie",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/groomer-36.webp",
+        "small": "media/portfolio/groomer-36-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Groomerka podczas strzyżenia psa w salonie"
+      }
+    },
+    {
+      "id": "produkt-31",
+      "title": "Packshot",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/produkt-31.webp",
+        "small": "media/portfolio/produkt-31-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Fotografia produktowa elementów metalowych"
+      }
+    },
+    {
+      "id": "produkt-33",
+      "title": "Packshot",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/produkt-33.webp",
+        "small": "media/portfolio/produkt-33-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Fotografia produktowa elementów metalowych"
+      }
+    },
+    {
+      "id": "produkt-36",
+      "title": "Packshot",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/produkt-36.webp",
+        "small": "media/portfolio/produkt-36-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Fotografia produktowa elementów metalowych"
+      }
+    },
+    {
+      "id": "produkt-41",
+      "title": "Packshot",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/produkt-41.webp",
+        "small": "media/portfolio/produkt-41-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Fotografia produktowa elementów metalowych"
+      }
+    },
+    {
+      "id": "zaklad-17",
+      "title": "Film dla zakładu produkcyjnego",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/zaklad-17.webp",
+        "small": "media/portfolio/zaklad-17-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu wizerunkowego zakładu produkcyjnego"
+      }
+    },
+    {
+      "id": "zaklad-25",
+      "title": "Produkcja – detal",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/zaklad-25.webp",
+        "small": "media/portfolio/zaklad-25-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu wizerunkowego zakładu produkcyjnego"
+      }
+    },
+    {
+      "id": "zaklad-33",
+      "title": "Ludzie firmy",
+      "category": "Firmy i instytucje",
+      "image": {
+        "src": "media/portfolio/zaklad-33.webp",
+        "small": "media/portfolio/zaklad-33-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu wizerunkowego zakładu produkcyjnego"
+      }
+    },
+    {
+      "id": "audi-00",
+      "title": "Audi A3",
+      "category": "Motoryzacja",
+      "image": {
+        "src": "media/portfolio/audi-00.webp",
+        "small": "media/portfolio/audi-00-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja zdjęciowa samochodu Audi A3"
+      }
+    },
+    {
+      "id": "audi-08",
+      "title": "Wnętrze Audi A3",
+      "category": "Motoryzacja",
+      "image": {
+        "src": "media/portfolio/audi-08.webp",
+        "small": "media/portfolio/audi-08-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja zdjęciowa samochodu Audi A3"
+      }
+    },
+    {
+      "id": "audi-16",
+      "title": "Audi A3",
+      "category": "Motoryzacja",
+      "image": {
+        "src": "media/portfolio/audi-16.webp",
+        "small": "media/portfolio/audi-16-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Sesja zdjęciowa samochodu Audi A3"
       }
     }
   ],
-  "films": []
+  "films": [
+    {
+      "title": "XXIX Lato w Jasienicy – podsumowanie",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lato-jasienica-podsumowanie.mp4",
+      "image": {
+        "src": "media/filmy/lato-jasienica-podsumowanie.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: XXIX Lato w Jasienicy – podsumowanie"
+      }
+    },
+    {
+      "title": "OSP – powitanie nowego wozu",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/osp-nowy-woz.mp4",
+      "image": {
+        "src": "media/filmy/osp-nowy-woz.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: OSP – powitanie nowego wozu"
+      }
+    },
+    {
+      "title": "Złote auto – film motoryzacyjny",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/zloty-samochod.mp4",
+      "image": {
+        "src": "media/filmy/zloty-samochod.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Złote auto – film motoryzacyjny"
+      }
+    },
+    {
+      "title": "Los Landecos Paintball – film promocyjny",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/los-landecos-paintball.mp4",
+      "image": {
+        "src": "media/filmy/los-landecos-paintball.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Los Landecos Paintball – film promocyjny"
+      }
+    },
+    {
+      "title": "Dach w Jaworzu – realizacja z drona",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/dachy-penkala-jaworze.mp4",
+      "image": {
+        "src": "media/filmy/dachy-penkala-jaworze.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Dach w Jaworzu – realizacja z drona"
+      }
+    },
+    {
+      "title": "WOŚP w Jasienicy",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/wosp-jasienica.mp4",
+      "image": {
+        "src": "media/filmy/wosp-jasienica.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: WOŚP w Jasienicy"
+      }
+    },
+    {
+      "title": "Korowód dożynkowy – Rudzica 2026",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/korowod-rudzica.mp4",
+      "image": {
+        "src": "media/filmy/korowod-rudzica.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Korowód dożynkowy – Rudzica 2026"
+      }
+    },
+    {
+      "title": "XXX Lato w Jasienicy – koncerty",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lato-jasienica-koncerty.mp4",
+      "image": {
+        "src": "media/filmy/lato-jasienica-koncerty.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: XXX Lato w Jasienicy – koncerty"
+      }
+    },
+    {
+      "title": "Salon groomerski – rolka",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/groomer-reel.mp4",
+      "image": {
+        "src": "media/filmy/groomer-reel.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Salon groomerski – rolka"
+      },
+      "vertical": true
+    },
+    {
+      "title": "Copa de Roztropice 2026 – rolka",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/copa-roztropice.mp4",
+      "image": {
+        "src": "media/filmy/copa-roztropice.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Copa de Roztropice 2026 – rolka"
+      },
+      "vertical": true
+    }
+  ]
 }

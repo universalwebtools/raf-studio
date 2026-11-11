@@ -22,8 +22,10 @@ const ed = (ctx, path) => (ctx.preview && path ? ` data-edit="${esc(path)}"` : '
 function img(ctx, image, { path = '', cls = '', sizes = '', eager = false } = {}) {
   if (!image || !image.src) return `<div class="ph ${cls}"${ed(ctx, path)}></div>`;
   const x = image.x ?? 50, y = image.y ?? 50;
-  return `<img class="${cls}" src="${esc(url(image.src))}" alt="${esc(image.alt || '')}" style="object-position:${x}% ${y}%"` +
-    `${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${sizes ? ` sizes="${sizes}"` : ''}${ed(ctx, path)}>`;
+  // image.small: mniejsza wersja (800 px) do siatek – przeglądarka sama wybierze rozmiar.
+  const srcset = image.small ? ` srcset="${esc(url(image.small))} 800w, ${esc(url(image.src))} 2000w" sizes="${sizes || '100vw'}"` : (sizes ? ` sizes="${sizes}"` : '');
+  return `<img class="${cls}" src="${esc(url(image.small || image.src))}"${srcset} alt="${esc(image.alt || '')}" style="object-position:${x}% ${y}%"` +
+    `${eager ? ' fetchpriority="high"' : ' loading="lazy"'} decoding="async"${ed(ctx, path)}>`;
 }
 
 const paras = (ctx, list, path) => (list || []).map((p, i) => `<p${ed(ctx, `${path}.${i}`)}>${esc(p)}</p>`).join('');
@@ -172,15 +174,21 @@ export function videoInfo(link) {
   return null;
 }
 
+// Film z pliku na stronie (media/filmy/…) albo z YouTube/Vimeo.
+const filmSource = (f) => (f.file ? { type: 'file', src: f.file, thumb: '' } : videoInfo(f.url));
+
 function filmCard(ctx, f, { large = false } = {}) {
   const i = ctx.data.portfolio.films.indexOf(f);
-  const v = videoInfo(f.url);
+  const v = filmSource(f);
   if (!v) return '';
+  const play = v.type === 'file'
+    ? `data-video="${esc(url(v.src))}"${f.image?.src ? ` data-poster="${esc(url(f.image.src))}"` : ''}`
+    : `data-embed="${esc(v.embed)}"`;
   const poster = f.image?.src
     ? img(ctx, f.image, { path: `portfolio.films.${i}.image`, sizes: large ? '(max-width:800px) 100vw, 50vw' : '(max-width:700px) 100vw, 33vw' })
     : v.thumb ? `<img src="${esc(v.thumb)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<div class="ph"></div>';
-  return `<figure class="film${large ? ' film--large' : ''}">
-    <button type="button" class="film__play" data-embed="${esc(v.embed)}" aria-label="Odtwórz film: ${esc(f.title)}">
+  return `<figure class="film${large ? ' film--large' : ''}${f.vertical ? ' film--vertical' : ''}">
+    <button type="button" class="film__play" ${play} aria-label="Odtwórz film: ${esc(f.title)}">
       ${poster}<span class="film__icon" aria-hidden="true"></span>
     </button>
     <figcaption><strong${ed(ctx, `portfolio.films.${i}.title`)}>${esc(f.title)}</strong>${f.category ? `<small>${esc(f.category)}</small>` : ''}</figcaption>
@@ -188,9 +196,9 @@ function filmCard(ctx, f, { large = false } = {}) {
 }
 
 const filmsGrid = (ctx, films) => `<div class="films">${films.map((f) => filmCard(ctx, f)).join('')}</div>
-  <p class="films__note">Filmy odtwarzają się z serwisu YouTube lub Vimeo dopiero po kliknięciu.</p>`;
+  ${films.some((f) => !f.file) ? '<p class="films__note">Filmy z YouTube i Vimeo wczytują się dopiero po kliknięciu.</p>' : ''}`;
 
-const visibleFilms = (data) => (data.portfolio.films || []).filter((f) => videoInfo(f.url));
+const visibleFilms = (data) => (data.portfolio.films || []).filter((f) => filmSource(f));
 
 function postCards(ctx, posts) {
   return `<div class="posts">${posts.map((p) => {
@@ -351,7 +359,7 @@ function servicePage(ctx, s) {
   const i = ctx.data.services.indexOf(s);
   const p = `services.${i}`;
   const related = ctx.data.portfolio.items.filter((it) => s.portfolioCategory ? it.category === s.portfolioCategory : true).slice(0, 3);
-  const films = s.showFilms ? visibleFilms(ctx.data) : [];
+  const films = s.showFilms ? visibleFilms(ctx.data).filter((f) => !s.filmCategory || f.category === s.filmCategory) : [];
   return `
 <section class="svc-hero">
   ${img(ctx, s.image, { path: `${p}.image`, cls: 'svc-hero__img', eager: true })}
@@ -454,7 +462,7 @@ function thanksPage() {
 
 function privacyPage(ctx) {
   const { site } = ctx.data;
-  const films = visibleFilms(ctx.data).length > 0;
+  const films = visibleFilms(ctx.data).some((f) => !f.file); // tylko filmy z YouTube/Vimeo
   const stats = !!String(site.goatcounter || '').trim();
   const admin = [site.legalName || site.name, site.address, site.nip && `NIP: ${site.nip}`].filter(Boolean).map(esc).join(', ');
   const mail = site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : 'adres e-mail podany w zakładce Kontakt';

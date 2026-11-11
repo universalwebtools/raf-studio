@@ -39,17 +39,18 @@
       "Od pierwszego pomysłu po ostatni kadr dbam o jasne ustalenia i spójny efekt. Wy przeżywacie swój dzień. Ja szukam opowieści, która z niego zostanie."
     ],
     "image": {
-      "src": "media/zaufanie.webp",
+      "src": "media/portfolio/slub-78.webp",
+      "small": "media/portfolio/slub-78-800.webp",
       "x": 50,
       "y": 50,
-      "alt": "Sesja ślubna przy samochodzie"
+      "alt": "Panna młoda w samochodzie ślubnym"
     }
   },
   "statement": [
     {
       "title": "Foto",
       "text": "Chwile zapisane w kadrach",
-      "link": "uslugi/fotografia-slubna/"
+      "link": "portfolio/"
     },
     {
       "title": "Film",
@@ -80,10 +81,10 @@
       "Tworzę ślubne opowieści, relacje z wydarzeń i materiały dla marek. Dopasowuję rytm montażu, dźwięk i kolor do konkretnej historii, żeby oglądało się ją z przyjemnością."
     ],
     "image": {
-      "src": "media/film-slub.webp",
+      "src": "media/uslugi-film.webp",
       "x": 50,
       "y": 50,
-      "alt": "Kadr z filmu ślubnego"
+      "alt": "Koncert na scenie plenerowej"
     }
   },
   "process": {

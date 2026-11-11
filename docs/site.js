@@ -114,11 +114,20 @@
   document.addEventListener('click', (e) => {
     const b = e.target.closest('.film__play');
     if (!b || window.RAF_PREVIEW) return;
-    const f = document.createElement('iframe');
-    f.src = b.dataset.embed;
-    f.title = b.getAttribute('aria-label') || 'Film';
-    f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
-    f.allowFullscreen = true;
+    let f;
+    if (b.dataset.video) {
+      f = document.createElement('video');
+      f.src = b.dataset.video;
+      if (b.dataset.poster) f.poster = b.dataset.poster;
+      f.controls = true; f.autoplay = true; f.playsInline = true;
+      f.setAttribute('aria-label', b.getAttribute('aria-label') || 'Film');
+    } else {
+      f = document.createElement('iframe');
+      f.src = b.dataset.embed;
+      f.title = b.getAttribute('aria-label') || 'Film';
+      f.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media';
+      f.allowFullscreen = true;
+    }
     const holder = document.createElement('div');
     holder.className = 'film__play';
     holder.append(f);

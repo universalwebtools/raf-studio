@@ -253,6 +253,7 @@ const SERVICE_FIELDS = [
   { key: 'includes', label: 'W ramach realizacji', type: 'lines' },
   { key: 'portfolioCategory', label: 'Zdjęcia z portfolio na tej podstronie', type: 'select', options: () => [['', 'Wszystkie kategorie'], ...data.portfolio.categories.map((c) => [c, c])] },
   { key: 'showFilms', label: 'Pokaż na tej podstronie filmy z portfolio', type: 'checkbox' },
+  T('filmCategory', 'Tylko filmy z kategorii (puste = wszystkie)', { placeholder: 'np. Eventy' }),
   T('slug', 'Adres podstrony', { slug: true, help: 'Np. fotografia-slubna → raf-studio.pl/uslugi/fotografia-slubna/' }),
   T('seoTitle', 'Tytuł w Google', { max: 65 }),
   TA('seoDescription', 'Opis w Google', { rows: 3, max: 160 }),
@@ -289,7 +290,9 @@ const FILM_FIELDS = [
   T('title', 'Tytuł filmu'),
   T('url', 'Link do filmu (YouTube lub Vimeo)', { type: 'url', placeholder: 'https://www.youtube.com/watch?v=…', help: 'Wklej zwykły link do filmu. Pierwszy film z listy pokazuje się też na stronie głównej.' }),
   T('category', 'Kategoria (np. Ślub, Event, Reklama)'),
-  IMG('image', 'Własna miniatura (opcjonalnie)'),
+  IMG('image', 'Miniatura (kadr z filmu)'),
+  T('file', 'Plik wideo na stronie (zamiast linku)', { placeholder: 'media/filmy/…mp4', help: 'Wypełnione = film odtwarzany prosto ze strony. Nowe pliki wideo wymagają kompresji – podeślij film, a dodam go.' }),
+  { key: 'vertical', label: 'Film pionowy (rolka / reels)', type: 'checkbox' },
 ];
 
 function panels() {

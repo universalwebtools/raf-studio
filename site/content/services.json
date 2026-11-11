@@ -4,10 +4,11 @@
     "title": "Fotografia ślubna",
     "short": "Od cichych przygotowań po ostatni taniec. Reportaż, w którym jest miejsce na ludzi, detale i niespodzianki.",
     "image": {
-      "src": "media/slub-reportaz.webp",
+      "src": "media/portfolio/slub-00.webp",
+      "small": "media/portfolio/slub-00-800.webp",
       "x": 50,
-      "y": 50,
-      "alt": "Para młoda na spacerze w polu"
+      "y": 55,
+      "alt": "Para młoda przy samochodzie ślubnym Audi RS"
     },
     "portfolioCategory": "Śluby",
     "intro": "Reportaż ślubny bez sztywnego pozowania. Jestem obok przez cały dzień i zbieram to, co naprawdę się wydarzyło.",
@@ -28,16 +29,46 @@
     "showFilms": false
   },
   {
+    "slug": "eventy-i-reportaze",
+    "title": "Eventy i reportaże",
+    "short": "Festyny, koncerty, dożynki, jubileusze i wydarzenia firmowe. Relacja foto i film, która oddaje atmosferę.",
+    "image": {
+      "src": "media/uslugi-eventy.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Publiczność podczas festynu"
+    },
+    "portfolioCategory": "Eventy",
+    "showFilms": true,
+    "filmCategory": "Eventy",
+    "intro": "Relacje z wydarzeń: od gminnych festynów i dożynek po koncerty, jubileusze i eventy firmowe.",
+    "paragraphs": [
+      "Wydarzenie trwa kilka godzin, a dobra relacja zostaje na lata. Rejestruję scenę, publiczność, kulisy i najważniejsze momenty – tak, żeby po obejrzeniu filmu chciało się tam wrócić.",
+      "Realizowałem m.in. relacje z Lata w Jasienicy, korowodów i dożynek, finału WOŚP oraz uroczystości jednostek OSP. Pracuję w 4K, z ujęciami z drona i krótkimi formami do social mediów.",
+      "Na życzenie przygotowuję krótki teaser tuż po wydarzeniu, a pełną relację w uzgodnionym terminie."
+    ],
+    "includes": [
+      "Relacja filmowa i/lub fotograficzna",
+      "Ujęcia z drona",
+      "Krótkie rolki do social mediów",
+      "Podsumowanie wydarzenia w 4K",
+      "Teaser tuż po wydarzeniu"
+    ],
+    "seoTitle": "Filmowanie i fotografia eventów Bielsko-Biała – festyny, koncerty | RAF.studio",
+    "seoDescription": "Relacje foto i wideo z wydarzeń w Bielsku-Białej i na Śląsku: festyny, dożynki, koncerty, uroczystości OSP i eventy firmowe. Film 4K i ujęcia z drona."
+  },
+  {
     "slug": "sesje",
     "title": "Sesje blisko Was",
     "short": "Portrety, rodzinne spotkania i małe wielkie okazje. Bez pośpiechu, w miejscu, w którym czujecie się dobrze.",
     "image": {
-      "src": "media/sesje.webp",
+      "src": "media/portfolio/zareczyny-51.webp",
+      "small": "media/portfolio/zareczyny-51-800.webp",
       "x": 50,
       "y": 45,
-      "alt": "Sesja zdjęciowa w plenerze"
+      "alt": "Para na sesji narzeczeńskiej w złotym świetle"
     },
-    "portfolioCategory": "Sesje",
+    "portfolioCategory": "Pary",
     "intro": "Sesje narzeczeńskie, rodzinne, portretowe i wizerunkowe. Bez pozowania na siłę, w Waszym tempie.",
     "paragraphs": [
       "Najlepsze zdjęcia powstają wtedy, gdy zapominacie o aparacie. Dlatego sesja zaczyna się od rozmowy i wyboru miejsca, w którym naprawdę dobrze się czujecie: w górach, w mieście albo po prostu w domu.",
@@ -60,12 +91,12 @@
     "title": "Wnętrza i architektura",
     "short": "Światło, proporcje i charakter miejsca. Zdjęcia przestrzeni gotowe do oferty sprzedaży, wynajmu lub prezentacji marki.",
     "image": {
-      "src": "media/slub-detale.webp",
+      "src": "media/uslugi-architektura.webp",
       "x": 50,
       "y": 50,
-      "alt": "Detale wnętrza"
+      "alt": "Dom jednorodzinny z lotu ptaka"
     },
-    "portfolioCategory": "Miejsca",
+    "portfolioCategory": "Firmy i instytucje",
     "intro": "Zdjęcia wnętrz i budynków, które pokazują przestrzeń taką, jaka jest: jasną, uporządkowaną i z charakterem.",
     "paragraphs": [
       "Dobre zdjęcia wnętrz sprzedają i wynajmują szybciej. Pracuję ze światłem zastanym i dodatkowym oświetleniem, pilnuję prostych linii i naturalnych kolorów.",
@@ -87,12 +118,12 @@
     "title": "Perspektywa z góry",
     "short": "Krajobraz, inwestycja lub wyjątkowe miejsce. Ujęcia, które dodają historii przestrzeni i nowego punktu widzenia.",
     "image": {
-      "src": "media/dron-miasto.webp",
+      "src": "media/uslugi-dron.webp",
       "x": 50,
       "y": 50,
-      "alt": "Ujęcie z drona nad miastem"
+      "alt": "Festyn z lotu ptaka"
     },
-    "portfolioCategory": "Miejsca",
+    "portfolioCategory": "Eventy",
     "intro": "Zdjęcia i filmy z drona: inwestycje, nieruchomości, wydarzenia i krajobrazy.",
     "paragraphs": [
       "Widok z góry pokazuje skalę, otoczenie i kontekst, których nie widać z ziemi. Sprawdza się przy prezentacji działek i inwestycji, hoteli, wydarzeń plenerowych, a także w filmach ślubnych.",
@@ -106,19 +137,49 @@
     ],
     "seoTitle": "Zdjęcia i filmy z drona Bielsko-Biała | RAF.studio",
     "seoDescription": "Zdjęcia i filmy z drona w Bielsku-Białej i na Śląsku: nieruchomości, inwestycje, wydarzenia i krajobrazy.",
-    "showFilms": false
+    "showFilms": true,
+    "filmCategory": ""
+  },
+  {
+    "slug": "dla-firm",
+    "title": "Foto i film dla firm",
+    "short": "Filmy promocyjne, zdjęcia produktowe i wizerunkowe, materiały do social mediów dla lokalnych firm.",
+    "image": {
+      "src": "media/portfolio/zaklad-25.webp",
+      "small": "media/portfolio/zaklad-25-800.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Detal z produkcji – kadr z filmu wizerunkowego"
+    },
+    "portfolioCategory": "Firmy i instytucje",
+    "showFilms": true,
+    "filmCategory": "Reklama",
+    "intro": "Zdjęcia i filmy, które pokazują firmę, ludzi i produkt – na stronę, do ofert i social mediów.",
+    "paragraphs": [
+      "Pracuję z firmami produkcyjnymi, usługowymi i lokalnymi markami: od filmu wizerunkowego zakładu i packshotów produktów, przez materiały dla salonu groomerskiego, po promocję pola paintballowego czy firmy dekarskiej z ujęciami z drona.",
+      "Zaczynamy od krótkiej rozmowy o celu: sprzedaż, rekrutacja, rozpoznawalność. Potem planuję zdjęcia i ujęcia tak, żeby materiał dało się wykorzystać w wielu miejscach – od strony internetowej po krótkie rolki."
+    ],
+    "includes": [
+      "Film promocyjny lub wizerunkowy",
+      "Fotografia produktowa (packshot)",
+      "Zdjęcia zespołu i miejsca pracy",
+      "Rolki pionowe do social mediów",
+      "Ujęcia z drona"
+    ],
+    "seoTitle": "Film promocyjny i zdjęcia dla firm Bielsko-Biała | RAF.studio",
+    "seoDescription": "Filmy reklamowe i wizerunkowe, fotografia produktowa i materiały do social mediów dla firm z Bielska-Białej i Śląska."
   },
   {
     "slug": "film",
     "title": "Historie w ruchu",
     "short": "Obrazy, głosy i dźwięki, do których chce się wracać. Film ślubny, relacja z wydarzenia lub opowieść o marce.",
     "image": {
-      "src": "media/film-slub.webp",
+      "src": "media/uslugi-film.webp",
       "x": 50,
       "y": 50,
-      "alt": "Kadr z filmu"
+      "alt": "Koncert na scenie plenerowej"
     },
-    "portfolioCategory": "",
+    "portfolioCategory": "Eventy",
     "intro": "Film ślubny, relacje z wydarzeń, reklamy i content do social mediów.",
     "paragraphs": [
       "Są rzeczy, których nie opowie pojedyncze zdjęcie. Drżący głos podczas przysięgi, śmiech przy stole, ruch sukni na wietrze. Film pozwala zatrzymać je razem.",
@@ -133,6 +194,7 @@
     ],
     "seoTitle": "Film ślubny i film reklamowy Bielsko-Biała | RAF.studio",
     "seoDescription": "Filmy ślubne, relacje z wydarzeń i filmy reklamowe w Bielsku-Białej i na Śląsku. Montaż, dźwięk i kolor dopasowane do historii.",
-    "showFilms": true
+    "showFilms": true,
+    "filmCategory": ""
   }
 ]
