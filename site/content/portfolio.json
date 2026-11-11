@@ -953,20 +953,6 @@
       }
     },
     {
-      "title": "LKS – derby (zwiastun)",
-      "collection": "rolki",
-      "category": "Eventy",
-      "url": "",
-      "file": "media/filmy/lks-derby-trailer.mp4",
-      "image": {
-        "src": "media/filmy/lks-derby-trailer.webp",
-        "x": 50,
-        "y": 50,
-        "alt": "Kadr z filmu: LKS – derby (zwiastun)"
-      },
-      "vertical": true
-    },
-    {
       "title": "LKS – derby",
       "collection": "rolki",
       "category": "Eventy",
@@ -977,20 +963,6 @@
         "x": 50,
         "y": 50,
         "alt": "Kadr z filmu: LKS – derby"
-      },
-      "vertical": true
-    },
-    {
-      "title": "Copa de Roztropice 2026",
-      "collection": "rolki",
-      "category": "Eventy",
-      "url": "",
-      "file": "media/filmy/copa-roztropice.mp4",
-      "image": {
-        "src": "media/filmy/copa-roztropice.webp",
-        "x": 50,
-        "y": 50,
-        "alt": "Kadr z filmu: Copa de Roztropice 2026"
       },
       "vertical": true
     },
@@ -1009,6 +981,48 @@
       "vertical": true
     },
     {
+      "title": "Złote auto – rolka",
+      "collection": "rolki",
+      "category": "Reklama",
+      "url": "",
+      "file": "media/filmy/reel-youcut.mp4",
+      "image": {
+        "src": "media/filmy/reel-youcut.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z rolki: Złote auto – rolka"
+      },
+      "vertical": true
+    },
+    {
+      "title": "Copa de Roztropice 2026",
+      "collection": "rolki",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/copa-roztropice.mp4",
+      "image": {
+        "src": "media/filmy/copa-roztropice.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: Copa de Roztropice 2026"
+      },
+      "vertical": true
+    },
+    {
+      "title": "LKS – derby (zwiastun)",
+      "collection": "rolki",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/lks-derby-trailer.mp4",
+      "image": {
+        "src": "media/filmy/lks-derby-trailer.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z filmu: LKS – derby (zwiastun)"
+      },
+      "vertical": true
+    },
+    {
       "title": "Salon groomerski – suszenie",
       "collection": "rolki",
       "category": "Reklama",
@@ -1019,6 +1033,20 @@
         "x": 50,
         "y": 50,
         "alt": "Kadr z filmu: Salon groomerski – suszenie"
+      },
+      "vertical": true
+    },
+    {
+      "title": "Taniec – Jasienica",
+      "collection": "rolki",
+      "category": "Eventy",
+      "url": "",
+      "file": "media/filmy/taniec-jasienica.mp4",
+      "image": {
+        "src": "media/filmy/taniec-jasienica.webp",
+        "x": 50,
+        "y": 50,
+        "alt": "Kadr z rolki: Taniec – Jasienica"
       },
       "vertical": true
     }

@@ -218,8 +218,46 @@ function collectionBlock(ctx, c, { limit = 0, alt = false } = {}) {
       <div><h2${ed(ctx, `portfolio.filmCollections.${i}.title`)}>${esc(c.title)}</h2>${c.lead ? `<p class="lead"${ed(ctx, `portfolio.filmCollections.${i}.lead`)}>${esc(c.lead)}</p>` : ''}</div>
       ${limit && all.length > films.length ? `<a class="btn btn--dark" href="${url(`filmy/${c.id}/`)}">Wszystkie (${all.length})</a>` : ''}
     </div>
-    ${filmsGrid(ctx, films, { reels: c.vertical })}
+    ${c.vertical ? reelLinks(ctx, c, films) : filmsGrid(ctx, films)}
   </div>
+</section>`;
+}
+
+/* ---------- Rolki w stylu „Shorts”: jeden film na ekran, przewijanie = następny ---------- */
+const reelId = (f) => String(f.file || f.url || f.title).split('/').pop().replace(/\.[^.]+$/, '').replace(/[^\w-]+/g, '-');
+
+// Miniatury rolek prowadzące do odtwarzacza na właściwym filmie.
+function reelLinks(ctx, c, films) {
+  return `<div class="films films--reels">${films.map((f) => {
+    const i = ctx.data.portfolio.films.indexOf(f);
+    return `<a class="film film--vertical film--link" href="${url(`filmy/${c.id}/`)}#${esc(reelId(f))}" aria-label="Oglądaj rolkę: ${esc(f.title)}">
+      <span class="film__play">${f.image?.src ? img(ctx, f.image, { path: `portfolio.films.${i}.image`, sizes: '(max-width:700px) 50vw, 240px' }) : '<span class="ph"></span>'}<span class="film__icon" aria-hidden="true"></span></span>
+      <span class="film__cap"><strong${ed(ctx, `portfolio.films.${i}.title`)}>${esc(f.title)}</strong></span>
+    </a>`;
+  }).join('')}</div>`;
+}
+
+function shortsFeed(ctx, c, films) {
+  return `<section class="shorts" data-shorts aria-label="${esc(c.title)}">
+  <div class="shorts__track" tabindex="0">
+    ${films.filter((f) => f.file).map((f, k) => {
+      const i = ctx.data.portfolio.films.indexOf(f);
+      return `<article class="short" data-id="${esc(reelId(f))}" data-src="${esc(url(f.file))}">
+      <div class="short__frame">
+        <video playsinline loop preload="none"${f.image?.src ? ` poster="${esc(url(f.image.src))}"` : ''} aria-label="${esc(f.title)}"></video>
+        <span class="short__state" aria-hidden="true"></span>
+        <div class="short__info"><span class="short__count">${k + 1} / ${films.length}</span><h2${ed(ctx, `portfolio.films.${i}.title`)}>${esc(f.title)}</h2></div>
+        <button type="button" class="short__mute" aria-label="Włącz dźwięk">🔇</button>
+        <div class="short__progress"><span></span></div>
+      </div>
+    </article>`;
+    }).join('')}
+  </div>
+  <div class="shorts__nav">
+    <button type="button" data-dir="-1" aria-label="Poprzednia rolka">↑</button>
+    <button type="button" data-dir="1" aria-label="Następna rolka">↓</button>
+  </div>
+  <p class="shorts__hint">Przewiń, aby zobaczyć następną rolkę</p>
 </section>`;
 }
 
@@ -241,6 +279,11 @@ function collectionNav(ctx, current = '') {
 
 function collectionPage(ctx, c) {
   const photos = c.photoCategory ? ctx.data.portfolio.items.filter((it) => it.category === c.photoCategory) : [];
+  if (c.vertical) {
+    return `<div class="shorts-head wrap"><h1>${esc(c.title)}</h1>${collectionNav(ctx, c.id)}</div>
+${shortsFeed(ctx, c, collectionFilms(ctx.data, c.id))}
+${cta(ctx)}`;
+  }
   return `${pageHead(ctx, { kicker: 'Filmy', title: c.title, lead: c.lead })}
 ${collectionNav(ctx, c.id)}
 <section class="section section--tight"><div class="wrap">${filmsGrid(ctx, collectionFilms(ctx.data, c.id), { reels: c.vertical })}</div></section>

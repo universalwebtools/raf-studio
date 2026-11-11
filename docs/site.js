@@ -146,6 +146,71 @@
     if (e.target.matches?.('.film video')) stopOtherFilms(e.target);
   }, true);
 
+  // Rolki w stylu Shorts: widoczna rolka gra, przewinięcie = następna.
+  $$('[data-shorts]').forEach((feed) => {
+    const track = $('.shorts__track', feed);
+    const items = $$('.short', feed);
+    if (!items.length) return;
+    let sound = false; // dźwięk po pierwszym dotknięciu (wymóg przeglądarek)
+    let current = null;
+    const load = (el) => { const v = $('video', el); if (v && !v.src) { v.src = el.dataset.src; v.preload = 'auto'; } return v; };
+    const setMute = () => items.forEach((el) => {
+      const v = $('video', el); v.muted = !sound;
+      const b = $('.short__mute', el); b.textContent = sound ? '🔊' : '🔇';
+      b.setAttribute('aria-label', sound ? 'Wycisz' : 'Włącz dźwięk');
+      b.classList.toggle('is-hint', !sound && el === current);
+    });
+    const play = (el) => {
+      const v = load(el);
+      v.muted = !sound;
+      v.play().then(() => el.classList.remove('is-paused')).catch(() => {
+        // Przeglądarka nie pozwala na dźwięk bez interakcji – startujemy bez dźwięku.
+        sound = false; setMute(); v.muted = true; v.play().catch(() => el.classList.add('is-paused'));
+      });
+    };
+    const activate = (el) => {
+      if (el === current) return;
+      current = el;
+      items.forEach((o) => { if (o !== el) { const v = $('video', o); if (v.src) { v.pause(); v.currentTime = 0; } o.classList.remove('is-paused'); } });
+      $$('.film video').forEach((v) => v.pause());
+      play(el);
+      const next = items[items.indexOf(el) + 1]; if (next) load(next); // wczytaj z wyprzedzeniem
+      setMute(); updateNav();
+      if (history.replaceState) history.replaceState(null, '', '#' + el.dataset.id);
+    };
+    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting && en.intersectionRatio > 0.6) activate(en.target); }), { root: track, threshold: [0.6] });
+    items.forEach((el) => {
+      io.observe(el);
+      const v = $('video', el);
+      v.addEventListener('click', () => {
+        if (!sound) { sound = true; setMute(); if (v.paused) play(el); return; } // pierwsze dotknięcie włącza dźwięk
+        if (v.paused) { v.play(); el.classList.remove('is-paused'); } else { v.pause(); el.classList.add('is-paused'); }
+      });
+      v.addEventListener('timeupdate', () => { $('.short__progress span', el).style.width = (v.currentTime / (v.duration || 1)) * 100 + '%'; });
+      $('.short__mute', el).addEventListener('click', () => { sound = !sound; setMute(); if (sound && v.paused) play(el); });
+    });
+    const go = (d) => { const i = items.indexOf(current) + d; if (items[i]) track.scrollTo({ top: items[i].offsetTop, behavior: 'smooth' }); };
+    // Odtwarzacz wypełnia ekran pod nagłówkiem strony i tytułem sekcji.
+    const fit = () => {
+      const top = ($('[data-hdr]')?.offsetHeight || 0) + ($('.shorts-head')?.offsetHeight || 0);
+      track.style.height = `calc(100svh - ${top}px)`;
+    };
+    fit(); addEventListener('resize', fit);
+    const nav = $$('.shorts__nav button', feed);
+    function updateNav() { const i = items.indexOf(current); if (nav.length) { nav[0].disabled = i <= 0; nav[1].disabled = i >= items.length - 1; } }
+    nav.forEach((b) => b.addEventListener('click', () => go(+b.dataset.dir)));
+    addEventListener('keydown', (e) => {
+      if (e.target.matches('input, textarea, select')) return;
+      if (e.key === 'ArrowDown' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+      if (e.key === ' ' && current) { e.preventDefault(); $('video', current).click(); }
+    });
+    // Start od rolki z adresu (#nazwa), np. po kliknięciu miniatury.
+    const want = decodeURIComponent(location.hash.slice(1));
+    const start = want && items.find((el) => el.dataset.id === want);
+    if (start) track.scrollTop = start.offsetTop;
+  });
+
   // Delikatne pojawianie się sekcji
   if ('IntersectionObserver' in window && !reduce) {
     const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
