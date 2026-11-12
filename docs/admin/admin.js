@@ -230,18 +230,21 @@ const IMG = (key = 'image', label = 'Zdjęcie') => ({ key, label, type: 'image' 
 const P = (key = 'paragraphs', label = 'Akapity') => ({ key, label, type: 'paragraphs' });
 
 const HOME = [
-  ['hero', 'Nagłówek z wideo', [T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł', { max: 40 }), TA('lead', 'Opis', { rows: 3 }), T('cta', 'Tekst przycisku'), IMG('image', 'Zdjęcie (widoczne zanim wczyta się wideo)'), { type: 'note', text: 'Wideo w tle: media/hero-1080.mp4 (komputer, Full HD) i media/hero-mobile.mp4 (telefon, pionowe). To montaż najlepszych ujęć z Twoich filmów – nowy montaż przygotuję dla Ciebie.' }]],
-  ['about', 'O mnie', [T('title', 'Tytuł'), P(), IMG('image', 'Portret'), T('cta', 'Tekst przycisku')]],
-  ['offer', 'Oferta (nagłówek)', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), { type: 'note', text: 'Karty usług edytujesz w grupie „Usługi” po lewej.' }]],
-  ['approach', 'Zaufanie (ciemna sekcja)', [T('title', 'Tytuł'), P(), IMG()]],
-  ['statement', 'Foto / Film', [{ key: '', type: 'groups', label: 'Kafelki', itemLabel: 'Kafelek', min: 1, max: 2, newItem: { title: '', text: '', link: '' }, fields: [T('title', 'Duży napis'), T('text', 'Podpis'), T('link', 'Link (np. uslugi/film/)')] }]],
-  ['promise', 'Od rozmowy do historii', [T('title', 'Tytuł'), { key: 'items', label: 'Punkty', type: 'lines' }]],
-  ['portfolio', 'Portfolio (zapowiedź)', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), T('count', 'Ile zdjęć pokazać na stronie głównej', { type: 'number' }), { type: 'note', text: 'Same zdjęcia dodajesz w „Portfolio” po lewej. Na stronie głównej pokazują się pierwsze z listy.' }]],
-  ['film', 'Film', [T('title', 'Tytuł'), P(), IMG()]],
-  ['process', 'Jak pracuję', [T('title', 'Tytuł'), { key: 'steps', type: 'groups', label: 'Kroki', itemLabel: 'Krok', min: 1, newItem: { title: '', text: '' }, fields: [T('title', 'Nazwa'), TA('text', 'Opis', { rows: 2 })] }]],
-  ['reviews', 'Opinie klientów', [T('title', 'Tytuł'), { key: 'items', type: 'groups', label: 'Opinie', itemLabel: 'Opinia', newItem: { text: '', author: '' }, fields: [TA('text', 'Treść opinii', { rows: 3 }), T('author', 'Autor (np. Ania i Tomek, ślub 2026)')], help: 'Sekcja pojawi się na stronie, gdy dodasz przynajmniej jedną opinię. Wpisuj tylko prawdziwe opinie za zgodą klientów.' }]],
-  ['journal', 'Dziennik (zapowiedź)', [T('label', 'Mały napis'), T('title', 'Tytuł'), { type: 'note', text: 'Wpisy dodajesz w grupie „Dziennik” po lewej.' }]],
-  ['contact', 'Kontakt', [T('kicker', 'Mały napis'), T('title', 'Tytuł'), TA('text', 'Opis', { rows: 3 })]],
+  ['hero', 'Nagłówek z filmem', [T('title', 'Tytuł', { max: 40 }), TA('lead', 'Opis', { rows: 3 }), T('cta2', 'Drugi przycisk (prowadzi do filmów)'),
+    T('float.label', 'Karteczka na filmie: mały napis'), T('float.title', 'Karteczka na filmie: tekst (puste = brak karteczki)'),
+    IMG('image', 'Kadr startowy (widoczny, zanim wczyta się film)'),
+    { type: 'note', text: 'Film w kadrze: media/hero-1080.mp4 (komputer) i media/hero-960.mp4 (telefon) – montaż najlepszych ujęć z Twoich filmów. Nowy montaż przygotuję dla Ciebie.' }]],
+  ['offer', 'Oferta', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie obok listy usług'), { type: 'note', text: 'Usługi na liście edytujesz w grupie „Usługi” po lewej.' }]],
+  ['chapters', 'Realizacje (zdjęcia przy przewijaniu)', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), { key: 'items', type: 'groups', label: 'Rozdziały', itemLabel: 'Rozdział', min: 3, max: 5, newItem: { title: '', text: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [T('title', 'Tytuł'), TA('text', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie (poziome)')], help: 'Od 3 do 5 rozdziałów, każdy z innym zdjęciem.' }]],
+  ['filmsBlock', 'Filmy (odtwarzacz z listą)', [T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), { key: 'films', label: 'Filmy na liście (nazwy plików bez .mp4)', type: 'lines', help: 'Np. lato-jasienica-podsumowanie. Pierwszy na liście startuje w odtwarzaczu.' }]],
+  ['steps', 'Współpraca w krokach', [T('title', 'Tytuł'), { key: 'items', type: 'groups', label: 'Kroki', itemLabel: 'Krok', min: 3, max: 3, newItem: { title: '', text: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [T('title', 'Nazwa'), TA('text', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie')] }]],
+  ['statement', 'O mnie (zdanie przy przewijaniu)', [T('label', 'Mały napis'), TA('text', 'Zdanie (12–40 słów)', { rows: 4 }), T('strong', 'Wyróżniony fragment (musi wystąpić w zdaniu)')]],
+  ['contact', 'Formularz zapytania', [T('title', 'Tytuł'), TA('text', 'Opis', { rows: 3 }), IMG('image', 'Zdjęcie obok formularza')]],
+  ['close', 'Zakończenie strony (nad stopką)', [T('title', 'Tytuł'), T('line', 'Linijka pod tytułem')]],
+  ['about', 'Podstrona „O mnie”', [T('title', 'Tytuł'), P(), IMG('image', 'Portret')]],
+  ['approach', 'Podstrona „O mnie” – ciąg dalszy', [P()]],
+  ['process', 'Podstrona „O mnie” – jak pracuję', [T('title', 'Tytuł'), { key: 'steps', type: 'groups', label: 'Kroki', itemLabel: 'Krok', min: 1, newItem: { title: '', text: '' }, fields: [T('title', 'Nazwa'), TA('text', 'Opis', { rows: 2 })] }]],
+  ['journal', 'Dziennik – nagłówek podstrony', [T('label', 'Mały napis'), T('title', 'Podtytuł'), { type: 'note', text: 'Wpisy dodajesz w grupie „Dziennik” po lewej.' }]],
 ];
 
 const SERVICE_FIELDS = [
@@ -299,7 +302,7 @@ const FILM_FIELDS = [
 function panels() {
   const list = [];
   for (const [key, label, fields] of HOME) {
-    list.push({ id: `home.${key}`, group: 'Strona główna', label, base: `home.${key}`, page: key === 'contact' ? 'kontakt/' : '', fields });
+    list.push({ id: `home.${key}`, group: 'Strona główna', label, base: `home.${key}`, page: ({ about: 'o-mnie/', approach: 'o-mnie/', process: 'o-mnie/', journal: 'blog/' })[key] || '', fields });
   }
   data.services.forEach((s, i) => list.push({
     id: `service-${i}`, group: 'Usługi', label: s.title || 'Nowa usługa', base: `services.${i}`, page: `uslugi/${s.slug}/`, fields: SERVICE_FIELDS,

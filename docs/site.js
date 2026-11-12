@@ -3,21 +3,7 @@
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-  // Menu mobilne
-  const burger = $('[data-burger]');
-  burger?.addEventListener('click', () => {
-    const open = document.body.classList.toggle('nav-open');
-    burger.setAttribute('aria-expanded', String(open));
-  });
-  $$('.hdr__nav a').forEach((a) => a.addEventListener('click', () => document.body.classList.remove('nav-open')));
-
-  // Nagłówek przezroczysty nad zdjęciem, ciemny po przewinięciu
-  const hdr = $('[data-hdr]');
-  if (hdr?.classList.contains('hdr--overlay')) {
-    const onScroll = () => hdr.classList.toggle('is-solid', scrollY > 60);
-    addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  }
+  // Menu, nagłówek, formularz i animacje obsługuje system.js (/kit/).
 
   // Wideo w nagłówku: wczytywane dopiero po załadowaniu strony,
   // lżejsza wersja na telefon, brak wideo przy oszczędzaniu danych.
@@ -33,22 +19,22 @@
     };
     if (document.readyState === 'complete') start(); else addEventListener('load', start, { once: true });
     toggle?.addEventListener('click', () => {
-      if (video.paused) { video.play(); toggle.textContent = '❚❚'; toggle.setAttribute('aria-label', 'Zatrzymaj wideo'); }
-      else { video.pause(); toggle.textContent = '▶'; toggle.setAttribute('aria-label', 'Odtwórz wideo'); }
+      if (video.paused) { video.play(); toggle.textContent = '❚❚'; toggle.setAttribute('aria-label', 'Zatrzymaj film'); }
+      else { video.pause(); toggle.textContent = '▶'; toggle.setAttribute('aria-label', 'Odtwórz film'); }
     });
   } else {
     toggle?.remove();
   }
 
   // Filtry portfolio
-  $$('.filters').forEach((bar) => {
+  $$('.rf-chips:not(.rf-chips--nav)').forEach((bar) => {
     const grid = bar.nextElementSibling;
     bar.addEventListener('click', (e) => {
       const b = e.target.closest('button');
       if (!b) return;
       $$('button', bar).forEach((x) => x.classList.toggle('is-on', x === b));
       const f = b.dataset.filter;
-      $$('.grid__item', grid).forEach((it) => it.classList.toggle('is-hidden', f !== '*' && it.dataset.cat !== f));
+      $$('.rf-gallery__item', grid).forEach((it) => it.classList.toggle('is-hidden', f !== '*' && it.dataset.cat !== f));
     });
   });
 
@@ -80,8 +66,7 @@
     $('.lb__close', box).focus();
   });
 
-  // Formularz kontaktowy → e-mail przez FormSubmit (bez przeładowania strony).
-  // Bez JavaScriptu formularz wysyła się zwykłym POST-em i wraca na stronę z podziękowaniem.
+  // Stary formularz (data-contact-form) – zostaje tylko dla stron sprzed przebudowy w pamięci przeglądarki.
   $$('[data-contact-form]').forEach((form) => form.addEventListener('submit', async (e) => {
     if (window.RAF_PREVIEW) { e.preventDefault(); return; }
     e.preventDefault();
@@ -134,6 +119,20 @@
     b.closest('.film')?.classList.add('is-playing');
     stopOtherFilms(f);
     b.replaceWith(holder);
+  });
+
+  // Odtwarzacz z listą filmów (strona główna): wybór z listy wczytuje film do kadru.
+  $$('[data-player]').forEach((box) => {
+    const v = $('.rf-player__screen video', box);
+    box.addEventListener('click', (e) => {
+      const b = e.target.closest('.rf-player__item');
+      if (!b || window.RAF_PREVIEW) return;
+      $$('.rf-player__item', box).forEach((x) => { x.classList.toggle('is-on', x === b); x.toggleAttribute('aria-current', x === b); });
+      v.poster = b.dataset.poster || '';
+      v.src = b.dataset.src;
+      v.setAttribute('aria-label', b.textContent.trim());
+      v.play().catch(() => {});
+    });
   });
 
   // Tylko jeden film naraz: start jednego zatrzymuje pozostałe.
@@ -195,7 +194,7 @@
     const go = (d) => { const i = items.indexOf(current) + d; if (items[i]) track.scrollTo({ top: items[i].offsetTop, behavior: 'smooth' }); };
     // Odtwarzacz wypełnia ekran pod nagłówkiem strony i tytułem sekcji.
     const fit = () => {
-      const top = ($('[data-hdr]')?.offsetHeight || 0) + ($('.shorts-head')?.offsetHeight || 0);
+      const top = ($('header.nav')?.offsetHeight || 0) + ($('.shorts-head')?.offsetHeight || 0);
       track.style.height = `calc(100svh - ${top}px)`;
     };
     fit(); addEventListener('resize', fit);
@@ -214,9 +213,4 @@
     if (start) track.scrollTop = start.offsetTop;
   });
 
-  // Delikatne pojawianie się sekcji
-  if ('IntersectionObserver' in window && !reduce) {
-    const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
-    $$('.section__head, .card, .split__img, .split__copy, .steps li, .post-card, .grid__item').forEach((el) => { el.classList.add('reveal'); io.observe(el); });
-  }
 })();

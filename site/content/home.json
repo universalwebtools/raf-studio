@@ -1,22 +1,21 @@
 {
   "hero": {
-    "kicker": "Fotografia & film",
-    "title": "Obraz, który zostaje.",
-    "lead": "Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.",
-    "cta": "Poznaj ofertę",
+    "kicker": "",
+    "title": "Fotograf i filmowiec z Bielska-Białej",
+    "lead": "Śluby, sesje, eventy i filmy dla firm na Podbeskidziu. Zdjęcia, film 4K i ujęcia z drona od jednej osoby.",
+    "cta": "Zapytaj o termin",
+    "cta2": "Zobacz filmy",
     "image": {
       "src": "media/hero-poster.webp",
       "x": 50,
       "y": 50,
-      "alt": "Festyn z lotu ptaka – kadr z filmu RAF.studio"
+      "alt": "Montaż ujęć z filmów RAF.studio: festyn z drona, koncert, wóz strażacki"
     },
     "video": "media/hero-1080.mp4",
-    "videoMobile": "media/hero-mobile.mp4",
-    "imageMobile": {
-      "src": "media/hero-poster-mobile.webp",
-      "x": 50,
-      "y": 50,
-      "alt": ""
+    "videoMobile": "media/hero-960.mp4",
+    "float": {
+      "label": "Ostatni film",
+      "title": "Dożynki gminne 2026"
     }
   },
   "about": {
@@ -35,8 +34,14 @@
     "cta": "Porozmawiajmy"
   },
   "offer": {
-    "title": "Wybierz swoją historię",
-    "lead": "Fotografia, film i perspektywa z góry. Jeden kontakt, spójny obraz."
+    "title": "Zdjęcia i filmy na zamówienie",
+    "lead": "Wycena po krótkiej rozmowie o terminie i miejscu.",
+    "image": {
+      "src": "media/portfolio/zareczyny-58.webp",
+      "x": 50,
+      "y": 40,
+      "alt": "Para podczas sesji narzeczeńskiej, dłoń na policzku"
+    }
   },
   "approach": {
     "title": "Dobre zdjęcia zaczynają się od zaufania.",
@@ -52,18 +57,11 @@
       "alt": "Panna młoda w samochodzie ślubnym"
     }
   },
-  "statement": [
-    {
-      "title": "Foto",
-      "text": "Chwile zapisane w kadrach",
-      "link": "portfolio/"
-    },
-    {
-      "title": "Film",
-      "text": "Historie, które mają swój rytm",
-      "link": "uslugi/film/"
-    }
-  ],
+  "statement": {
+    "label": "O mnie",
+    "text": "Nazywam się Rafał Kukla i robię zdjęcia oraz filmy w Bielsku-Białej, Cieszynie i w Beskidach. Pracuję sam, od pierwszej rozmowy po montaż, więc plan ustalasz i gotowy materiał odbierasz u tej samej osoby.",
+    "strong": "od pierwszej rozmowy po montaż"
+  },
   "promise": {
     "title": "Od pierwszej rozmowy do gotowej historii",
     "items": [
@@ -120,7 +118,116 @@
   },
   "contact": {
     "kicker": "Zróbmy pierwszy krok",
-    "title": "Co możemy dla Ciebie stworzyć?",
-    "text": "Napisz o terminie, miejscu i tym, na czym najbardziej Ci zależy. Wspólnie ustalimy szczegóły."
+    "title": "Zapytanie o zdjęcia lub film",
+    "text": "Napisz, co ma powstać, kiedy i gdzie. Odpowiem mailem z wyceną i wolnymi terminami.",
+    "image": {
+      "src": "media/portret.webp",
+      "x": 41,
+      "y": 30,
+      "alt": "Rafał Kukla, fotograf i filmowiec RAF.studio"
+    }
+  },
+  "chapters": {
+    "title": "Cztery realizacje z ostatnich sezonów",
+    "lead": "Ślub, zaręczyny, wieczór panieński i festiwal gminy, po jednym kadrze z każdej.",
+    "items": [
+      {
+        "title": "Ślub z Audi RS7",
+        "text": "Przygotowania, auto pary młodej i plener przy willi, sfotografowane jednego dnia.",
+        "image": {
+          "src": "media/portfolio/slub-129.webp",
+          "small": "media/portfolio/slub-129-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Welon panny młodej na masce Audi RS7"
+        }
+      },
+      {
+        "title": "Zaręczyny na łące",
+        "text": "Oświadczyny o zachodzie słońca i spacer po łące w złotej godzinie.",
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Oświadczyny na łące pod błękitnym niebem"
+        }
+      },
+      {
+        "title": "Wieczór panieński",
+        "text": "Wianki, białe sukienki i taniec w ogrodzie do ostatniego światła.",
+        "image": {
+          "src": "media/portfolio/panienski-02.webp",
+          "small": "media/portfolio/panienski-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Dziewczyny w wiankach i białych sukienkach w ogrodzie"
+        }
+      },
+      {
+        "title": "Lato w Jasienicy",
+        "text": "Trzy dni festiwalu gminy: koncerty, publiczność i ujęcia z drona, zmontowane w film.",
+        "image": {
+          "src": "media/uslugi-eventy.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Publiczność festiwalu Lato w Jasienicy o zachodzie słońca"
+        }
+      }
+    ]
+  },
+  "filmsBlock": {
+    "title": "Filmy z wydarzeń i dla firm",
+    "lead": "Relacje dla gminy Jasienica i jednostek OSP, reklamy oraz rolki do social mediów.",
+    "films": [
+      "lato-jasienica-podsumowanie",
+      "osp-roztropice-100-lecie",
+      "los-landecos-paintball",
+      "dozynki-2026",
+      "osp-wieszczeta-nowy-samochod",
+      "zloty-samochod"
+    ]
+  },
+  "steps": {
+    "title": "Współpraca w 3 krokach",
+    "items": [
+      {
+        "title": "Ustalamy termin i plan",
+        "text": "Piszesz, co ma powstać. Ustalamy miejsce, godziny i to, czy potrzebny jest film albo dron.",
+        "image": {
+          "src": "media/portfolio/panienski-18.webp",
+          "small": "media/portfolio/panienski-18-800.webp",
+          "x": 50,
+          "y": 40,
+          "alt": "Dwie przyjaciółki w wiankach podczas sesji"
+        }
+      },
+      {
+        "title": "Fotografuję i filmuję na miejscu",
+        "text": "Pracuję według ustalonego planu, a ujęcia z drona dokładam tam, gdzie mają sens.",
+        "image": {
+          "src": "media/portfolio/zareczyny-11.webp",
+          "small": "media/portfolio/zareczyny-11-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para tańcząca w trawie podczas sesji"
+        }
+      },
+      {
+        "title": "Oddaję galerię i film",
+        "text": "Wybrane i obrobione zdjęcia trafiają do prywatnej galerii online, film do pobrania w 4K.",
+        "image": {
+          "src": "media/portfolio/slub-105.webp",
+          "small": "media/portfolio/slub-105-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Bukiet panny młodej w samochodzie"
+        }
+      }
+    ]
+  },
+  "close": {
+    "title": "Termin na ślub, sesję albo film",
+    "line": "Bielsko-Biała, Cieszyn, Śląsk i Beskidy, także realizacje wyjazdowe."
   }
 }

@@ -1,2 +1,5 @@
 site/dist/
 _export/
+.taste-skill/
+.claude/
+site/.impeccable/

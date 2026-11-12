@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="pl">
+<html lang="pl" data-type="service" data-radius="soft" data-buttons="block" data-motion>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Portfolio – fotografia i film | RAF.studio</title>
 <meta name="description" content="Śluby, pary, sesje, wydarzenia i materiały dla firm. Wybrane realizacje RAF.studio.">
+<meta name="site-kind" content="other">
+<meta name="page-type" content="service">
 <link rel="canonical" href="https://raf-studio.pl/portfolio/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="RAF.studio">
@@ -13,339 +15,209 @@
 <meta property="og:url" content="https://raf-studio.pl/portfolio/">
 <meta property="og:image" content="https://raf-studio.pl/media/hero-taniec.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0b0b0c">
+<meta name="theme-color" content="#eeecea">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/style.css?v=da855e52">
+<link rel="preload" href="/fonts/host-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/kit/system.css?v=2a534a10">
+<link rel="stylesheet" href="/kit/ui/cards.css?v=2a534a10">
+<link rel="stylesheet" href="/kit/motion/motion.css?v=2a534a10">
+<link rel="stylesheet" href="/kit/layout/layout.css?v=2a534a10">
+<!-- deal: palette three-stones (kamienne tło jak ściana galerii, oliwkowy akcent – kolor dają zdjęcia), pairing Host Grotesk -->
+<style>
+:root {
+  --p-bg: #eeecea; --p-surface: #e4e1dd; --p-ink: #333231; --p-muted: #625f5b;
+  --p-accent: #5c6b54; --p-accent-ink: #ffffff; --p-action: #5c6b54; --p-action-ink: #ffffff;
+  --p-inv-bg: #333231; --p-inv-surface: #3e3d3c; --p-inv-ink: #eeecea; --p-inv-muted: #adaba9;
+  --p-inv-accent: #eeecea; --p-inv-accent-ink: #333231; --p-inv-action: #eeecea; --p-inv-action-ink: #333231;
+  --font-display: "Host Grotesk", system-ui, sans-serif;
+  --font-text: "Host Grotesk", system-ui, sans-serif;
+  --display-weight: 400;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.04em;
+}
+</style>
+<link rel="stylesheet" href="/style.css?v=2a534a10">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+
 
 </head>
 <body>
-<a class="skip" href="#tresc">Przejdź do treści</a>
-<header class="hdr" data-hdr>
-  <div class="wrap hdr__in">
-    <a class="hdr__logo" href="/" aria-label="RAF.studio – strona główna">
-      <img class="logo-light" src="/media/logo-white.png" alt="RAF.studio" width="120" height="39">
-      <img class="logo-dark" src="/media/logo-black.png" alt="" width="120" height="39" aria-hidden="true">
-    </a>
-    <button class="hdr__burger" type="button" aria-label="Menu" aria-expanded="false" data-burger><span></span><span></span></button>
-    <nav class="hdr__nav" aria-label="Główne menu">
-      <a href="/uslugi/">Oferta</a><a href="/portfolio/" aria-current="page">Portfolio</a><a href="/filmy/">Filmy</a><a href="/o-mnie/">O mnie</a><a href="/blog/">Dziennik</a><a href="/kontakt/">Kontakt</a>
-      <a class="hdr__client" href="https://galeria.raf-studio.pl/" rel="noopener">Strefa klienta</a>
+<!-- type: service · deal: hero split, nav-mega, close-type, footer-columns, rhythm surface-pairs, buttons block, logo klienta
+     moments: photo-chapters (#realizacje), word-highlight (#o-mnie) -->
+<header class="nav">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Przejdź do treści</a>
+    <a class="nav__logo" href="/" aria-label="RAF.studio, strona główna"><img class="rf-logo" src="/media/logo-black.png" alt="RAF.studio" width="104" height="34"></a>
+    <nav class="nav__links" aria-label="Menu główne">
+      <div class="nav__item">
+        <a class="nav__link" href="/uslugi/">Oferta <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <div class="nav__menu">
+          <div class="wrap grid">
+            <div class="menu-col span-3"><p class="t-label">Ludzie</p><a href="/uslugi/fotografia-slubna/">Fotografia ślubna<span>Reportaż i plener</span></a><a href="/uslugi/eventy-i-reportaze/">Eventy i reportaże<span>Festyny, koncerty, OSP</span></a><a href="/uslugi/sesje/">Sesje blisko Was<span>Pary, rodziny, portrety</span></a><a href="/uslugi/wnetrza-i-architektura/">Wnętrza i architektura<span>Domy i nieruchomości</span></a></div>
+            <div class="menu-col span-3"><p class="t-label">Firmy i miejsca</p><a href="/uslugi/dron/">Perspektywa z góry<span>Zdjęcia i film z powietrza</span></a><a href="/uslugi/dla-firm/">Foto i film dla firm<span>Reklama i packshoty</span></a><a href="/uslugi/film/">Historie w ruchu<span>Śluby, eventy, reklamy</span></a></div>
+            <a class="menu-card span-3 start-10" href="/uslugi/fotografia-slubna/">
+              <div class="panel"><img class="frame__img" src="/media/portfolio/slub-00-800.webp" srcset="/media/portfolio/slub-00-800.webp 800w, /media/portfolio/slub-00.webp 2000w" sizes="300px" alt="Para młoda przy samochodzie ślubnym Audi RS" style="object-position:50% 55%" loading="lazy" decoding="async"></div>
+              <span class="t-card">Fotografia ślubna</span>
+              <span class="t-small muted">Bielsko-Biała i okolice</span>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="nav__item"><a class="nav__link" href="/portfolio/" aria-current="page">Portfolio</a></div>
+      <div class="nav__item"><a class="nav__link" href="/filmy/">Filmy</a></div>
+      <div class="nav__item"><a class="nav__link" href="/o-mnie/">O mnie</a></div>
+      <div class="nav__item"><a class="nav__link" href="/blog/">Dziennik</a></div>
     </nav>
+    <div class="nav__actions">
+      <a class="nav__link" href="https://galeria.raf-studio.pl/" rel="noopener">Strefa klienta</a>
+      <a class="btn btn--primary" href="/#kontakt">Zapytaj o termin</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
   </div>
 </header>
-<main id="tresc"><section class="pagehead">
+<main id="top"><div class="rf-page"><section class="rf-sec rf-sec--first rf-head">
   <div class="wrap">
-    <p class="kicker">Realizacje</p>
+    <p class="t-label muted">Realizacje</p>
     <h1>Portfolio</h1>
-    <p class="lead">Śluby, pary, sesje, wydarzenia i materiały dla firm. Wybrane realizacje RAF.studio.</p>
+    <p class="t-lead measure">Śluby, pary, sesje, wydarzenia i materiały dla firm. Wybrane realizacje RAF.studio.</p>
   </div>
 </section>
-<section class="section section--tight"><div class="wrap"><div class="filters" role="tablist">
+<section class="rf-sec rf-sec--tight"><div class="wrap"><div class="rf-chips" role="group" aria-label="Kategorie zdjęć">
       <button type="button" class="is-on" data-filter="*">Wszystkie</button>
       <button type="button" data-filter="Śluby">Śluby</button><button type="button" data-filter="Pary">Pary</button><button type="button" data-filter="Sesje">Sesje</button><button type="button" data-filter="Eventy">Eventy</button><button type="button" data-filter="Straż pożarna">Straż pożarna</button><button type="button" data-filter="Firmy i instytucje">Firmy i instytucje</button><button type="button" data-filter="Motoryzacja">Motoryzacja</button>
     </div>
-    <div class="grid" data-lightbox><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-00.webp" data-lb><img class="" src="/media/portfolio/slub-00-800.webp" srcset="/media/portfolio/slub-00-800.webp 800w, /media/portfolio/slub-00.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Ślub z Audi RS</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-51.webp" data-lb><img class="" src="/media/portfolio/zareczyny-51-800.webp" srcset="/media/portfolio/zareczyny-51-800.webp 800w, /media/portfolio/zareczyny-51.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Złota godzina</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-02.webp" data-lb><img class="" src="/media/portfolio/panienski-02-800.webp" srcset="/media/portfolio/panienski-02-800.webp 800w, /media/portfolio/panienski-02.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Wieczór panieński</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-14.webp" data-lb><img class="" src="/media/portfolio/fitness-14-800.webp" srcset="/media/portfolio/fitness-14-800.webp 800w, /media/portfolio/fitness-14.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Sesja fitness</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-38.webp" data-lb><img class="" src="/media/portfolio/zareczyny-38-800.webp" srcset="/media/portfolio/zareczyny-38-800.webp 800w, /media/portfolio/zareczyny-38.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Zaręczyny</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/groomer-34.webp" data-lb><img class="" src="/media/portfolio/groomer-34-800.webp" srcset="/media/portfolio/groomer-34-800.webp 800w, /media/portfolio/groomer-34.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Salon groomerski</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-129.webp" data-lb><img class="" src="/media/portfolio/slub-129-800.webp" srcset="/media/portfolio/slub-129-800.webp 800w, /media/portfolio/slub-129.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Welon i Audi RS</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-28.webp" data-lb><img class="" src="/media/portfolio/zareczyny-28-800.webp" srcset="/media/portfolio/zareczyny-28-800.webp 800w, /media/portfolio/zareczyny-28.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Pod światło</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-14.webp" data-lb><img class="" src="/media/portfolio/panienski-14-800.webp" srcset="/media/portfolio/panienski-14-800.webp 800w, /media/portfolio/panienski-14.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Wianki</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Eventy">
-        <a href="/media/uslugi-eventy.webp" data-lb><img class="" src="/media/uslugi-eventy.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Publiczność podczas festynu Lato w Jasienicy" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>XXIX Lato w Jasienicy</span><small>Eventy</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Eventy">
-        <a href="/media/uslugi-film.webp" data-lb><img class="" src="/media/uslugi-film.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Koncert na scenie plenerowej" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Koncert pod sceną</span><small>Eventy</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Eventy">
-        <a href="/media/uslugi-dron.webp" data-lb><img class="" src="/media/uslugi-dron.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Festyn z drona" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Festyn z lotu ptaka</span><small>Eventy</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Eventy">
-        <a href="/media/hero-taniec.webp" data-lb><img class="" src="/media/hero-taniec.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Taniec podczas festynu" style="object-position:50% 40%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Energia spotkań</span><small>Eventy</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Straż pożarna">
-        <a href="/media/portfolio/osp-00.webp" data-lb><img class="" src="/media/portfolio/osp-00-800.webp" srcset="/media/portfolio/osp-00-800.webp 800w, /media/portfolio/osp-00.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Zdjęcie grupowe jednostki OSP przed remizą" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Jednostka OSP przed remizą</span><small>Straż pożarna</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Straż pożarna">
-        <a href="/media/portfolio/osp-01.webp" data-lb><img class="" src="/media/portfolio/osp-01-800.webp" srcset="/media/portfolio/osp-01-800.webp 800w, /media/portfolio/osp-01.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Zdjęcie grupowe jednostki OSP przed remizą" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>OSP – zdjęcie grupowe</span><small>Straż pożarna</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Straż pożarna">
-        <a href="/media/portfolio/osp-02.webp" data-lb><img class="" src="/media/portfolio/osp-02-800.webp" srcset="/media/portfolio/osp-02-800.webp 800w, /media/portfolio/osp-02.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Remiza OSP z wozami i jednostką – ujęcie z drona" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Remiza z lotu ptaka</span><small>Straż pożarna</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Straż pożarna">
-        <a href="/media/portfolio/osp-023.webp" data-lb><img class="" src="/media/portfolio/osp-023-800.webp" srcset="/media/portfolio/osp-023-800.webp 800w, /media/portfolio/osp-023.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Strażacy i młodzież przed wozami bojowymi" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>OSP – zdjęcie jednostki</span><small>Straż pożarna</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-78.webp" data-lb><img class="" src="/media/portfolio/slub-78-800.webp" srcset="/media/portfolio/slub-78-800.webp 800w, /media/portfolio/slub-78.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>W drodze na ślub</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-87.webp" data-lb><img class="" src="/media/portfolio/slub-87-800.webp" srcset="/media/portfolio/slub-87-800.webp 800w, /media/portfolio/slub-87.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Para młoda</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-90.webp" data-lb><img class="" src="/media/portfolio/slub-90-800.webp" srcset="/media/portfolio/slub-90-800.webp 800w, /media/portfolio/slub-90.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Chwila w aucie</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-105.webp" data-lb><img class="" src="/media/portfolio/slub-105-800.webp" srcset="/media/portfolio/slub-105-800.webp 800w, /media/portfolio/slub-105.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Bukiet</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-138.webp" data-lb><img class="" src="/media/portfolio/slub-138-800.webp" srcset="/media/portfolio/slub-138-800.webp 800w, /media/portfolio/slub-138.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Welon</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-153.webp" data-lb><img class="" src="/media/portfolio/slub-153-800.webp" srcset="/media/portfolio/slub-153-800.webp 800w, /media/portfolio/slub-153.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Panna młoda</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-21.webp" data-lb><img class="" src="/media/portfolio/slub-21-800.webp" srcset="/media/portfolio/slub-21-800.webp 800w, /media/portfolio/slub-21.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Ślubne Audi RS7</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Śluby">
-        <a href="/media/portfolio/slub-36.webp" data-lb><img class="" src="/media/portfolio/slub-36-800.webp" srcset="/media/portfolio/slub-36-800.webp 800w, /media/portfolio/slub-36.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Detale samochodu</span><small>Śluby</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-02.webp" data-lb><img class="" src="/media/portfolio/zareczyny-02-800.webp" srcset="/media/portfolio/zareczyny-02-800.webp 800w, /media/portfolio/zareczyny-02.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Na spacer</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-11.webp" data-lb><img class="" src="/media/portfolio/zareczyny-11-800.webp" srcset="/media/portfolio/zareczyny-11-800.webp 800w, /media/portfolio/zareczyny-11.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Taniec w trawie</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-16.webp" data-lb><img class="" src="/media/portfolio/zareczyny-16-800.webp" srcset="/media/portfolio/zareczyny-16-800.webp 800w, /media/portfolio/zareczyny-16.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Lekkość</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-29.webp" data-lb><img class="" src="/media/portfolio/zareczyny-29-800.webp" srcset="/media/portfolio/zareczyny-29-800.webp 800w, /media/portfolio/zareczyny-29.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Blisko</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-58.webp" data-lb><img class="" src="/media/portfolio/zareczyny-58-800.webp" srcset="/media/portfolio/zareczyny-58-800.webp 800w, /media/portfolio/zareczyny-58.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Spojrzenie</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-60.webp" data-lb><img class="" src="/media/portfolio/zareczyny-60-800.webp" srcset="/media/portfolio/zareczyny-60-800.webp 800w, /media/portfolio/zareczyny-60.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Pierścionek</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Pary">
-        <a href="/media/portfolio/zareczyny-64.webp" data-lb><img class="" src="/media/portfolio/zareczyny-64-800.webp" srcset="/media/portfolio/zareczyny-64-800.webp 800w, /media/portfolio/zareczyny-64.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Zachód słońca</span><small>Pary</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-00.webp" data-lb><img class="" src="/media/portfolio/panienski-00-800.webp" srcset="/media/portfolio/panienski-00-800.webp 800w, /media/portfolio/panienski-00.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Przyjaciółki</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-06.webp" data-lb><img class="" src="/media/portfolio/panienski-06-800.webp" srcset="/media/portfolio/panienski-06-800.webp 800w, /media/portfolio/panienski-06.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Wieczór panieński</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-09.webp" data-lb><img class="" src="/media/portfolio/panienski-09-800.webp" srcset="/media/portfolio/panienski-09-800.webp 800w, /media/portfolio/panienski-09.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Taniec na łące</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-11.webp" data-lb><img class="" src="/media/portfolio/panienski-11-800.webp" srcset="/media/portfolio/panienski-11-800.webp 800w, /media/portfolio/panienski-11.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Wieczór panieński</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-15.webp" data-lb><img class="" src="/media/portfolio/panienski-15-800.webp" srcset="/media/portfolio/panienski-15-800.webp 800w, /media/portfolio/panienski-15.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>W kwiatach</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-18.webp" data-lb><img class="" src="/media/portfolio/panienski-18-800.webp" srcset="/media/portfolio/panienski-18-800.webp 800w, /media/portfolio/panienski-18.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Razem</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/panienski-21.webp" data-lb><img class="" src="/media/portfolio/panienski-21-800.webp" srcset="/media/portfolio/panienski-21-800.webp 800w, /media/portfolio/panienski-21.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Zabawa</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-01.webp" data-lb><img class="" src="/media/portfolio/fitness-01-800.webp" srcset="/media/portfolio/fitness-01-800.webp 800w, /media/portfolio/fitness-01.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Portret w studio</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-07.webp" data-lb><img class="" src="/media/portfolio/fitness-07-800.webp" srcset="/media/portfolio/fitness-07-800.webp 800w, /media/portfolio/fitness-07.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Sesja fitness</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-19.webp" data-lb><img class="" src="/media/portfolio/fitness-19-800.webp" srcset="/media/portfolio/fitness-19-800.webp 800w, /media/portfolio/fitness-19.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Trening</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-28.webp" data-lb><img class="" src="/media/portfolio/fitness-28-800.webp" srcset="/media/portfolio/fitness-28-800.webp 800w, /media/portfolio/fitness-28.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Sesja fitness</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Sesje">
-        <a href="/media/portfolio/fitness-56.webp" data-lb><img class="" src="/media/portfolio/fitness-56-800.webp" srcset="/media/portfolio/fitness-56-800.webp 800w, /media/portfolio/fitness-56.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Portret</span><small>Sesje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/groomer-01.webp" data-lb><img class="" src="/media/portfolio/groomer-01-800.webp" srcset="/media/portfolio/groomer-01-800.webp 800w, /media/portfolio/groomer-01.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Salon groomerski</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/groomer-07.webp" data-lb><img class="" src="/media/portfolio/groomer-07-800.webp" srcset="/media/portfolio/groomer-07-800.webp 800w, /media/portfolio/groomer-07.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Po strzyżeniu</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/groomer-24.webp" data-lb><img class="" src="/media/portfolio/groomer-24-800.webp" srcset="/media/portfolio/groomer-24-800.webp 800w, /media/portfolio/groomer-24.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Groomerka i pies</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/groomer-36.webp" data-lb><img class="" src="/media/portfolio/groomer-36-800.webp" srcset="/media/portfolio/groomer-36-800.webp 800w, /media/portfolio/groomer-36.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Strzyżenie</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/produkt-31.webp" data-lb><img class="" src="/media/portfolio/produkt-31-800.webp" srcset="/media/portfolio/produkt-31-800.webp 800w, /media/portfolio/produkt-31.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Packshot</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/produkt-33.webp" data-lb><img class="" src="/media/portfolio/produkt-33-800.webp" srcset="/media/portfolio/produkt-33-800.webp 800w, /media/portfolio/produkt-33.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Packshot</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/produkt-36.webp" data-lb><img class="" src="/media/portfolio/produkt-36-800.webp" srcset="/media/portfolio/produkt-36-800.webp 800w, /media/portfolio/produkt-36.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Packshot</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/produkt-41.webp" data-lb><img class="" src="/media/portfolio/produkt-41-800.webp" srcset="/media/portfolio/produkt-41-800.webp 800w, /media/portfolio/produkt-41.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Packshot</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/zaklad-17.webp" data-lb><img class="" src="/media/portfolio/zaklad-17-800.webp" srcset="/media/portfolio/zaklad-17-800.webp 800w, /media/portfolio/zaklad-17.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Film dla zakładu produkcyjnego</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/zaklad-25.webp" data-lb><img class="" src="/media/portfolio/zaklad-25-800.webp" srcset="/media/portfolio/zaklad-25-800.webp 800w, /media/portfolio/zaklad-25.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Produkcja – detal</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Firmy i instytucje">
-        <a href="/media/portfolio/zaklad-33.webp" data-lb><img class="" src="/media/portfolio/zaklad-33-800.webp" srcset="/media/portfolio/zaklad-33-800.webp 800w, /media/portfolio/zaklad-33.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Ludzie firmy</span><small>Firmy i instytucje</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Motoryzacja">
-        <a href="/media/portfolio/audi-00.webp" data-lb><img class="" src="/media/portfolio/audi-00-800.webp" srcset="/media/portfolio/audi-00-800.webp 800w, /media/portfolio/audi-00.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Audi A3</span><small>Motoryzacja</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Motoryzacja">
-        <a href="/media/portfolio/audi-08.webp" data-lb><img class="" src="/media/portfolio/audi-08-800.webp" srcset="/media/portfolio/audi-08-800.webp 800w, /media/portfolio/audi-08.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Wnętrze Audi A3</span><small>Motoryzacja</small></figcaption>
-      </figure><figure class="grid__item" data-cat="Motoryzacja">
-        <a href="/media/portfolio/audi-16.webp" data-lb><img class="" src="/media/portfolio/audi-16-800.webp" srcset="/media/portfolio/audi-16-800.webp 800w, /media/portfolio/audi-16.webp 2000w" sizes="(max-width:700px) 100vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a>
-        <figcaption><span>Audi A3</span><small>Motoryzacja</small></figcaption>
-      </figure></div></div></section>
-<section class="section section--alt" id="rolki">
+    <div class="rf-gallery" data-lightbox><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-00.webp" data-lb aria-label="Powiększ: Ślub z Audi RS"><img class="" src="/media/portfolio/slub-00-800.webp" srcset="/media/portfolio/slub-00-800.webp 800w, /media/portfolio/slub-00.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-51.webp" data-lb aria-label="Powiększ: Złota godzina"><img class="" src="/media/portfolio/zareczyny-51-800.webp" srcset="/media/portfolio/zareczyny-51-800.webp 800w, /media/portfolio/zareczyny-51.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-02.webp" data-lb aria-label="Powiększ: Wieczór panieński"><img class="" src="/media/portfolio/panienski-02-800.webp" srcset="/media/portfolio/panienski-02-800.webp 800w, /media/portfolio/panienski-02.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-14.webp" data-lb aria-label="Powiększ: Sesja fitness"><img class="" src="/media/portfolio/fitness-14-800.webp" srcset="/media/portfolio/fitness-14-800.webp 800w, /media/portfolio/fitness-14.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-38.webp" data-lb aria-label="Powiększ: Zaręczyny"><img class="" src="/media/portfolio/zareczyny-38-800.webp" srcset="/media/portfolio/zareczyny-38-800.webp 800w, /media/portfolio/zareczyny-38.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/groomer-34.webp" data-lb aria-label="Powiększ: Salon groomerski"><img class="" src="/media/portfolio/groomer-34-800.webp" srcset="/media/portfolio/groomer-34-800.webp 800w, /media/portfolio/groomer-34.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-129.webp" data-lb aria-label="Powiększ: Welon i Audi RS"><img class="" src="/media/portfolio/slub-129-800.webp" srcset="/media/portfolio/slub-129-800.webp 800w, /media/portfolio/slub-129.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-28.webp" data-lb aria-label="Powiększ: Pod światło"><img class="" src="/media/portfolio/zareczyny-28-800.webp" srcset="/media/portfolio/zareczyny-28-800.webp 800w, /media/portfolio/zareczyny-28.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-14.webp" data-lb aria-label="Powiększ: Wianki"><img class="" src="/media/portfolio/panienski-14-800.webp" srcset="/media/portfolio/panienski-14-800.webp 800w, /media/portfolio/panienski-14.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Eventy" href="/media/uslugi-eventy.webp" data-lb aria-label="Powiększ: XXIX Lato w Jasienicy"><img class="" src="/media/uslugi-eventy.webp" sizes="(max-width:700px) 50vw, 33vw" alt="Publiczność podczas festynu Lato w Jasienicy" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Eventy" href="/media/uslugi-film.webp" data-lb aria-label="Powiększ: Koncert pod sceną"><img class="" src="/media/uslugi-film.webp" sizes="(max-width:700px) 50vw, 33vw" alt="Koncert na scenie plenerowej" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Eventy" href="/media/uslugi-dron.webp" data-lb aria-label="Powiększ: Festyn z lotu ptaka"><img class="" src="/media/uslugi-dron.webp" sizes="(max-width:700px) 50vw, 33vw" alt="Festyn z drona" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Eventy" href="/media/hero-taniec.webp" data-lb aria-label="Powiększ: Energia spotkań"><img class="" src="/media/hero-taniec.webp" sizes="(max-width:700px) 50vw, 33vw" alt="Taniec podczas festynu" style="object-position:50% 40%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Straż pożarna" href="/media/portfolio/osp-00.webp" data-lb aria-label="Powiększ: Jednostka OSP przed remizą"><img class="" src="/media/portfolio/osp-00-800.webp" srcset="/media/portfolio/osp-00-800.webp 800w, /media/portfolio/osp-00.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Zdjęcie grupowe jednostki OSP przed remizą" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Straż pożarna" href="/media/portfolio/osp-01.webp" data-lb aria-label="Powiększ: OSP – zdjęcie grupowe"><img class="" src="/media/portfolio/osp-01-800.webp" srcset="/media/portfolio/osp-01-800.webp 800w, /media/portfolio/osp-01.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Zdjęcie grupowe jednostki OSP przed remizą" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Straż pożarna" href="/media/portfolio/osp-02.webp" data-lb aria-label="Powiększ: Remiza z lotu ptaka"><img class="" src="/media/portfolio/osp-02-800.webp" srcset="/media/portfolio/osp-02-800.webp 800w, /media/portfolio/osp-02.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Remiza OSP z wozami i jednostką – ujęcie z drona" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Straż pożarna" href="/media/portfolio/osp-023.webp" data-lb aria-label="Powiększ: OSP – zdjęcie jednostki"><img class="" src="/media/portfolio/osp-023-800.webp" srcset="/media/portfolio/osp-023-800.webp 800w, /media/portfolio/osp-023.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Strażacy i młodzież przed wozami bojowymi" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-78.webp" data-lb aria-label="Powiększ: W drodze na ślub"><img class="" src="/media/portfolio/slub-78-800.webp" srcset="/media/portfolio/slub-78-800.webp 800w, /media/portfolio/slub-78.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-87.webp" data-lb aria-label="Powiększ: Para młoda"><img class="" src="/media/portfolio/slub-87-800.webp" srcset="/media/portfolio/slub-87-800.webp 800w, /media/portfolio/slub-87.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-90.webp" data-lb aria-label="Powiększ: Chwila w aucie"><img class="" src="/media/portfolio/slub-90-800.webp" srcset="/media/portfolio/slub-90-800.webp 800w, /media/portfolio/slub-90.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-105.webp" data-lb aria-label="Powiększ: Bukiet"><img class="" src="/media/portfolio/slub-105-800.webp" srcset="/media/portfolio/slub-105-800.webp 800w, /media/portfolio/slub-105.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-138.webp" data-lb aria-label="Powiększ: Welon"><img class="" src="/media/portfolio/slub-138-800.webp" srcset="/media/portfolio/slub-138-800.webp 800w, /media/portfolio/slub-138.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-153.webp" data-lb aria-label="Powiększ: Panna młoda"><img class="" src="/media/portfolio/slub-153-800.webp" srcset="/media/portfolio/slub-153-800.webp 800w, /media/portfolio/slub-153.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-21.webp" data-lb aria-label="Powiększ: Ślubne Audi RS7"><img class="" src="/media/portfolio/slub-21-800.webp" srcset="/media/portfolio/slub-21-800.webp 800w, /media/portfolio/slub-21.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Śluby" href="/media/portfolio/slub-36.webp" data-lb aria-label="Powiększ: Detale samochodu"><img class="" src="/media/portfolio/slub-36-800.webp" srcset="/media/portfolio/slub-36-800.webp 800w, /media/portfolio/slub-36.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para młoda i samochód ślubny Audi RS" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-02.webp" data-lb aria-label="Powiększ: Na spacer"><img class="" src="/media/portfolio/zareczyny-02-800.webp" srcset="/media/portfolio/zareczyny-02-800.webp 800w, /media/portfolio/zareczyny-02.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-11.webp" data-lb aria-label="Powiększ: Taniec w trawie"><img class="" src="/media/portfolio/zareczyny-11-800.webp" srcset="/media/portfolio/zareczyny-11-800.webp 800w, /media/portfolio/zareczyny-11.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-16.webp" data-lb aria-label="Powiększ: Lekkość"><img class="" src="/media/portfolio/zareczyny-16-800.webp" srcset="/media/portfolio/zareczyny-16-800.webp 800w, /media/portfolio/zareczyny-16.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-29.webp" data-lb aria-label="Powiększ: Blisko"><img class="" src="/media/portfolio/zareczyny-29-800.webp" srcset="/media/portfolio/zareczyny-29-800.webp 800w, /media/portfolio/zareczyny-29.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-58.webp" data-lb aria-label="Powiększ: Spojrzenie"><img class="" src="/media/portfolio/zareczyny-58-800.webp" srcset="/media/portfolio/zareczyny-58-800.webp 800w, /media/portfolio/zareczyny-58.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-60.webp" data-lb aria-label="Powiększ: Pierścionek"><img class="" src="/media/portfolio/zareczyny-60-800.webp" srcset="/media/portfolio/zareczyny-60-800.webp 800w, /media/portfolio/zareczyny-60.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Pary" href="/media/portfolio/zareczyny-64.webp" data-lb aria-label="Powiększ: Zachód słońca"><img class="" src="/media/portfolio/zareczyny-64-800.webp" srcset="/media/portfolio/zareczyny-64-800.webp 800w, /media/portfolio/zareczyny-64.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Para podczas sesji narzeczeńskiej w złotym świetle" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-00.webp" data-lb aria-label="Powiększ: Przyjaciółki"><img class="" src="/media/portfolio/panienski-00-800.webp" srcset="/media/portfolio/panienski-00-800.webp 800w, /media/portfolio/panienski-00.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-06.webp" data-lb aria-label="Powiększ: Wieczór panieński"><img class="" src="/media/portfolio/panienski-06-800.webp" srcset="/media/portfolio/panienski-06-800.webp 800w, /media/portfolio/panienski-06.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-09.webp" data-lb aria-label="Powiększ: Taniec na łące"><img class="" src="/media/portfolio/panienski-09-800.webp" srcset="/media/portfolio/panienski-09-800.webp 800w, /media/portfolio/panienski-09.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-11.webp" data-lb aria-label="Powiększ: Wieczór panieński"><img class="" src="/media/portfolio/panienski-11-800.webp" srcset="/media/portfolio/panienski-11-800.webp 800w, /media/portfolio/panienski-11.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-15.webp" data-lb aria-label="Powiększ: W kwiatach"><img class="" src="/media/portfolio/panienski-15-800.webp" srcset="/media/portfolio/panienski-15-800.webp 800w, /media/portfolio/panienski-15.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-18.webp" data-lb aria-label="Powiększ: Razem"><img class="" src="/media/portfolio/panienski-18-800.webp" srcset="/media/portfolio/panienski-18-800.webp 800w, /media/portfolio/panienski-18.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/panienski-21.webp" data-lb aria-label="Powiększ: Zabawa"><img class="" src="/media/portfolio/panienski-21-800.webp" srcset="/media/portfolio/panienski-21-800.webp 800w, /media/portfolio/panienski-21.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Wieczór panieński – dziewczyny w wiankach i białych sukienkach" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-01.webp" data-lb aria-label="Powiększ: Portret w studio"><img class="" src="/media/portfolio/fitness-01-800.webp" srcset="/media/portfolio/fitness-01-800.webp 800w, /media/portfolio/fitness-01.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-07.webp" data-lb aria-label="Powiększ: Sesja fitness"><img class="" src="/media/portfolio/fitness-07-800.webp" srcset="/media/portfolio/fitness-07-800.webp 800w, /media/portfolio/fitness-07.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-19.webp" data-lb aria-label="Powiększ: Trening"><img class="" src="/media/portfolio/fitness-19-800.webp" srcset="/media/portfolio/fitness-19-800.webp 800w, /media/portfolio/fitness-19.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-28.webp" data-lb aria-label="Powiększ: Sesja fitness"><img class="" src="/media/portfolio/fitness-28-800.webp" srcset="/media/portfolio/fitness-28-800.webp 800w, /media/portfolio/fitness-28.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Sesje" href="/media/portfolio/fitness-56.webp" data-lb aria-label="Powiększ: Portret"><img class="" src="/media/portfolio/fitness-56-800.webp" srcset="/media/portfolio/fitness-56-800.webp 800w, /media/portfolio/fitness-56.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja fitness na siłowni" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/groomer-01.webp" data-lb aria-label="Powiększ: Salon groomerski"><img class="" src="/media/portfolio/groomer-01-800.webp" srcset="/media/portfolio/groomer-01-800.webp 800w, /media/portfolio/groomer-01.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/groomer-07.webp" data-lb aria-label="Powiększ: Po strzyżeniu"><img class="" src="/media/portfolio/groomer-07-800.webp" srcset="/media/portfolio/groomer-07-800.webp 800w, /media/portfolio/groomer-07.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/groomer-24.webp" data-lb aria-label="Powiększ: Groomerka i pies"><img class="" src="/media/portfolio/groomer-24-800.webp" srcset="/media/portfolio/groomer-24-800.webp 800w, /media/portfolio/groomer-24.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/groomer-36.webp" data-lb aria-label="Powiększ: Strzyżenie"><img class="" src="/media/portfolio/groomer-36-800.webp" srcset="/media/portfolio/groomer-36-800.webp 800w, /media/portfolio/groomer-36.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Groomerka podczas strzyżenia psa w salonie" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/produkt-31.webp" data-lb aria-label="Powiększ: Packshot"><img class="" src="/media/portfolio/produkt-31-800.webp" srcset="/media/portfolio/produkt-31-800.webp 800w, /media/portfolio/produkt-31.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/produkt-33.webp" data-lb aria-label="Powiększ: Packshot"><img class="" src="/media/portfolio/produkt-33-800.webp" srcset="/media/portfolio/produkt-33-800.webp 800w, /media/portfolio/produkt-33.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/produkt-36.webp" data-lb aria-label="Powiększ: Packshot"><img class="" src="/media/portfolio/produkt-36-800.webp" srcset="/media/portfolio/produkt-36-800.webp 800w, /media/portfolio/produkt-36.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/produkt-41.webp" data-lb aria-label="Powiększ: Packshot"><img class="" src="/media/portfolio/produkt-41-800.webp" srcset="/media/portfolio/produkt-41-800.webp 800w, /media/portfolio/produkt-41.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Fotografia produktowa elementów metalowych" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/zaklad-17.webp" data-lb aria-label="Powiększ: Film dla zakładu produkcyjnego"><img class="" src="/media/portfolio/zaklad-17-800.webp" srcset="/media/portfolio/zaklad-17-800.webp 800w, /media/portfolio/zaklad-17.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/zaklad-25.webp" data-lb aria-label="Powiększ: Produkcja – detal"><img class="" src="/media/portfolio/zaklad-25-800.webp" srcset="/media/portfolio/zaklad-25-800.webp 800w, /media/portfolio/zaklad-25.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Firmy i instytucje" href="/media/portfolio/zaklad-33.webp" data-lb aria-label="Powiększ: Ludzie firmy"><img class="" src="/media/portfolio/zaklad-33-800.webp" srcset="/media/portfolio/zaklad-33-800.webp 800w, /media/portfolio/zaklad-33.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Kadr z filmu wizerunkowego zakładu produkcyjnego" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Motoryzacja" href="/media/portfolio/audi-00.webp" data-lb aria-label="Powiększ: Audi A3"><img class="" src="/media/portfolio/audi-00-800.webp" srcset="/media/portfolio/audi-00-800.webp 800w, /media/portfolio/audi-00.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Motoryzacja" href="/media/portfolio/audi-08.webp" data-lb aria-label="Powiększ: Wnętrze Audi A3"><img class="" src="/media/portfolio/audi-08-800.webp" srcset="/media/portfolio/audi-08-800.webp 800w, /media/portfolio/audi-08.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a><a class="rf-gallery__item" data-cat="Motoryzacja" href="/media/portfolio/audi-16.webp" data-lb aria-label="Powiększ: Audi A3"><img class="" src="/media/portfolio/audi-16-800.webp" srcset="/media/portfolio/audi-16-800.webp 800w, /media/portfolio/audi-16.webp 2000w" sizes="(max-width:700px) 50vw, 33vw" alt="Sesja zdjęciowa samochodu Audi A3" style="object-position:50% 50%" loading="lazy" decoding="async"></a></div></div></section>
+<section class="rf-sec ground-surface" id="rolki">
   <div class="wrap">
-    <div class="section__head section__head--row">
-      <div><h2>Rolki</h2><p class="lead">Krótkie, pionowe formy na Instagram, TikTok i Facebook – sport, wydarzenia i lokalne marki.</p></div>
-      <a class="btn btn--dark" href="/filmy/rolki/">Wszystkie (7)</a>
+    <div class="section-head section-head--row">
+      <div><h2>Rolki</h2><p>Krótkie, pionowe formy na Instagram, TikTok i Facebook – sport, wydarzenia i lokalne marki.</p></div>
+      <a class="btn btn--secondary" href="/filmy/rolki/">Zobacz wszystkie (7)</a>
     </div>
     <div class="films films--reels"><a class="film film--vertical film--link" href="/filmy/rolki/#lks-derby" aria-label="Oglądaj rolkę: LKS – derby">
+      <span class="film__cap">LKS – derby</span>
       <span class="film__play"><img class="" src="/media/filmy/lks-derby.webp" sizes="(max-width:700px) 50vw, 240px" alt="Kadr z filmu: LKS – derby" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span></span>
-      <span class="film__cap"><strong>LKS – derby</strong></span>
     </a><a class="film film--vertical film--link" href="/filmy/rolki/#groomer-reel" aria-label="Oglądaj rolkę: Salon groomerski – strzyżenie">
+      <span class="film__cap">Salon groomerski – strzyżenie</span>
       <span class="film__play"><img class="" src="/media/filmy/groomer-reel.webp" sizes="(max-width:700px) 50vw, 240px" alt="Kadr z filmu: Salon groomerski – strzyżenie" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span></span>
-      <span class="film__cap"><strong>Salon groomerski – strzyżenie</strong></span>
     </a><a class="film film--vertical film--link" href="/filmy/rolki/#reel-youcut" aria-label="Oglądaj rolkę: Złote auto – rolka">
+      <span class="film__cap">Złote auto – rolka</span>
       <span class="film__play"><img class="" src="/media/filmy/reel-youcut.webp" sizes="(max-width:700px) 50vw, 240px" alt="Kadr z rolki: Złote auto – rolka" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span></span>
-      <span class="film__cap"><strong>Złote auto – rolka</strong></span>
     </a><a class="film film--vertical film--link" href="/filmy/rolki/#copa-roztropice" aria-label="Oglądaj rolkę: Copa de Roztropice 2026">
+      <span class="film__cap">Copa de Roztropice 2026</span>
       <span class="film__play"><img class="" src="/media/filmy/copa-roztropice.webp" sizes="(max-width:700px) 50vw, 240px" alt="Kadr z filmu: Copa de Roztropice 2026" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span></span>
-      <span class="film__cap"><strong>Copa de Roztropice 2026</strong></span>
     </a></div>
   </div>
-</section><section class="section" id="gmina-jasienica">
+</section><section class="rf-sec" id="gmina-jasienica">
   <div class="wrap">
-    <div class="section__head section__head--row">
-      <div><h2>Gmina Jasienica</h2><p class="lead">Lato w Jasienicy, dożynki, korowody i finały WOŚP – relacje filmowe z wydarzeń w gminie.</p></div>
-      <a class="btn btn--dark" href="/filmy/gmina-jasienica/">Wszystkie (8)</a>
+    <div class="section-head section-head--row">
+      <div><h2>Gmina Jasienica</h2><p>Lato w Jasienicy, dożynki, korowody i finały WOŚP – relacje filmowe z wydarzeń w gminie.</p></div>
+      <a class="btn btn--secondary" href="/filmy/gmina-jasienica/">Zobacz wszystkie (8)</a>
     </div>
-    <div class="films"><figure class="film">
+    <div class="films"><article class="card card--open film">
+    <h3 class="film__title">XXIX Lato w Jasienicy – podsumowanie</h3>
     <button type="button" class="film__play" data-video="/media/filmy/lato-jasienica-podsumowanie.mp4" data-poster="/media/filmy/lato-jasienica-podsumowanie.webp" aria-label="Odtwórz film: XXIX Lato w Jasienicy – podsumowanie">
       <img class="" src="/media/filmy/lato-jasienica-podsumowanie.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: XXIX Lato w Jasienicy – podsumowanie" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>XXIX Lato w Jasienicy – podsumowanie</strong><small>Eventy</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">Lato w Jasienicy 2026 – sobota</h3>
     <button type="button" class="film__play" data-video="/media/filmy/lato-2026-sobota.mp4" data-poster="/media/filmy/lato-2026-sobota.webp" aria-label="Odtwórz film: Lato w Jasienicy 2026 – sobota">
       <img class="" src="/media/filmy/lato-2026-sobota.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: Lato w Jasienicy 2026 – sobota" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>Lato w Jasienicy 2026 – sobota</strong><small>Eventy</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">XXX Lato w Jasienicy – koncerty</h3>
     <button type="button" class="film__play" data-video="/media/filmy/lato-jasienica-koncerty.mp4" data-poster="/media/filmy/lato-jasienica-koncerty.webp" aria-label="Odtwórz film: XXX Lato w Jasienicy – koncerty">
       <img class="" src="/media/filmy/lato-jasienica-koncerty.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: XXX Lato w Jasienicy – koncerty" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>XXX Lato w Jasienicy – koncerty</strong><small>Eventy</small></figcaption>
-  </figure></div>
+  </article></div>
   
   </div>
-</section><section class="section section--alt" id="straz-pozarna">
+</section><section class="rf-sec ground-surface" id="straz-pozarna">
   <div class="wrap">
-    <div class="section__head section__head--row">
-      <div><h2>Straż pożarna</h2><p class="lead">Jubileusze jednostek, przywitania nowych wozów, zawody i Żaczki – filmy i zdjęcia dla OSP.</p></div>
-      <a class="btn btn--dark" href="/filmy/straz-pozarna/">Wszystkie (7)</a>
+    <div class="section-head section-head--row">
+      <div><h2>Straż pożarna</h2><p>Jubileusze jednostek, przywitania nowych wozów, zawody i Żaczki – filmy i zdjęcia dla OSP.</p></div>
+      <a class="btn btn--secondary" href="/filmy/straz-pozarna/">Zobacz wszystkie (7)</a>
     </div>
-    <div class="films"><figure class="film">
+    <div class="films"><article class="card card--open film">
+    <h3 class="film__title">OSP Roztropice – jubileusz 100-lecia jednostki</h3>
     <button type="button" class="film__play" data-video="/media/filmy/osp-roztropice-100-lecie.mp4" data-poster="/media/filmy/osp-roztropice-100-lecie.webp" aria-label="Odtwórz film: OSP Roztropice – jubileusz 100-lecia jednostki">
       <img class="" src="/media/filmy/osp-roztropice-100-lecie.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: OSP Roztropice – jubileusz 100-lecia jednostki" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>OSP Roztropice – jubileusz 100-lecia jednostki</strong><small>Eventy</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)</h3>
     <button type="button" class="film__play" data-video="/media/filmy/osp-wieszczeta-nowy-samochod.mp4" data-poster="/media/filmy/osp-wieszczeta-nowy-samochod.webp" aria-label="Odtwórz film: OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)">
       <img class="" src="/media/filmy/osp-wieszczeta-nowy-samochod.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>OSP Wieszczęta – przywitanie nowego samochodu (30.01.2025)</strong><small>Eventy</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">OSP – powitanie nowego wozu Scania</h3>
     <button type="button" class="film__play" data-video="/media/filmy/osp-nowy-woz.mp4" data-poster="/media/filmy/osp-nowy-woz.webp" aria-label="Odtwórz film: OSP – powitanie nowego wozu Scania">
       <img class="" src="/media/filmy/osp-nowy-woz.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: OSP – powitanie nowego wozu Scania" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>OSP – powitanie nowego wozu Scania</strong><small>Eventy</small></figcaption>
-  </figure></div>
+  </article></div>
   
   </div>
-</section><section class="section" id="reklama">
+</section><section class="rf-sec" id="reklama">
   <div class="wrap">
-    <div class="section__head section__head--row">
-      <div><h2>Reklama i firmy</h2><p class="lead">Filmy promocyjne dla lokalnych firm i marek – także z ujęciami z drona.</p></div>
-      <a class="btn btn--dark" href="/filmy/reklama/">Wszystkie (4)</a>
+    <div class="section-head section-head--row">
+      <div><h2>Reklama i firmy</h2><p>Filmy promocyjne dla lokalnych firm i marek – także z ujęciami z drona.</p></div>
+      <a class="btn btn--secondary" href="/filmy/reklama/">Zobacz wszystkie (4)</a>
     </div>
-    <div class="films"><figure class="film">
+    <div class="films"><article class="card card--open film">
+    <h3 class="film__title">Złote auto – film motoryzacyjny</h3>
     <button type="button" class="film__play" data-video="/media/filmy/zloty-samochod.mp4" data-poster="/media/filmy/zloty-samochod.webp" aria-label="Odtwórz film: Złote auto – film motoryzacyjny">
       <img class="" src="/media/filmy/zloty-samochod.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: Złote auto – film motoryzacyjny" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>Złote auto – film motoryzacyjny</strong><small>Reklama</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">Los Landecos Paintball – film promocyjny</h3>
     <button type="button" class="film__play" data-video="/media/filmy/los-landecos-paintball.mp4" data-poster="/media/filmy/los-landecos-paintball.webp" aria-label="Odtwórz film: Los Landecos Paintball – film promocyjny">
       <img class="" src="/media/filmy/los-landecos-paintball.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: Los Landecos Paintball – film promocyjny" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>Los Landecos Paintball – film promocyjny</strong><small>Reklama</small></figcaption>
-  </figure><figure class="film">
+  </article><article class="card card--open film">
+    <h3 class="film__title">Dach w Jaworzu – realizacja z drona</h3>
     <button type="button" class="film__play" data-video="/media/filmy/dachy-penkala-jaworze.mp4" data-poster="/media/filmy/dachy-penkala-jaworze.webp" aria-label="Odtwórz film: Dach w Jaworzu – realizacja z drona">
       <img class="" src="/media/filmy/dachy-penkala-jaworze.webp" sizes="(max-width:700px) 100vw, 33vw" alt="Kadr z filmu: Dach w Jaworzu – realizacja z drona" style="object-position:50% 50%" loading="lazy" decoding="async"><span class="film__icon" aria-hidden="true"></span>
     </button>
-    <figcaption><strong>Dach w Jaworzu – realizacja z drona</strong><small>Reklama</small></figcaption>
-  </figure></div>
+  </article></div>
   
   </div>
-</section>
-<section class="cta"><div class="wrap cta__in">
-    <h2>Co możemy dla Ciebie stworzyć?</h2>
-    <a class="btn btn--light" href="/kontakt/">Zapytaj o termin</a>
-  </div></section></main>
-<footer class="ftr">
-  <div class="wrap ftr__grid">
-    <div>
-      <img src="/media/logo-white.png" alt="RAF.studio" width="130" height="42" loading="lazy">
-      <p class="ftr__tag">Fotografia &amp; film</p>
-      <p class="ftr__region">Bielsko-Biała · Cieszyn · Śląsk · realizacje wyjazdowe</p>
+</section></div></main>
+<footer class="footer closing" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--type">
+      <div class="section-head">
+        <h2 id="close-h">Termin na ślub, sesję albo film</h2>
+        <p>Bielsko-Biała, Cieszyn, Śląsk i Beskidy, także realizacje wyjazdowe.</p>
+      </div>
+      <a class="btn btn--primary btn--xl btn--wide" href="/#kontakt">Zapytaj o termin<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
     </div>
-    <div>
-      <h3>Oferta</h3>
-      <ul><li><a href="/uslugi/fotografia-slubna/">Fotografia ślubna</a></li><li><a href="/uslugi/eventy-i-reportaze/">Eventy i reportaże</a></li><li><a href="/uslugi/sesje/">Sesje blisko Was</a></li><li><a href="/uslugi/wnetrza-i-architektura/">Wnętrza i architektura</a></li><li><a href="/uslugi/dron/">Perspektywa z góry</a></li><li><a href="/uslugi/dla-firm/">Foto i film dla firm</a></li><li><a href="/uslugi/film/">Historie w ruchu</a></li></ul>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="/"><img class="rf-logo" src="/media/logo-black.png" alt="RAF.studio" width="104" height="34" loading="lazy"></a>
+          <p class="footer__lede">Fotografia i film, Bielsko-Biała</p>
+        </div>
+        <div class="span-2 footer__col"><h3>Oferta</h3><ul><li><a href="/uslugi/fotografia-slubna/">Fotografia ślubna</a></li><li><a href="/uslugi/eventy-i-reportaze/">Eventy i reportaże</a></li><li><a href="/uslugi/sesje/">Sesje blisko Was</a></li><li><a href="/uslugi/wnetrza-i-architektura/">Wnętrza i architektura</a></li><li><a href="/uslugi/dron/">Perspektywa z góry</a></li><li><a href="/uslugi/dla-firm/">Foto i film dla firm</a></li><li><a href="/uslugi/film/">Historie w ruchu</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Filmy</h3><ul><li><a href="/filmy/rolki/">Rolki</a></li><li><a href="/filmy/gmina-jasienica/">Gmina Jasienica</a></li><li><a href="/filmy/straz-pozarna/">Straż pożarna</a></li><li><a href="/filmy/reklama/">Reklama i firmy</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Strona</h3><ul><li><a href="/portfolio/">Portfolio</a></li><li><a href="/o-mnie/">O mnie</a></li><li><a href="/blog/">Dziennik</a></li><li><a href="/kontakt/">Kontakt</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Kontakt</h3><ul>
+          <li><a href="mailto:rafalkukla00@gmail.com">E-mail</a></li>
+          
+          
+          <li><a href="https://galeria.raf-studio.pl/" rel="noopener">Strefa klienta</a></li>
+        </ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 RAF.studio &nbsp; <a href="/polityka-prywatnosci/">Polityka prywatności</a></span>
+        <div class="socials"></div>
+      </div>
     </div>
-    <div>
-      <h3>Kontakt</h3>
-      <ul>
-        <li><a href="mailto:rafalkukla00@gmail.com">rafalkukla00@gmail.com</a></li>
-        
-        
-        <li><a href="https://galeria.raf-studio.pl/" rel="noopener">Strefa klienta</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="wrap ftr__bottom">
-    <span>© RAF.studio. Fotografia, film i historie blisko ludzi.</span>
-    <a href="/polityka-prywatnosci/">Polityka prywatności</a>
   </div>
 </footer>
-<script src="/site.js?v=da855e52" defer></script>
+<script type="module" src="/kit/system.js?v=2a534a10"></script>
+<script type="module" src="/kit/motion/motion.js?v=2a534a10"></script>
+<script type="module" src="/kit/layout/layout.js?v=2a534a10"></script>
+<script src="/site.js?v=2a534a10" defer></script>
 </body>
 </html>
