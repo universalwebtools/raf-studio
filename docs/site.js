@@ -143,7 +143,7 @@
     $$('.film iframe').forEach((fr) => { if (fr !== current) fr.src = fr.src; });
   }
   document.addEventListener('play', (e) => {
-    if (e.target.matches?.('.film video')) stopOtherFilms(e.target);
+    if (e.target.matches?.('.film video:not(.wg-hover)')) stopOtherFilms(e.target);
   }, true);
 
   // Rolki w stylu Shorts: widoczna rolka gra, przewinięcie = następna.
@@ -212,6 +212,141 @@
     const want = decodeURIComponent(location.hash.slice(1));
     const start = want && items.find((el) => el.dataset.id === want);
     if (start) track.scrollTop = start.offsetTop;
+  });
+
+  /* ---------- Widżety (włączane w edytorze) ---------- */
+  const raf = (fn) => { let t = 0; return () => { if (!t) t = requestAnimationFrame(() => { t = 0; fn(); }); }; };
+  const progress = (el) => { const r = el.getBoundingClientRect(); const d = r.height - innerHeight; return d > 0 ? Math.min(1, Math.max(0, -r.top / d)) : 0; };
+
+  // Pozioma galeria: sekcja ma wysokość zależną od szerokości paska, pasek przesuwa się w bok.
+  $$('[data-wg-hscroll]').forEach((sec) => {
+    const track = $('.wg-hscroll__track', sec);
+    if (reduce) { sec.classList.add('is-static'); return; }
+    const size = () => { const extra = Math.max(0, track.scrollWidth - innerWidth); sec.style.height = `calc(100svh + ${extra}px)`; sec.dataset.extra = extra; upd(); };
+    const upd = raf(() => { track.style.transform = `translate3d(${-progress(sec) * (+sec.dataset.extra || 0)}px,0,0)`; });
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', size);
+    addEventListener('load', size, { once: true });
+    size();
+  });
+
+  // Rozdziały: zdjęcie zmienia się razem z aktywnym akapitem.
+  $$('[data-wg-chapters]').forEach((sec) => {
+    const imgs = $$('.wg-chapters__img', sec);
+    const steps = $$('.wg-chapters__step', sec);
+    const io = new IntersectionObserver((es) => es.forEach((en) => {
+      if (!en.isIntersecting) return;
+      const i = steps.indexOf(en.target);
+      steps.forEach((s, j) => s.classList.toggle('is-on', j === i));
+      imgs.forEach((m, j) => m.classList.toggle('is-on', j === i));
+    }), { rootMargin: '-45% 0px -45% 0px' });
+    steps.forEach((s) => io.observe(s));
+  });
+
+  // Zbliżenie nagłówka przy przewijaniu.
+  $$('[data-wg-zoom]').forEach((hero) => {
+    if (reduce) return;
+    const media = $('.hero__media', hero);
+    const upd = raf(() => {
+      const p = Math.min(1, Math.max(0, scrollY / (hero.offsetHeight || 1)));
+      media.style.transform = `scale(${1 + p * 0.18})`;
+      media.style.opacity = String(1 - p * 0.35);
+    });
+    addEventListener('scroll', upd, { passive: true });
+    upd();
+  });
+
+  // Suwak przed/po.
+  $$('[data-wg-ba]').forEach((fr) => {
+    const r = $('input', fr);
+    const set = () => fr.style.setProperty('--pos', r.value + '%');
+    r.addEventListener('input', set);
+    set();
+  });
+
+  // Podgląd filmu po najechaniu myszką (tylko komputer).
+  if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduce && !saveData) {
+    $$('[data-wg-hover]').forEach((fig) => {
+      let v = null;
+      fig.addEventListener('mouseenter', () => {
+        if (fig.classList.contains('is-playing')) return;
+        if (!v) {
+          v = document.createElement('video');
+          v.className = 'wg-hover'; v.muted = true; v.loop = true; v.playsInline = true; v.preload = 'auto'; v.setAttribute('aria-hidden', 'true');
+          v.src = fig.dataset.wgHover;
+          $('.film__play', fig)?.append(v);
+          v.addEventListener('playing', () => v.classList.add('is-on'));
+        }
+        v.play().catch(() => {});
+      });
+      fig.addEventListener('mouseleave', () => { if (v) { v.pause(); v.classList.remove('is-on'); } });
+      fig.addEventListener('click', () => { v?.remove(); v = null; }, true);
+    });
+  }
+
+  // Karuzela opinii: strzałki + automatyczne przewijanie (zatrzymane po najechaniu).
+  $$('[data-wg-reviews]').forEach((sec) => {
+    const track = $('.wg-rev__track', sec);
+    const go = (d) => {
+      const card = track.firstElementChild; if (!card) return;
+      const w = card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0);
+      const end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      track.scrollTo({ left: d > 0 && end ? 0 : track.scrollLeft + d * w, behavior: 'smooth' });
+    };
+    $$('.wg-rev__nav button', sec).forEach((b) => b.addEventListener('click', () => go(+b.dataset.dir)));
+    let hold = false;
+    sec.addEventListener('mouseenter', () => { hold = true; });
+    sec.addEventListener('mouseleave', () => { hold = false; });
+    sec.addEventListener('focusin', () => { hold = true; });
+    if (!reduce) setInterval(() => { if (!hold && !document.hidden && track.scrollWidth > track.clientWidth + 4) go(1); }, 6000);
+  });
+
+  // Liczniki – liczą od zera, gdy pojawią się na ekranie.
+  const counters = $$('[data-wg-count]');
+  if (counters.length && !reduce && 'IntersectionObserver' in window) {
+    const io = new IntersectionObserver((es) => es.forEach((en) => {
+      if (!en.isIntersecting) return;
+      io.unobserve(en.target);
+      const el = en.target, to = +el.dataset.wgCount, suffix = el.textContent.replace(/^[\d\s]+/, ''), t0 = performance.now();
+      const tick = (t) => { const p = Math.min(1, (t - t0) / 1400); el.textContent = Math.round(to * (1 - (1 - p) ** 3)) + suffix; if (p < 1) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+    }), { threshold: 0.6 });
+    counters.forEach((el) => io.observe(el));
+  }
+
+  // Kalendarz wolnych terminów – zawsze od bieżącego miesiąca.
+  $$('[data-wg-calendar]').forEach((box) => {
+    const busy = new Set((box.dataset.busy || '').split(',').filter(Boolean));
+    const n = +box.dataset.months || 3;
+    const names = ['Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec', 'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'];
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const pad = (x) => String(x).padStart(2, '0');
+    let html = '';
+    for (let m = 0; m < n; m++) {
+      const first = new Date(today.getFullYear(), today.getMonth() + m, 1);
+      const days = new Date(first.getFullYear(), first.getMonth() + 1, 0).getDate();
+      const lead = (first.getDay() + 6) % 7; // poniedziałek = 0
+      let cells = '<span class="wg-cal__dow">Pn</span><span class="wg-cal__dow">Wt</span><span class="wg-cal__dow">Śr</span><span class="wg-cal__dow">Cz</span><span class="wg-cal__dow">Pt</span><span class="wg-cal__dow">So</span><span class="wg-cal__dow">Nd</span>';
+      cells += '<span></span>'.repeat(lead);
+      for (let d = 1; d <= days; d++) {
+        const date = new Date(first.getFullYear(), first.getMonth(), d);
+        const iso = `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(d)}`;
+        const cls = date < today ? 'is-past' : busy.has(iso) ? 'is-busy' : 'is-free';
+        cells += `<span class="wg-cal__d ${cls}" title="${cls === 'is-busy' ? 'Zajęty' : cls === 'is-free' ? 'Wolny' : ''}">${d}</span>`;
+      }
+      html += `<div class="wg-cal__month"><h3>${names[first.getMonth()]} ${first.getFullYear()}</h3><div class="wg-cal__grid">${cells}</div></div>`;
+    }
+    box.innerHTML = html;
+  });
+
+  // Mapa – wczytywana dopiero po kliknięciu (bez połączeń z OpenStreetMap wcześniej).
+  $$('[data-wg-map]').forEach((box) => {
+    $('button', box)?.addEventListener('click', () => {
+      if (window.RAF_PREVIEW) return;
+      const f = document.createElement('iframe');
+      f.src = box.dataset.wgMap; f.title = 'Mapa obszaru działania'; f.loading = 'lazy'; f.referrerPolicy = 'no-referrer';
+      box.replaceChildren(f);
+    });
   });
 
   // Delikatne pojawianie się sekcji

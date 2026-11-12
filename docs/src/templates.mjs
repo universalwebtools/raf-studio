@@ -191,7 +191,8 @@ function filmCard(ctx, f, { large = false } = {}) {
   const poster = f.image?.src
     ? img(ctx, f.image, { path: `portfolio.films.${i}.image`, sizes: large ? '(max-width:800px) 100vw, 50vw' : '(max-width:700px) 100vw, 33vw' })
     : v.thumb ? `<img src="${esc(v.thumb)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<div class="ph"></div>';
-  return `<figure class="film${large ? ' film--large' : ''}${f.vertical ? ' film--vertical' : ''}">
+  const hover = v.type === 'file' && ctx.data.widgets?.filmHover?.enabled ? ` data-wg-hover="${esc(url(v.src))}"` : '';
+  return `<figure class="film${large ? ' film--large' : ''}${f.vertical ? ' film--vertical' : ''}"${hover}>
     <button type="button" class="film__play" ${play} aria-label="Odtwórz film: ${esc(f.title)}">
       ${poster}<span class="film__icon" aria-hidden="true"></span>
     </button>
@@ -321,13 +322,157 @@ const cta = (ctx) => {
   </div></section>`;
 };
 
+/* ---------- Widżety (włączane w edytorze: „Widżety do dodania”) ---------- */
+
+const WG = (ctx) => ctx.data.widgets || {};
+const wgOn = (ctx, key) => !!WG(ctx)[key]?.enabled;
+const wgHead = (ctx, key, w, { center = true } = {}) => (w.title || w.lead) ? `<div class="section__head${center ? ' center' : ''}">
+      ${w.title ? `<h2${ed(ctx, `widgets.${key}.title`)}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p class="lead"${ed(ctx, `widgets.${key}.lead`)}>${esc(w.lead)}</p>` : ''}
+    </div>` : '';
+
+const WIDGETS = {
+  // 1. Karuzela z logotypami (nazwa tekstem, dopóki nie ma logo)
+  logos(ctx, w) {
+    const items = (w.items || []).filter((x) => x.name || x.image?.src);
+    if (!items.length) return '';
+    const one = items.map((x, i) => `<li${ed(ctx, `widgets.logos.items.${i}.name`)}>${x.image?.src
+      ? `<img src="${esc(url(x.image.src))}" alt="${esc(x.image.alt || x.name || '')}" loading="lazy" decoding="async">`
+      : `<span>${esc(x.name)}</span>`}</li>`).join('');
+    return `<section class="wg-logos" aria-label="${esc(w.title || 'Klienci')}">
+  ${w.title ? `<p class="wg-logos__title"${ed(ctx, 'widgets.logos.title')}>${esc(w.title)}</p>` : ''}
+  <div class="wg-logos__viewport"><ul class="wg-logos__track">${one}${one.replace(/<li/g, '<li aria-hidden="true"')}</ul></div>
+</section>`;
+  },
+  // 2. Pozioma galeria przewijana w dół
+  hscroll(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="wg-hscroll" data-wg-hscroll>
+  <div class="wg-hscroll__sticky">
+    <div class="wrap">${wgHead(ctx, 'hscroll', w, { center: false })}</div>
+    <div class="wg-hscroll__track" data-lightbox>${items.map((x, i) => `<a class="wg-hscroll__item" href="${esc(url(x.image.src))}" data-lb>${img(ctx, x.image, { path: `widgets.hscroll.items.${i}.image`, sizes: '(max-width:700px) 80vw, 40vw' })}</a>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // 3. Rozdziały odsłaniane przy przewijaniu
+  chapters(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src || x.title);
+    if (!items.length) return '';
+    return `<section class="section wg-chapters" data-wg-chapters>
+  <div class="wrap">${wgHead(ctx, 'chapters', w)}
+    <div class="wg-chapters__grid">
+      <div class="wg-chapters__media" aria-hidden="true">${items.map((x, i) => `<div class="wg-chapters__img${i ? '' : ' is-on'}">${img(ctx, x.image, { path: `widgets.chapters.items.${i}.image`, sizes: '(max-width:800px) 100vw, 50vw' })}</div>`).join('')}</div>
+      <ol class="wg-chapters__list">${items.map((x, i) => `<li class="wg-chapters__step${i ? '' : ' is-on'}">
+        <div class="wg-chapters__mimg">${img(ctx, x.image, { sizes: '100vw' })}</div>
+        <span class="wg-chapters__n">0${i + 1}</span>
+        <h3${ed(ctx, `widgets.chapters.items.${i}.title`)}>${esc(x.title)}</h3>
+        <p${ed(ctx, `widgets.chapters.items.${i}.text`)}>${esc(x.text)}</p>
+      </li>`).join('')}</ol>
+    </div>
+  </div>
+</section>`;
+  },
+  // 5. Suwak przed/po
+  beforeAfter(ctx, w) {
+    const items = (w.items || []).filter((x) => x.before?.src && x.after?.src);
+    if (!items.length) return '';
+    return `<section class="section section--alt">
+  <div class="wrap">${wgHead(ctx, 'beforeAfter', w)}
+    <div class="wg-ba-list">${items.map((x, i) => `<figure class="wg-ba">
+      <div class="wg-ba__frame" data-wg-ba style="--pos:50%">
+        ${img(ctx, x.after, { path: `widgets.beforeAfter.items.${i}.after`, cls: 'wg-ba__after', sizes: '(max-width:800px) 100vw, 50vw' })}
+        <div class="wg-ba__before">${img(ctx, x.before, { path: `widgets.beforeAfter.items.${i}.before`, sizes: '(max-width:800px) 100vw, 50vw' })}</div>
+        <span class="wg-ba__tag wg-ba__tag--l">Przed</span><span class="wg-ba__tag wg-ba__tag--r">Po</span>
+        <span class="wg-ba__handle" aria-hidden="true"></span>
+        <input class="wg-ba__range" type="range" min="0" max="100" value="50" aria-label="Porównanie przed i po">
+      </div>
+      ${x.label ? `<figcaption${ed(ctx, `widgets.beforeAfter.items.${i}.label`)}>${esc(x.label)}</figcaption>` : ''}
+    </figure>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // 7. Karuzela opinii
+  reviews(ctx, w) {
+    const items = (w.items || []).filter((x) => x.text);
+    if (!items.length) return '';
+    const stars = (n) => { const k = Math.max(0, Math.min(5, Number(n) || 0)); return k ? `<span class="wg-rev__stars" aria-label="Ocena ${k} na 5">${'★'.repeat(k)}${'☆'.repeat(5 - k)}</span>` : ''; };
+    return `<section class="section wg-rev" data-wg-reviews>
+  <div class="wrap">${wgHead(ctx, 'reviews', w)}
+    <div class="wg-rev__track">${items.map((x, i) => `<blockquote class="wg-rev__card">
+      ${stars(x.stars)}
+      <p${ed(ctx, `widgets.reviews.items.${i}.text`)}>„${esc(x.text)}”</p>
+      <footer${ed(ctx, `widgets.reviews.items.${i}.author`)}>${esc(x.author)}</footer>
+    </blockquote>`).join('')}</div>
+    <div class="wg-rev__nav">
+      <button type="button" data-dir="-1" aria-label="Poprzednia opinia">‹</button>
+      <button type="button" data-dir="1" aria-label="Następna opinia">›</button>
+      ${w.link ? `<a class="more" href="${esc(w.link)}" rel="noopener">Wszystkie opinie w Google →</a>` : ''}
+    </div>
+  </div>
+</section>`;
+  },
+  // 8. Liczniki
+  counters(ctx, w) {
+    const d = ctx.data;
+    const films = visibleFilms(d);
+    const auto = { photos: d.portfolio.items.length, films: films.length, reels: films.filter((f) => f.vertical).length, services: d.services.length };
+    const items = (w.items || []).map((x) => ({ ...x, n: x.auto && auto[x.auto] != null ? auto[x.auto] : Number(x.value) || 0 })).filter((x) => x.label);
+    if (!items.length) return '';
+    return `<section class="wg-count">
+  <div class="wrap">
+    ${w.title ? `<h2 class="center"${ed(ctx, 'widgets.counters.title')}>${esc(w.title)}</h2>` : ''}
+    <ul class="wg-count__list">${items.map((x, i) => `<li><strong data-wg-count="${x.n}">${x.n}${esc(x.suffix || '')}</strong><span${ed(ctx, `widgets.counters.items.${i}.label`)}>${esc(x.label)}</span></li>`).join('')}</ul>
+  </div>
+</section>`;
+  },
+  // 9. Kalendarz wolnych terminów (siatka miesięcy rysowana w przeglądarce, żeby zawsze startowała od bieżącego miesiąca)
+  calendar(ctx, w) {
+    const busy = (w.busy || []).filter((x) => /^\d{4}-\d{2}-\d{2}$/.test(x));
+    return `<section class="section section--alt">
+  <div class="wrap">${wgHead(ctx, 'calendar', w)}
+    <div class="wg-cal" data-wg-calendar data-busy="${esc(busy.join(','))}" data-months="${Math.max(1, Math.min(12, Number(w.months) || 3))}"></div>
+    <p class="wg-cal__legend"><span class="wg-cal__key wg-cal__key--busy"></span> zajęty <span class="wg-cal__key"></span> wolny</p>
+    ${w.note ? `<p class="center help-note"${ed(ctx, 'widgets.calendar.note')}>${esc(w.note)}</p>` : ''}
+    <p class="center"><a class="btn btn--dark" href="${url(`kontakt/`)}">Zapytaj o termin</a></p>
+  </div>
+</section>`;
+  },
+  // 10. Mapa obszaru działania (OpenStreetMap wczytywane dopiero po kliknięciu)
+  map(ctx, w) {
+    const lat = Number(w.lat) || 49.79, lon = Number(w.lon) || 18.93, z = Math.max(5, Math.min(14, Number(w.zoom) || 10));
+    const dx = 360 / 2 ** z * 1.6, dy = dx * 0.55;
+    const src = `https://www.openstreetmap.org/export/embed.html?bbox=${(lon - dx).toFixed(4)}%2C${(lat - dy).toFixed(4)}%2C${(lon + dx).toFixed(4)}%2C${(lat + dy).toFixed(4)}&layer=mapnik&marker=${lat}%2C${lon}`;
+    return `<section class="section">
+  <div class="wrap wg-map">
+    <div class="wg-map__copy">
+      ${w.title ? `<h2${ed(ctx, 'widgets.map.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p class="lead"${ed(ctx, 'widgets.map.lead')}>${esc(w.lead)}</p>` : ''}
+      <ul class="wg-map__places">${(w.places || []).filter(Boolean).map((p, i) => `<li${ed(ctx, `widgets.map.places.${i}`)}>${esc(p)}</li>`).join('')}</ul>
+    </div>
+    <div class="wg-map__box" data-wg-map="${esc(src)}">
+      <button type="button" class="wg-map__load"><strong>Pokaż mapę</strong><small>Mapa wczyta się z OpenStreetMap</small></button>
+    </div>
+  </div>
+</section>`;
+  },
+};
+
+// Widżety w danym miejscu strony głównej, w stałej kolejności.
+const WIDGET_ORDER = ['counters', 'logos', 'chapters', 'hscroll', 'beforeAfter', 'reviews', 'calendar', 'map'];
+function widgetsAt(ctx, position) {
+  const all = WG(ctx);
+  return WIDGET_ORDER.filter((k) => all[k]?.enabled && (all[k].position || 'beforeContact') === position)
+    .map((k) => WIDGETS[k](ctx, all[k])).join('\n');
+}
+
 /* ---------- Strony ---------- */
 
 function homePage(ctx) {
   const { home: h, portfolio, blog } = ctx.data;
   const posts = blog.filter((p) => p.published).slice(0, 3);
   return `
-<section class="hero">
+<section class="hero${wgOn(ctx, 'heroZoom') ? ' wg-zoom' : ''}"${wgOn(ctx, 'heroZoom') ? ' data-wg-zoom' : ''}>
   <div class="hero__media">
     ${h.hero.imageMobile?.src
       ? `<picture class="hero__poster"><source media="(max-width: 899px)" srcset="${esc(url(h.hero.imageMobile.src))}">${img(ctx, h.hero.image, { path: 'home.hero.image', eager: true })}</picture>`
@@ -347,6 +492,7 @@ function homePage(ctx) {
   </div>
   ${h.hero.video ? '<button class="hero__toggle" type="button" data-video-toggle aria-label="Zatrzymaj wideo">❚❚</button>' : ''}
 </section>
+${widgetsAt(ctx, 'afterHero')}
 
 <section class="split">
   <div class="wrap split__grid">
@@ -358,6 +504,7 @@ function homePage(ctx) {
     </div>
   </div>
 </section>
+${widgetsAt(ctx, 'afterAbout')}
 
 <section class="section section--alt" id="oferta">
   <div class="wrap">
@@ -368,6 +515,7 @@ function homePage(ctx) {
     ${serviceCards(ctx)}
   </div>
 </section>
+${widgetsAt(ctx, 'afterOffer')}
 
 <section class="dark">
   <div class="wrap split__grid split__grid--rev">
@@ -399,6 +547,7 @@ function homePage(ctx) {
     <p class="center"><a class="btn btn--dark" href="${url(`portfolio/`)}">Całe portfolio</a></p>
   </div>
 </section>
+${widgetsAt(ctx, 'afterPortfolio')}
 
 <section class="section">
   <div class="wrap split__grid">
@@ -412,6 +561,7 @@ function homePage(ctx) {
     </div>
   </div>
 </section>
+${widgetsAt(ctx, 'afterFilm')}
 
 <section class="section section--alt">
   <div class="wrap">
@@ -436,6 +586,8 @@ ${posts.length ? `<section class="section">
     ${postCards(ctx, posts)}
   </div>
 </section>` : ''}
+
+${widgetsAt(ctx, 'beforeContact')}
 
 ${contactBlock(ctx)}`;
 }
@@ -580,7 +732,7 @@ function privacyPage(ctx) {
 <p>Wiadomość z formularza jest przekazywana na naszą skrzynkę e-mail za pośrednictwem usługi FormSubmit (formsubmit.co). Dalej przechowujemy ją w skrzynce pocztowej tak jak zwykły e-mail. Podanie danych jest dobrowolne, ale bez adresu e-mail nie możemy odpowiedzieć.</p>
 
 <h2>5. Cookies</h2>
-<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}</p>
+<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}${ctx.data.widgets?.map?.enabled ? ' Mapa na stronie głównej (OpenStreetMap) wczytuje się dopiero po kliknięciu „Pokaż mapę” – wtedy serwer OpenStreetMap otrzymuje Twój adres IP.' : ''}</p>
 ${films ? `<h2>6. Filmy z YouTube i Vimeo</h2>
 <p>Filmy są osadzone z serwisów YouTube (Google) i Vimeo. Odtwarzacz wczytuje się dopiero po kliknięciu przycisku odtwarzania – dopiero wtedy serwis otrzymuje Twój adres IP i może zapisać własne cookies zgodnie ze swoją polityką prywatności. Miniatury niektórych filmów mogą być pobierane z serwerów YouTube podczas wyświetlania strony.</p>` : ''}
 <h2>${films ? 7 : 6}. Odbiorcy danych</h2>

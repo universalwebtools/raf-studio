@@ -369,3 +369,126 @@ p { margin: 0 0 1em; }
   .shorts-head .filters--nav::-webkit-scrollbar { display: none; }
   .shorts-head .filters--nav a { flex: none; padding: 7px 14px; font-size: 13px; }
 }
+
+/* ---------- Widżety (włączane w edytorze) ---------- */
+/* 1. Logotypy */
+.wg-logos { padding: 34px 0; border-bottom: 1px solid var(--line); overflow: hidden; }
+.wg-logos__title { text-align: center; font-size: 13px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+.wg-logos__viewport { -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent); }
+.wg-logos__track { --gap: clamp(36px, 6vw, 72px); display: flex; gap: var(--gap); width: max-content; margin: 0; padding: 0; list-style: none; animation: wg-marquee 38s linear infinite; }
+.wg-logos:hover .wg-logos__track { animation-play-state: paused; }
+.wg-logos__track li { flex: none; display: flex; align-items: center; height: 48px; }
+.wg-logos__track img { max-height: 44px; max-width: 150px; width: auto; filter: grayscale(1); opacity: .7; transition: filter .3s, opacity .3s; }
+.wg-logos__track li:hover img { filter: none; opacity: 1; }
+.wg-logos__track span { font-weight: 600; font-size: clamp(17px, 1.8vw, 21px); letter-spacing: -.01em; color: var(--ink-2); white-space: nowrap; opacity: .75; }
+@keyframes wg-marquee { to { transform: translateX(calc(-50% - var(--gap) / 2)); } }
+
+/* 2. Pozioma galeria */
+.wg-hscroll { position: relative; background: var(--dark); color: var(--on-dark); }
+.wg-hscroll__sticky { position: sticky; top: 0; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+.wg-hscroll .lead { color: var(--on-dark-muted); }
+.wg-hscroll .section__head { margin-bottom: 28px; }
+.wg-hscroll__track { display: flex; align-items: center; gap: 18px; padding: 0 max(20px, calc((100vw - var(--wrap)) / 2 + 20px)); width: max-content; will-change: transform; }
+.wg-hscroll__item { flex: none; width: clamp(220px, 28vw, 440px); aspect-ratio: 4 / 5; max-height: 62svh; border-radius: var(--radius); overflow: hidden; }
+.wg-hscroll__item:nth-child(even) { aspect-ratio: 3 / 2; width: clamp(280px, 38vw, 600px); }
+.wg-hscroll__item img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s; }
+.wg-hscroll__item:hover img { transform: scale(1.03); }
+.wg-hscroll.is-static .wg-hscroll__sticky { position: static; height: auto; padding: 80px 0; }
+.wg-hscroll.is-static .wg-hscroll__track { width: auto; overflow-x: auto; scroll-snap-type: x mandatory; }
+.wg-hscroll.is-static .wg-hscroll__item { scroll-snap-align: start; }
+
+/* 3. Rozdziały */
+.wg-chapters__grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(32px, 6vw, 90px); align-items: start; }
+.wg-chapters__media { position: sticky; top: 12vh; height: 76vh; border-radius: var(--radius); overflow: hidden; background: var(--dark); }
+.wg-chapters__img { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); transition: clip-path .9s cubic-bezier(.7, 0, .2, 1); }
+.wg-chapters__img.is-on { clip-path: inset(0 0 0 0); z-index: 1; }
+.wg-chapters__img img, .wg-chapters__img .ph { width: 100%; height: 100%; object-fit: cover; }
+.wg-chapters__list { list-style: none; margin: 0; padding: 0; }
+.wg-chapters__step { min-height: 76vh; display: flex; flex-direction: column; justify-content: center; opacity: .3; transition: opacity .5s; }
+.wg-chapters__step.is-on { opacity: 1; }
+.wg-chapters__step h3 { font-size: clamp(28px, 3.4vw, 44px); }
+.wg-chapters__step p { color: var(--ink-2); max-width: 44ch; }
+.wg-chapters__n { font-size: 13px; letter-spacing: .14em; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+.wg-chapters__mimg { display: none; }
+
+/* 4. Zbliżenie nagłówka */
+.wg-zoom .hero__media { transform-origin: 50% 40%; will-change: transform; }
+
+/* 5. Przed / po */
+.wg-ba-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 28px; }
+.wg-ba { margin: 0; }
+.wg-ba figcaption { padding: 12px 2px 0; color: var(--muted); font-size: 15px; }
+.wg-ba__frame { position: relative; aspect-ratio: 3 / 2; border-radius: var(--radius); overflow: hidden; background: var(--dark); user-select: none; }
+.wg-ba__frame img, .wg-ba__frame .ph { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wg-ba__before { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.wg-ba__handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 2px; margin-left: -1px; background: #fff; pointer-events: none; }
+.wg-ba__handle::after { content: "\2039\00a0\203A"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 44px; height: 44px; border-radius: 50%; background: #fff; color: var(--ink); display: grid; place-items: center; font-weight: 700; font-size: 17px; box-shadow: 0 4px 18px rgba(0, 0, 0, .25); }
+.wg-ba__range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; }
+.wg-ba__tag { position: absolute; top: 14px; padding: 4px 10px; border-radius: 99px; background: rgba(0, 0, 0, .55); color: #fff; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; pointer-events: none; }
+.wg-ba__tag--l { left: 14px; }
+.wg-ba__tag--r { right: 14px; }
+.wg-ba__frame:has(.wg-ba__range:focus-visible) .wg-ba__handle::after { outline: 3px solid var(--accent); }
+
+/* 6. Podgląd filmu po najechaniu */
+.film video.wg-hover { object-fit: cover; opacity: 0; transition: opacity .4s; pointer-events: none; background: transparent; }
+.film video.wg-hover.is-on { opacity: 1; }
+
+/* 7. Opinie */
+.wg-rev__track { display: grid; grid-auto-flow: column; grid-auto-columns: min(100%, 380px); gap: 22px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding-bottom: 4px; }
+.wg-rev__track::-webkit-scrollbar { display: none; }
+.wg-rev__card { scroll-snap-align: start; margin: 0; padding: 30px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--paper); display: flex; flex-direction: column; gap: 14px; }
+.wg-rev__card p { margin: 0; font-size: 18px; line-height: 1.55; flex: 1; }
+.wg-rev__card footer { color: var(--muted); font-size: 15px; font-weight: 600; }
+.wg-rev__stars { color: var(--accent); letter-spacing: 3px; font-size: 16px; }
+.wg-rev__nav { display: flex; align-items: center; gap: 10px; margin-top: 22px; }
+.wg-rev__nav button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--paper); font-size: 22px; line-height: 1; cursor: pointer; color: var(--ink); }
+.wg-rev__nav button:hover { border-color: var(--ink); }
+.wg-rev__nav .more { margin-left: auto; }
+
+/* 8. Liczniki */
+.wg-count { padding: clamp(48px, 7vw, 84px) 0; border-bottom: 1px solid var(--line); }
+.wg-count__list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 28px; text-align: center; }
+.wg-count__list strong { display: block; font-size: clamp(42px, 6vw, 72px); font-weight: 600; letter-spacing: -.04em; line-height: 1; font-variant-numeric: tabular-nums; }
+.wg-count__list span { display: block; margin-top: 8px; color: var(--muted); }
+
+/* 9. Kalendarz */
+.wg-cal { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 28px; }
+.wg-cal__month { background: var(--paper); border-radius: var(--radius); padding: 22px; border: 1px solid var(--line); }
+.wg-cal__month h3 { font-size: 18px; margin-bottom: 14px; }
+.wg-cal__grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 14px; }
+.wg-cal__dow { color: var(--muted); font-size: 12px; padding-bottom: 6px; }
+.wg-cal__d { aspect-ratio: 1; display: grid; place-items: center; border-radius: 8px; font-variant-numeric: tabular-nums; }
+.wg-cal__d.is-free { background: var(--paper-2); }
+.wg-cal__d.is-busy { background: var(--ink); color: #fff; text-decoration: line-through; }
+.wg-cal__d.is-past { color: #c4c0ba; }
+.wg-cal__legend { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 22px 0 6px; color: var(--muted); font-size: 14px; }
+.wg-cal__key { display: inline-block; width: 14px; height: 14px; border-radius: 4px; background: var(--paper-2); border: 1px solid var(--line); margin-left: 10px; }
+.wg-cal__key--busy { background: var(--ink); border-color: var(--ink); margin-left: 0; }
+.help-note { color: var(--muted); font-size: 14px; }
+
+/* 10. Mapa */
+.wg-map { display: grid; grid-template-columns: 1fr 1.2fr; gap: clamp(28px, 5vw, 70px); align-items: center; }
+.wg-map__places { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.wg-map__places li { padding: 6px 14px; border: 1px solid var(--line); border-radius: 99px; font-size: 15px; }
+.wg-map__box { position: relative; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; background: var(--paper-2) radial-gradient(circle at 50% 50%, rgba(184, 146, 90, .18), transparent 60%); border: 1px solid var(--line); }
+.wg-map__box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.wg-map__load { position: absolute; inset: 0; width: 100%; border: 0; background: none; cursor: pointer; display: grid; place-content: center; gap: 4px; color: var(--ink); font: inherit; }
+.wg-map__load strong { font-size: 18px; }
+.wg-map__load small { color: var(--muted); }
+.wg-map__load:hover strong { text-decoration: underline; }
+
+@media (max-width: 800px) {
+  .wg-chapters__grid, .wg-map { grid-template-columns: 1fr; }
+  .wg-chapters__media { display: none; }
+  .wg-chapters__step { min-height: 0; opacity: 1; margin-bottom: 48px; }
+  .wg-chapters__mimg { display: block; aspect-ratio: 4 / 3; border-radius: var(--radius); overflow: hidden; margin-bottom: 18px; }
+  .wg-chapters__mimg img { width: 100%; height: 100%; object-fit: cover; }
+  .wg-hscroll__item { width: 70vw; }
+  .wg-hscroll__item:nth-child(even) { width: 82vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wg-logos__track { animation: none; flex-wrap: wrap; justify-content: center; width: auto; }
+  .wg-logos__track li[aria-hidden] { display: none; }
+  .wg-chapters__img { transition: none; }
+}
+.section__head.center .lead { margin-inline: auto; }

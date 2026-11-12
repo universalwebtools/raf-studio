@@ -11,7 +11,7 @@ import { createHash } from 'node:crypto';
 const ROOT = dirname(fileURLToPath(import.meta.url));
 export const CONTENT = join(ROOT, 'content');
 export const DIST = process.env.OUT ? join(ROOT, process.env.OUT) : join(ROOT, '..', 'docs');
-export const CONTENT_FILES = ['site', 'home', 'services', 'portfolio', 'blog'];
+export const CONTENT_FILES = ['site', 'home', 'services', 'portfolio', 'blog', 'widgets'];
 const BASE = (process.env.BASE || '').replace(/\/$/, '');
 const NOINDEX = !!process.env.NOINDEX;
 

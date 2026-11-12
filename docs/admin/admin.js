@@ -124,7 +124,7 @@ function fieldText(path, f) {
 
 function fieldCheckbox(path, f) {
   return h('div', { class: 'field' }, h('label', {},
-    h('input', { type: 'checkbox', checked: !!get(path), 'data-path': path, onchange: (e) => { set(path, e.target.checked); changed(); } }),
+    h('input', { type: 'checkbox', checked: !!get(path), 'data-path': path, onchange: (e) => { set(path, e.target.checked); changed({ rerender: !!f.rerender }); } }),
     ' ', f.label), f.help && h('div', { class: 'help' }, f.help));
 }
 
@@ -296,6 +296,45 @@ const FILM_FIELDS = [
   { key: 'vertical', label: 'Film pionowy (rolka / reels)', type: 'checkbox' },
 ];
 
+/* ---------- Widżety do dodania ---------- */
+const ON = { key: 'enabled', label: 'Włączony – widoczny na stronie', type: 'checkbox', rerender: true };
+const POS = { key: 'position', label: 'Miejsce na stronie głównej', type: 'select', options: [
+  ['afterHero', 'Zaraz pod nagłówkiem z wideo'], ['afterAbout', 'Pod sekcją „O mnie”'], ['afterOffer', 'Pod ofertą'],
+  ['afterPortfolio', 'Pod portfolio'], ['afterFilm', 'Pod filmem'], ['beforeContact', 'Na dole, nad kontaktem'],
+] };
+const NOTE = (text) => ({ type: 'note', text });
+const IMGS = (label, itemLabel = 'Zdjęcie') => ({ key: 'items', type: 'groups', label, itemLabel, newItem: { image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie')] });
+const WIDGET_PANELS = [
+  ['logos', 'Karuzela z logotypami', [ON, POS, NOTE('Pasek z nazwami/logotypami firm, z którymi współpracujesz – przesuwa się powoli w bok, zatrzymuje po najechaniu myszką. Dopóki nie wgrasz logo, widać nazwę napisaną tekstem. Najlepiej wgrywać logo w PNG z przezroczystym tłem.'),
+    T('title', 'Mały napis nad paskiem'),
+    { key: 'items', type: 'groups', label: 'Firmy', itemLabel: 'Firma', newItem: { name: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [T('name', 'Nazwa firmy'), IMG('image', 'Logo (opcjonalnie)')], help: 'Wpisz tylko firmy, które zgodziły się na pokazanie ich nazwy lub logo.' }]],
+  ['hscroll', 'Galeria przewijana w bok', [ON, POS, NOTE('Ciemna sekcja na cały ekran: gdy przewijasz stronę w dół, zdjęcia przesuwają się w bok. Kliknięcie powiększa zdjęcie.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMGS('Zdjęcia (najlepiej 6–12)')]],
+  ['chapters', 'Rozdziały odsłaniane przy przewijaniu', [ON, POS, NOTE('Po lewej przyklejone zdjęcie, po prawej krótkie rozdziały. Przy przewijaniu kolejne zdjęcie „wjeżdża” od dołu. Na telefonie zdjęcia są nad tekstem.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Rozdziały', itemLabel: 'Rozdział', newItem: { title: '', text: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [T('title', 'Nazwa'), TA('text', 'Tekst', { rows: 3 }), IMG('image', 'Zdjęcie')] }]],
+  ['heroZoom', 'Zbliżenie nagłówka przy przewijaniu', [ON, NOTE('Wideo w nagłówku strony głównej delikatnie się przybliża i przygasa, gdy zaczynasz przewijać w dół. Bez dodatkowych ustawień.')]],
+  ['beforeAfter', 'Suwak przed / po', [ON, POS, NOTE('Dwa zdjęcia nałożone na siebie – przesuwając suwak, odwiedzający widzi różnicę między surowym kadrem a gotowym zdjęciem. Przykładowe „przed” są sztucznie przygotowane – podmień je na swoje prawdziwe surowe pliki (ten sam kadr i proporcje).'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Porównania', itemLabel: 'Porównanie', newItem: { label: '', before: { src: '', x: 50, y: 50, alt: 'Przed obróbką' }, after: { src: '', x: 50, y: 50, alt: 'Po obróbce' } }, fields: [T('label', 'Podpis'), IMG('before', 'Zdjęcie PRZED'), IMG('after', 'Zdjęcie PO')] }]],
+  ['filmHover', 'Podgląd filmu po najechaniu', [ON, NOTE('Na komputerze, gdy najedziesz myszką na miniaturę filmu, film zaczyna grać bez dźwięku jako podgląd. Kliknięcie odtwarza go normalnie. Działa w całej stronie dla filmów wgranych na stronę (nie YouTube).')]],
+  ['reviews', 'Karuzela opinii (np. z Google)', [ON, POS, NOTE('Przesuwane karty z opiniami. Przykładowe wpisy to tylko miejsca do uzupełnienia – wklej prawdziwe opinie (np. skopiowane z Google) i usuń nieuzupełnione, zanim włączysz widżet.'),
+    T('title', 'Tytuł'), T('link', 'Link do wszystkich opinii w Google (opcjonalnie)', { type: 'url' }),
+    { key: 'items', type: 'groups', label: 'Opinie', itemLabel: 'Opinia', newItem: { text: '', author: '', stars: 5 }, fields: [TA('text', 'Treść opinii', { rows: 3 }), T('author', 'Autor'), T('stars', 'Gwiazdki (0–5, 0 = bez gwiazdek)', { type: 'number' })] }]],
+  ['counters', 'Liczniki', [ON, POS, NOTE('Duże liczby, które „odliczają” od zera, gdy pojawią się na ekranie. Liczby z wyborem „automatycznie” same się aktualizują (np. gdy dodasz film).'),
+    T('title', 'Tytuł (opcjonalnie)'),
+    { key: 'items', type: 'groups', label: 'Liczniki', itemLabel: 'Licznik', max: 6, newItem: { label: '', auto: '', value: 0, suffix: '' }, fields: [
+      T('label', 'Podpis pod liczbą'),
+      { key: 'auto', label: 'Skąd liczba', type: 'select', options: [['', 'Wpiszę sam'], ['photos', 'Automatycznie: zdjęcia w portfolio'], ['films', 'Automatycznie: filmy'], ['reels', 'Automatycznie: rolki'], ['services', 'Automatycznie: usługi']] },
+      T('value', 'Liczba (gdy „wpiszę sam”)', { type: 'number' }), T('suffix', 'Dopisek za liczbą (np. +)')] }]],
+  ['calendar', 'Kalendarz wolnych terminów', [ON, POS, NOTE('Kilka miesięcy, zawsze od bieżącego. Dni z listy poniżej są oznaczone jako zajęte – resztę widać jako wolne. Pamiętaj, żeby aktualizować listę.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), T('months', 'Ile miesięcy pokazać', { type: 'number' }),
+    { key: 'busy', label: 'Zajęte dni (format RRRR-MM-DD, np. 2027-06-12)', type: 'lines' }, T('note', 'Dopisek pod kalendarzem')]],
+  ['map', 'Mapa obszaru działania', [ON, POS, NOTE('Lista miejscowości i mapa (OpenStreetMap). Mapa wczytuje się dopiero po kliknięciu „Pokaż mapę”, więc nie spowalnia strony – polityka prywatności sama dopisze o tym zdanie.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 3 }), { key: 'places', label: 'Miejscowości', type: 'lines' },
+    T('lat', 'Środek mapy – szerokość geogr.', { type: 'number' }), T('lon', 'Środek mapy – długość geogr.', { type: 'number' }), T('zoom', 'Przybliżenie (5 = kraj, 10 = region, 13 = miasto)', { type: 'number' })]],
+];
+
 function panels() {
   const list = [];
   for (const [key, label, fields] of HOME) {
@@ -330,6 +369,12 @@ function panels() {
     data.blog.unshift({ slug: `nowy-wpis-${Date.now().toString(36)}`, title: 'Nowy wpis', date: new Date().toISOString().slice(0, 10), excerpt: '', image: { src: '', x: 50, y: 50, alt: '' }, published: false, paragraphs: [''] });
     changed(); renderSide(); openPanel('post-0');
   } });
+  if (!data.widgets) data.widgets = {};
+  for (const [key, label, fields] of WIDGET_PANELS) {
+    if (!data.widgets[key]) data.widgets[key] = { enabled: false };
+    const on = !!data.widgets[key].enabled;
+    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' ? 'filmy/' : '', fields });
+  }
   list.push({ id: 'site', group: 'Ustawienia', label: 'Dane firmy i SEO', base: 'site', page: '', fields: SITE_FIELDS });
   return list;
 }
@@ -394,7 +439,7 @@ function renderPanel() {
   if (!p) return;
   if (p.custom) p.custom(panelEl);
   else {
-    panelEl.append(h('h2', {}, p.label), h('p', { class: 'sub' }, p.group));
+    panelEl.append(h('h2', {}, p.title || p.label), h('p', { class: 'sub' }, p.group));
     panelEl.append(...renderFields(p.base, p.fields));
     if (p.danger) panelEl.append(h('div', { class: 'danger-zone' }, h('button', { type: 'button', class: 'btn btn--small btn--danger', onclick: p.danger }, 'Usuń')));
   }

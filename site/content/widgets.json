@@ -1,0 +1,364 @@
+{
+  "logos": {
+    "enabled": false,
+    "position": "afterHero",
+    "title": "Zaufali mi",
+    "items": [
+      {
+        "name": "Gmina Jasienica",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "Gmina Jasienica"
+        }
+      },
+      {
+        "name": "OSP Roztropice",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "OSP Roztropice"
+        }
+      },
+      {
+        "name": "OSP Wieszczęta",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "OSP Wieszczęta"
+        }
+      },
+      {
+        "name": "LKS Zamek Grodziec",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "LKS Zamek Grodziec"
+        }
+      },
+      {
+        "name": "Los Landecos Paintball",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "Los Landecos Paintball"
+        }
+      },
+      {
+        "name": "Penkala",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "Penkala"
+        }
+      },
+      {
+        "name": "SABNER",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "SABNER"
+        }
+      },
+      {
+        "name": "Salon groomerski",
+        "image": {
+          "src": "",
+          "x": 50,
+          "y": 50,
+          "alt": "Salon groomerski"
+        }
+      }
+    ]
+  },
+  "hscroll": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Kadry, które zostają",
+    "lead": "Przewiń w dół – zdjęcia przesuwają się w bok.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-00.webp",
+          "small": "media/portfolio/slub-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda i samochód ślubny Audi RS"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-51.webp",
+          "small": "media/portfolio/zareczyny-51-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para w złotym świetle"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-02.webp",
+          "small": "media/portfolio/panienski-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja wieczoru panieńskiego"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-129.webp",
+          "small": "media/portfolio/slub-129-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda podczas sesji ślubnej"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja narzeczeńska"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-14.webp",
+          "small": "media/portfolio/fitness-14-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-00.webp",
+          "small": "media/portfolio/audi-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Audi – sesja motoryzacyjna"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/osp-01.webp",
+          "small": "media/portfolio/osp-01-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Strażacy OSP w akcji"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/groomer-34.webp",
+          "small": "media/portfolio/groomer-34-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Salon groomerski"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-87.webp",
+          "small": "media/portfolio/slub-87-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Detale ślubne"
+        }
+      }
+    ]
+  },
+  "chapters": {
+    "enabled": false,
+    "position": "afterOffer",
+    "title": "Historie, które opowiadam",
+    "lead": "Każdy rozdział odsłania się podczas przewijania.",
+    "items": [
+      {
+        "title": "Ślub",
+        "text": "Cały dzień – od przygotowań po ostatni taniec. Bez ustawiania, z uważnością na detale.",
+        "image": {
+          "src": "media/portfolio/slub-129.webp",
+          "small": "media/portfolio/slub-129-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda podczas sesji ślubnej"
+        }
+      },
+      {
+        "title": "Zaręczyny",
+        "text": "Spokojna sesja we dwoje, zwykle w złotej godzinie – świetna rozgrzewka przed ślubem.",
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja narzeczeńska"
+        }
+      },
+      {
+        "title": "Wieczór panieński",
+        "text": "Dużo śmiechu, trochę szaleństwa i zdjęcia, które chce się pokazywać.",
+        "image": {
+          "src": "media/portfolio/panienski-02.webp",
+          "small": "media/portfolio/panienski-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja wieczoru panieńskiego"
+        }
+      },
+      {
+        "title": "Wydarzenia",
+        "text": "Festyny, zawody i uroczystości – reportaż, film i ujęcia z drona.",
+        "image": {
+          "src": "media/uslugi-eventy.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Reportaż z wydarzenia"
+        }
+      }
+    ]
+  },
+  "heroZoom": {
+    "enabled": false
+  },
+  "beforeAfter": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Przed i po obróbce",
+    "lead": "Przesuń suwak, żeby zobaczyć różnicę między surowym kadrem a gotowym zdjęciem.",
+    "items": [
+      {
+        "label": "Ślub – obróbka kolorów",
+        "before": {
+          "src": "media/widgets/slub-129-przed.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zdjęcie przed obróbką"
+        },
+        "after": {
+          "src": "media/widgets/slub-129-po.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zdjęcie po obróbce"
+        }
+      },
+      {
+        "label": "Zaręczyny – światło i kolor",
+        "before": {
+          "src": "media/widgets/zareczyny-38-przed.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zdjęcie przed obróbką"
+        },
+        "after": {
+          "src": "media/widgets/zareczyny-38-po.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zdjęcie po obróbce"
+        }
+      }
+    ]
+  },
+  "filmHover": {
+    "enabled": false
+  },
+  "reviews": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Co mówią klienci",
+    "items": [
+      {
+        "text": "Tu wklej prawdziwą opinię klienta (np. skopiowaną z Google).",
+        "author": "Imię klienta, rodzaj zlecenia",
+        "stars": 5
+      },
+      {
+        "text": "Tu wklej drugą opinię. Pamiętaj, by publikować tylko prawdziwe opinie.",
+        "author": "Imię klienta",
+        "stars": 5
+      },
+      {
+        "text": "Tu wklej trzecią opinię.",
+        "author": "Imię klienta",
+        "stars": 5
+      }
+    ],
+    "link": ""
+  },
+  "counters": {
+    "enabled": false,
+    "position": "afterHero",
+    "title": "",
+    "items": [
+      {
+        "label": "zdjęć w portfolio",
+        "auto": "photos",
+        "value": 0,
+        "suffix": ""
+      },
+      {
+        "label": "filmów na stronie",
+        "auto": "films",
+        "value": 0,
+        "suffix": ""
+      },
+      {
+        "label": "rolek",
+        "auto": "reels",
+        "value": 0,
+        "suffix": ""
+      },
+      {
+        "label": "rodzajów usług",
+        "auto": "services",
+        "value": 0,
+        "suffix": ""
+      }
+    ]
+  },
+  "calendar": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Wolne terminy",
+    "lead": "Zaznaczone dni są już zarezerwowane. Pozostałe – zapytaj śmiało.",
+    "months": 3,
+    "busy": [
+      "2026-12-05",
+      "2026-12-12",
+      "2026-12-31",
+      "2027-01-16",
+      "2027-01-23"
+    ],
+    "note": "Kalendarz orientacyjny – ostateczne potwierdzenie terminu po kontakcie."
+  },
+  "map": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Gdzie pracuję",
+    "lead": "Na co dzień Bielsko-Biała, Cieszyn i okolice. Dojeżdżam też dalej – na śluby i wydarzenia w całej Polsce.",
+    "places": [
+      "Bielsko-Biała",
+      "Jasienica",
+      "Cieszyn",
+      "Czechowice-Dziedzice",
+      "Skoczów",
+      "Ustroń",
+      "Wisła",
+      "Szczyrk",
+      "Żywiec",
+      "Pszczyna"
+    ],
+    "lat": 49.79,
+    "lon": 18.93,
+    "zoom": 10
+  }
+}

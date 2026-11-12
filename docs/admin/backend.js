@@ -2,7 +2,7 @@
 //  • lokalnie (localhost): przez server.mjs na tym komputerze,
 //  • online: logowanie kontem Firebase, treść i strona zapisywane jako commit w repozytorium GitHub.
 
-const CONTENT_FILES = ['site', 'home', 'services', 'portfolio', 'blog'];
+const CONTENT_FILES = ['site', 'home', 'services', 'portfolio', 'blog', 'widgets'];
 
 // Adres bazowy strony, np. '' na raf-studio.pl albo '/raf-studio-podglad' na stronie testowej.
 export const SITE_BASE = location.pathname.replace(/\/admin(\/.*)?$/, '');
