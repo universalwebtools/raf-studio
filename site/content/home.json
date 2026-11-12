@@ -1,21 +1,22 @@
 {
   "hero": {
-    "kicker": "",
-    "title": "Fotograf i filmowiec z Bielska-Białej",
-    "lead": "Śluby, sesje, eventy i filmy dla firm na Podbeskidziu. Zdjęcia, film 4K i ujęcia z drona od jednej osoby.",
-    "cta": "Zapytaj o termin",
-    "cta2": "Zobacz filmy",
+    "kicker": "Fotografia & film",
+    "title": "Obraz, który zostaje.",
+    "lead": "Fotografia i film tworzone z naciskiem na emocje, detal i nowoczesny, filmowy charakter.",
+    "cta": "Poznaj ofertę",
     "image": {
       "src": "media/hero-poster.webp",
       "x": 50,
       "y": 50,
-      "alt": "Montaż ujęć z filmów RAF.studio: festyn z drona, koncert, wóz strażacki"
+      "alt": "Festyn z lotu ptaka – kadr z filmu RAF.studio"
     },
     "video": "media/hero-1080.mp4",
-    "videoMobile": "media/hero-960.mp4",
-    "float": {
-      "label": "Ostatni film",
-      "title": "Dożynki gminne 2026"
+    "videoMobile": "media/hero-mobile.mp4",
+    "imageMobile": {
+      "src": "media/hero-poster-mobile.webp",
+      "x": 50,
+      "y": 50,
+      "alt": ""
     }
   },
   "about": {
@@ -34,14 +35,8 @@
     "cta": "Porozmawiajmy"
   },
   "offer": {
-    "title": "Zdjęcia i filmy na zamówienie",
-    "lead": "Wycena po krótkiej rozmowie o terminie i miejscu.",
-    "image": {
-      "src": "media/portfolio/zareczyny-58.webp",
-      "x": 50,
-      "y": 40,
-      "alt": "Para podczas sesji narzeczeńskiej, dłoń na policzku"
-    }
+    "title": "Wybierz swoją historię",
+    "lead": "Fotografia, film i perspektywa z góry. Jeden kontakt, spójny obraz."
   },
   "approach": {
     "title": "Dobre zdjęcia zaczynają się od zaufania.",
@@ -57,11 +52,18 @@
       "alt": "Panna młoda w samochodzie ślubnym"
     }
   },
-  "statement": {
-    "label": "O mnie",
-    "text": "Nazywam się Rafał Kukla i robię zdjęcia oraz filmy w Bielsku-Białej, Cieszynie i w Beskidach. Pracuję sam, od pierwszej rozmowy po montaż, więc plan ustalasz i gotowy materiał odbierasz u tej samej osoby.",
-    "strong": "od pierwszej rozmowy po montaż"
-  },
+  "statement": [
+    {
+      "title": "Foto",
+      "text": "Chwile zapisane w kadrach",
+      "link": "portfolio/"
+    },
+    {
+      "title": "Film",
+      "text": "Historie, które mają swój rytm",
+      "link": "uslugi/film/"
+    }
+  ],
   "promise": {
     "title": "Od pierwszej rozmowy do gotowej historii",
     "items": [
@@ -118,14 +120,18 @@
   },
   "contact": {
     "kicker": "Zróbmy pierwszy krok",
-    "title": "Zapytanie o zdjęcia lub film",
-    "text": "Napisz, co ma powstać, kiedy i gdzie. Odpowiem mailem z wyceną i wolnymi terminami.",
+    "title": "Co możemy dla Ciebie stworzyć?",
+    "text": "Napisz o terminie, miejscu i tym, na czym najbardziej Ci zależy. Wspólnie ustalimy szczegóły.",
     "image": {
       "src": "media/portret.webp",
       "x": 41,
       "y": 30,
       "alt": "Rafał Kukla, fotograf i filmowiec RAF.studio"
     }
+  },
+  "close": {
+    "title": "Termin na ślub, sesję albo film",
+    "line": "Bielsko-Biała, Cieszyn, Śląsk i Beskidy, także realizacje wyjazdowe."
   },
   "chapters": {
     "title": "Cztery realizacje z ostatnich sezonów",
@@ -225,9 +231,5 @@
         }
       }
     ]
-  },
-  "close": {
-    "title": "Termin na ślub, sesję albo film",
-    "line": "Bielsko-Biała, Cieszyn, Śląsk i Beskidy, także realizacje wyjazdowe."
   }
 }

@@ -2,6 +2,8 @@
 // Ten sam plik działa w Node (build.mjs) i w przeglądarce (podgląd w edytorze),
 // więc nie może importować niczego z Node.
 
+import { legacyHome } from './legacy-home.mjs';
+
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
 export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ESC[c]);
 
@@ -732,7 +734,7 @@ export function routes(data, { preview = false, base = '', noindex = false, v = 
   });
 
   const list = [
-    mk('', (ctx) => layout(ctx, { title: site.seoTitle, description: site.seoDescription, home: true, moments: ['photo-chapters', 'word-highlight'], body: homePage(ctx), image: home.hero.image, jsonld: [businessJsonLd(data)] })),
+    { path: '', render: () => legacyHome(data, { preview, base, noindex, v }) }, // strona główna: wersja sprzed przebudowy
     mk('uslugi/', (ctx) => layout(ctx, { title: t('Oferta – fotografia, film i dron w Bielsku-Białej'), description: home.offer.lead + ' ' + services.map((s) => s.title).join(', ') + '.', body: servicesPage(ctx) })),
     ...services.map((s) => mk(`uslugi/${s.slug}/`, (ctx) => layout(ctx, { title: s.seoTitle || t(s.title), description: s.seoDescription || s.short, image: s.image, body: servicePage(ctx, s), jsonld: [crumbs([['Oferta', 'uslugi/'], [s.title, `uslugi/${s.slug}/`]])] }))),
     mk('portfolio/', (ctx) => layout(ctx, { title: t('Portfolio – fotografia i film'), description: portfolio.lead, body: portfolioPage(ctx) })),
