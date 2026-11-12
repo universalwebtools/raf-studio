@@ -26,8 +26,7 @@
     ],
     "seoTitle": "Fotograf ślubny Bielsko-Biała – reportaż ślubny | RAF.studio",
     "seoDescription": "Fotografia ślubna w Bielsku-Białej, Cieszynie i na Śląsku. Naturalny reportaż ślubny, sesje plenerowe i film ślubny od RAF.studio.",
-    "showFilms": false,
-    "navLine": "Reportaż i plener"
+    "showFilms": false
   },
   {
     "slug": "eventy-i-reportaze",
@@ -56,8 +55,7 @@
       "Teaser tuż po wydarzeniu"
     ],
     "seoTitle": "Filmowanie i fotografia eventów Bielsko-Biała – festyny, koncerty | RAF.studio",
-    "seoDescription": "Relacje foto i wideo z wydarzeń w Bielsku-Białej i na Śląsku: festyny, dożynki, koncerty, uroczystości OSP i eventy firmowe. Film 4K i ujęcia z drona.",
-    "navLine": "Festyny, koncerty, OSP"
+    "seoDescription": "Relacje foto i wideo z wydarzeń w Bielsku-Białej i na Śląsku: festyny, dożynki, koncerty, uroczystości OSP i eventy firmowe. Film 4K i ujęcia z drona."
   },
   {
     "slug": "sesje",
@@ -86,8 +84,7 @@
     ],
     "seoTitle": "Sesje zdjęciowe Bielsko-Biała – rodzinne, narzeczeńskie, wizerunkowe | RAF.studio",
     "seoDescription": "Sesje zdjęciowe w Bielsku-Białej i Beskidach: narzeczeńskie, rodzinne, portretowe i wizerunkowe. Naturalnie i bez pośpiechu.",
-    "showFilms": false,
-    "navLine": "Pary, rodziny, portrety"
+    "showFilms": false
   },
   {
     "slug": "wnetrza-i-architektura",
@@ -114,8 +111,7 @@
     ],
     "seoTitle": "Fotografia wnętrz i nieruchomości Bielsko-Biała | RAF.studio",
     "seoDescription": "Profesjonalne zdjęcia wnętrz, nieruchomości i architektury w Bielsku-Białej i na Śląsku. Do ogłoszeń, na stronę i do social mediów.",
-    "showFilms": false,
-    "navLine": "Domy i nieruchomości"
+    "showFilms": false
   },
   {
     "slug": "dron",
@@ -142,8 +138,7 @@
     "seoTitle": "Zdjęcia i filmy z drona Bielsko-Biała | RAF.studio",
     "seoDescription": "Zdjęcia i filmy z drona w Bielsku-Białej i na Śląsku: nieruchomości, inwestycje, wydarzenia i krajobrazy.",
     "showFilms": true,
-    "filmCategory": "",
-    "navLine": "Zdjęcia i film z powietrza"
+    "filmCategory": ""
   },
   {
     "slug": "dla-firm",
@@ -172,8 +167,7 @@
       "Ujęcia z drona"
     ],
     "seoTitle": "Film promocyjny i zdjęcia dla firm Bielsko-Biała | RAF.studio",
-    "seoDescription": "Filmy reklamowe i wizerunkowe, fotografia produktowa i materiały do social mediów dla firm z Bielska-Białej i Śląska.",
-    "navLine": "Reklama i packshoty"
+    "seoDescription": "Filmy reklamowe i wizerunkowe, fotografia produktowa i materiały do social mediów dla firm z Bielska-Białej i Śląska."
   },
   {
     "slug": "film",
@@ -201,7 +195,6 @@
     "seoTitle": "Film ślubny i film reklamowy Bielsko-Biała | RAF.studio",
     "seoDescription": "Filmy ślubne, relacje z wydarzeń i filmy reklamowe w Bielsku-Białej i na Śląsku. Montaż, dźwięk i kolor dopasowane do historii.",
     "showFilms": true,
-    "filmCategory": "",
-    "navLine": "Śluby, eventy, reklamy"
+    "filmCategory": ""
   }
 ]

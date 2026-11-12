@@ -242,7 +242,6 @@ const HOME = [
   ['reviews', 'Opinie klientów', [T('title', 'Tytuł'), { key: 'items', type: 'groups', label: 'Opinie', itemLabel: 'Opinia', newItem: { text: '', author: '' }, fields: [TA('text', 'Treść opinii', { rows: 3 }), T('author', 'Autor (np. Ania i Tomek, ślub 2026)')], help: 'Sekcja pojawi się na stronie, gdy dodasz przynajmniej jedną opinię. Wpisuj tylko prawdziwe opinie za zgodą klientów.' }]],
   ['journal', 'Dziennik (zapowiedź)', [T('label', 'Mały napis'), T('title', 'Tytuł'), { type: 'note', text: 'Wpisy dodajesz w grupie „Dziennik” po lewej.' }]],
   ['contact', 'Kontakt', [T('kicker', 'Mały napis'), T('title', 'Tytuł'), TA('text', 'Opis', { rows: 3 })]],
-  ['close', 'Zakończenie podstron (nad stopką)', [T('title', 'Tytuł'), T('line', 'Linijka pod tytułem')]],
 ];
 
 const SERVICE_FIELDS = [
@@ -300,7 +299,7 @@ const FILM_FIELDS = [
 function panels() {
   const list = [];
   for (const [key, label, fields] of HOME) {
-    list.push({ id: `home.${key}`, group: 'Strona główna', label, base: `home.${key}`, page: key === 'close' ? 'o-mnie/' : '', fields });
+    list.push({ id: `home.${key}`, group: 'Strona główna', label, base: `home.${key}`, page: key === 'contact' ? 'kontakt/' : '', fields });
   }
   data.services.forEach((s, i) => list.push({
     id: `service-${i}`, group: 'Usługi', label: s.title || 'Nowa usługa', base: `services.${i}`, page: `uslugi/${s.slug}/`, fields: SERVICE_FIELDS,

@@ -32,7 +32,7 @@ export async function build() {
   const { renderSite } = await import(pathToFileURL(join(ROOT, 'src/templates.mjs')).href + `?t=${t0}`);
   const data = await loadContent();
   // Wersja = skrót treści CSS i JS; zmienia się tylko, gdy te pliki się zmienią.
-  const v = createHash('sha1').update(await readFile(join(ROOT, 'src/style.css'))).update(await readFile(join(ROOT, 'src/site.js'))).update(await readFile(join(ROOT, 'src/style-home.css'))).update(await readFile(join(ROOT, 'src/site-home.js'))).digest('hex').slice(0, 8);
+  const v = createHash('sha1').update(await readFile(join(ROOT, 'src/style.css'))).update(await readFile(join(ROOT, 'src/site.js'))).digest('hex').slice(0, 8);
 
   await rm(DIST, { recursive: true, force: true });
   const files = renderSite(data, { base: BASE, noindex: NOINDEX, v });
@@ -48,10 +48,6 @@ export async function build() {
   await cp(join(ROOT, 'src/style.css'), join(DIST, 'style.css'));
   await cp(join(ROOT, 'src/site.js'), join(DIST, 'site.js'));
   await cp(join(ROOT, 'src/templates.mjs'), join(DIST, 'src/templates.mjs'));
-  // Strona główna w wersji sprzed przebudowy: własny szablon, style i skrypt.
-  await cp(join(ROOT, 'src/legacy-home.mjs'), join(DIST, 'src/legacy-home.mjs'));
-  await cp(join(ROOT, 'src/style-home.css'), join(DIST, 'style-home.css'));
-  await cp(join(ROOT, 'src/site-home.js'), join(DIST, 'site-home.js'));
   await cp(join(ROOT, 'admin'), join(DIST, 'admin'), { recursive: true });
   await cp(join(ROOT, 'media'), join(DIST, 'media'), { recursive: true });
   if (existsSync(join(ROOT, 'static'))) await cp(join(ROOT, 'static'), DIST, { recursive: true });
