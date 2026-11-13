@@ -397,6 +397,286 @@
     });
   });
 
+  /* ---------- Widżety, część druga ---------- */
+  const fx = (document.body.dataset.wgFx || '').split(' ');
+  const demo = window.RAF_PREVIEW ? document.body.dataset.wgDemo : '';
+  const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+  const onView = (el, fn, opts = { threshold: 0.3 }) => {
+    if (!('IntersectionObserver' in window)) { fn(true); return; }
+    new IntersectionObserver((es) => es.forEach((en) => fn(en.isIntersecting, en)), opts).observe(el);
+  };
+
+  // Stykówka: przeciąganie paska myszką.
+  $$('.wg-sheet__strip').forEach((strip) => {
+    let down = false, moved = 0, x0 = 0, s0 = 0;
+    strip.addEventListener('pointerdown', (e) => { if (e.pointerType !== 'mouse') return; down = true; moved = 0; x0 = e.clientX; s0 = strip.scrollLeft; });
+    addEventListener('pointermove', (e) => { if (!down) return; moved = Math.abs(e.clientX - x0); strip.scrollLeft = s0 - (e.clientX - x0); });
+    addEventListener('pointerup', () => { down = false; });
+    strip.addEventListener('click', (e) => { if (moved > 6) { e.preventDefault(); e.stopPropagation(); } }, true);
+    strip.addEventListener('dragstart', (e) => e.preventDefault());
+  });
+
+  // Ciemnia: odbitki wywołują się po kolei, gdy sekcja wjedzie na ekran.
+  $$('[data-wg-develop]').forEach((sec) => {
+    if (reduce) return;
+    sec.classList.add('is-armed');
+    const prints = $$('.wg-dark__print', sec);
+    let done = false;
+    onView(sec, (vis) => {
+      if (!vis || done) return;
+      done = true;
+      prints.forEach((el, i) => setTimeout(() => el.classList.add('is-in'), 250 + i * 700));
+    }, { threshold: 0.35 });
+  });
+
+  // Latarka: plama światła idzie za kursorem; bez myszki krąży sama.
+  $$('[data-wg-torch]').forEach((sec) => {
+    let manual = false, t0 = performance.now(), vis = false;
+    const set = (x, y) => { sec.style.setProperty('--x', x + 'px'); sec.style.setProperty('--y', y + 'px'); };
+    sec.addEventListener('pointermove', (e) => { if (e.pointerType === 'touch') return; manual = true; const r = sec.getBoundingClientRect(); set(e.clientX - r.left, e.clientY - r.top); });
+    sec.addEventListener('pointerleave', () => { manual = false; });
+    if (reduce) return;
+    const loop = (t) => {
+      if (!vis) return;
+      if (!manual) { const k = (t - t0) / 1000, w = sec.clientWidth, hh = sec.clientHeight; set(w * (0.5 + 0.34 * Math.sin(k * 0.55)), hh * (0.45 + 0.24 * Math.sin(k * 0.9 + 1))); }
+      requestAnimationFrame(loop);
+    };
+    onView(sec, (v) => { const was = vis; vis = v; if (v && !was) requestAnimationFrame(loop); }, { threshold: 0 });
+  });
+
+  // Stos odbitek: wierzchnie zdjęcie odjeżdża w bok i wraca na spód.
+  $$('[data-wg-stack]').forEach((pile) => {
+    let cards = $$('.wg-stack__card', pile), busy = false;
+    const lay = () => cards.forEach((c, k) => { c.style.zIndex = cards.length - k; c.style.setProperty('--k', Math.min(k, 4)); });
+    const next = () => {
+      if (busy || cards.length < 2) return;
+      busy = true;
+      const top = cards[0];
+      top.classList.add('is-out');
+      setTimeout(() => { cards = [...cards.slice(1), top]; lay(); top.classList.remove('is-out'); busy = false; }, reduce ? 0 : 330);
+    };
+    pile.addEventListener('click', next);
+    $('[data-wg-stack-next]', pile.closest('section'))?.addEventListener('click', next);
+    lay();
+  });
+
+  // Mozaika: kafelki zdjęcia składają się w całość wraz z przewijaniem.
+  $$('[data-wg-mosaic]').forEach((sec) => {
+    const frame = $('.wg-mosaic__frame', sec), pic = $('img', frame);
+    if (reduce || !pic) { sec.classList.add('is-static'); return; }
+    const COLS = 6, ROWS = 4, tiles = [];
+    // Stały „losowy” rozrzut – taki sam przy każdym wejściu.
+    const rnd = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+    const build = () => {
+      if (pic.naturalWidth) frame.style.setProperty('--ar', Math.max(0.7, Math.min(2.4, pic.naturalWidth / pic.naturalHeight)).toFixed(3));
+      for (let r = 0; r < ROWS; r++) for (let c = 0; c < COLS; c++) {
+        const el = document.createElement('i'), n = r * COLS + c;
+        el.className = 'wg-mosaic__tile';
+        el.style.cssText = `left:${c * 100 / COLS}%;top:${r * 100 / ROWS}%;width:${100 / COLS + 0.15}%;height:${100 / ROWS + 0.15}%;background-image:url("${frame.dataset.src}");background-size:${COLS * 100}% ${ROWS * 100}%;background-position:${c * 100 / (COLS - 1)}% ${r * 100 / (ROWS - 1)}%`;
+        frame.append(el);
+        tiles.push({ el, dx: (rnd(n) - 0.5) * 900, dy: (rnd(n + 50) - 0.5) * 700, rot: (rnd(n + 99) - 0.5) * 140, delay: rnd(n + 7) * 0.35 });
+      }
+      frame.classList.add('is-tiled');
+      upd();
+    };
+    const upd = raf(() => {
+      const p = Math.min(1, progress(sec) / 0.8);
+      tiles.forEach((t) => {
+        const q = Math.min(1, Math.max(0, (p - t.delay) / (1 - 0.35))), e = 1 - (1 - q) ** 3, k = 1 - e;
+        t.el.style.transform = `translate3d(${t.dx * k}px,${t.dy * k}px,0) rotate(${t.rot * k}deg) scale(${1 - 0.35 * k})`;
+        t.el.style.opacity = String(0.15 + 0.85 * e);
+      });
+    });
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', upd);
+    if (pic.complete && pic.naturalWidth) build(); else pic.addEventListener('load', build, { once: true });
+  });
+
+  // Oś czasu filmu: klipy mają szerokość proporcjonalną do długości sceny, kliknięcie przeskakuje do niej.
+  $$('[data-wg-timeline]').forEach((box) => {
+    const v = $('video', box), clips = $$('.wg-tl__clip', box), head = $('.wg-tl__head', box), time = $('[data-wg-tl-time]', box);
+    const fmt = (n) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`;
+    const start = (t) => {
+      // preload="none" – samo ustawienie adresu niczego nie wczyta, trzeba to wymusić.
+      if (!v.src) { v.preload = 'auto'; v.src = box.dataset.src; v.controls = true; box.classList.add('is-started'); v.load(); }
+      const go = () => { if (t != null) v.currentTime = t; v.play().catch(() => {}); };
+      if (v.readyState >= 1) go(); else v.addEventListener('loadedmetadata', go, { once: true });
+    };
+    $('.wg-tl__start', box)?.addEventListener('click', () => start(null));
+    clips.forEach((c) => c.addEventListener('click', () => start(+c.dataset.t)));
+    v.addEventListener('loadedmetadata', () => {
+      clips.forEach((c, i) => { const end = clips[i + 1] ? +clips[i + 1].dataset.t : v.duration; c.style.flexGrow = String(Math.max(0.6, end - +c.dataset.t)); });
+    });
+    v.addEventListener('timeupdate', () => {
+      if (!v.duration) return;
+      const t = v.currentTime;
+      time.textContent = `${fmt(t)} / ${fmt(v.duration)}`;
+      let on = -1;
+      clips.forEach((c, i) => { if (t >= +c.dataset.t) on = i; });
+      clips.forEach((c, i) => c.classList.toggle('is-on', i === on));
+      // Głowica stoi nad właściwym klipem, w miejscu odpowiadającym postępowi sceny.
+      const c = clips[on];
+      if (c) { const end = clips[on + 1] ? +clips[on + 1].dataset.t : v.duration, k = Math.min(1, (t - +c.dataset.t) / Math.max(0.1, end - +c.dataset.t)); head.style.left = (c.offsetLeft + c.offsetWidth * k) + 'px'; }
+    });
+    document.addEventListener('play', (e) => { if (e.target !== v && e.target.matches?.('.film video:not(.wg-hover)')) v.pause(); }, true);
+  });
+
+  // Klaps: krótka animacja klapsa filmowego z tytułem, zanim ruszy film.
+  if (fx.includes('clapper')) {
+    const clap = (fig) => {
+      const holder = $('.film__play', fig);
+      if (!holder || $('.wg-clap', fig)) return;
+      const title = $('figcaption strong', fig)?.textContent || (holder.getAttribute('aria-label') || '').replace(/^Odtwórz film:\s*/, '');
+      const cat = $('figcaption small', fig)?.textContent || 'Film';
+      const el = document.createElement('div');
+      el.className = 'wg-clap'; el.setAttribute('aria-hidden', 'true');
+      el.innerHTML = '<div class="wg-clap__box"><div class="wg-clap__arm"></div><div class="wg-clap__top"></div><div class="wg-clap__board"><span>Produkcja: RAF.studio</span><b></b><span></span></div></div>';
+      $('b', el).textContent = title;
+      $('.wg-clap__board span:last-child', el).textContent = `${cat} · ujęcie 1`;
+      holder.append(el);
+      setTimeout(() => el.remove(), 1500);
+    };
+    document.addEventListener('click', (e) => {
+      const b = e.target.closest('button.film__play');
+      const fig = b?.closest('figure.film');
+      if (fig) setTimeout(() => clap(fig), 0); // po podmianie przycisku na odtwarzacz
+    });
+    if (demo === 'clapper') {
+      const fig = $('figure.film');
+      if (fig) setTimeout(() => { fig.scrollIntoView({ block: 'center', behavior: 'instant' }); clap(fig); }, 700);
+    }
+  }
+
+  // Ściana rolek: filmy grają po kolei, po kilka sekund, bez dźwięku.
+  $$('[data-wg-reelwall]').forEach((sec) => {
+    const phones = $$('.wg-reels__phone', sec);
+    if (!phones.length) return;
+    if (reduce || saveData) { phones[0].classList.add('is-on'); return; }
+    let i = -1, timer = 0, vis = false;
+    const step = () => {
+      const prev = phones[i];
+      if (prev) { prev.classList.remove('is-on', 'is-playing'); $('video', prev).pause(); }
+      i = (i + 1) % phones.length;
+      const ph = phones[i], v = $('video', ph);
+      ph.classList.add('is-on');
+      if (!v.src) { v.src = ph.dataset.src; v.addEventListener('playing', () => { if (phones[i] === ph) ph.classList.add('is-playing'); }); }
+      else if (!v.paused || v.readyState > 2) ph.classList.add('is-playing');
+      v.play().then(() => { if (phones[i] === ph) ph.classList.add('is-playing'); }).catch(() => {});
+      if (innerWidth < 800) ph.scrollIntoView({ inline: 'center', block: 'nearest', behavior: 'smooth' });
+    };
+    onView(sec, (v) => {
+      if (v === vis) return;
+      vis = v;
+      clearInterval(timer);
+      if (v) { step(); timer = setInterval(step, 4500); }
+      else if (phones[i]) { $('video', phones[i]).pause(); }
+    }, { threshold: 0.4 });
+  });
+
+  // Pas z filmem w tle: wideo wczytuje się dopiero, gdy pas jest na ekranie.
+  $$('[data-wg-vband]').forEach((sec) => {
+    if (reduce || saveData) return;
+    const v = $('video', sec);
+    v.addEventListener('playing', () => sec.classList.add('is-playing'));
+    onView(sec, (vis) => {
+      if (vis) { if (!v.src) v.src = sec.dataset.src; v.play().catch(() => {}); } else v.pause();
+    }, { threshold: 0.15 });
+  });
+
+  // Wysokościomierz: kadr oddala się (wznoszenie), licznik pokazuje metry.
+  $$('[data-wg-alt]').forEach((sec) => {
+    if (reduce) { sec.classList.add('is-static'); return; }
+    const pic = $('.wg-alt__img', sec), num = $('[data-wg-alt-n]', sec), scale = $('.wg-alt__scale', sec), max = +sec.dataset.max || 120;
+    const upd = raf(() => {
+      const p = Math.min(1, progress(sec) / 0.85), e = 1 - (1 - p) ** 2;
+      pic.style.transform = `scale(${(3 - 2 * e).toFixed(4)})`;
+      num.textContent = String(Math.round(max * e));
+      scale.style.setProperty('--p', e.toFixed(3));
+    });
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', upd);
+    upd();
+  });
+
+  // Trasa lotu: linia rysuje się, znacznik drona leci po niej, numery ujęć pojawiają się po drodze.
+  $$('[data-wg-path]').forEach((map) => {
+    const path = $('path', map), drone = $('.wg-path__drone', map), pts = $$('.wg-path__pt', map);
+    if (reduce || !path || !path.getTotalLength) return;
+    const len = path.getTotalLength();
+    // W którym miejscu linii (0…1) leży każdy punkt.
+    const at = pts.map((el) => {
+      const x = parseFloat(el.style.left), y = parseFloat(el.style.top);
+      let best = 0, bd = Infinity;
+      for (let k = 0; k <= 240; k++) { const q = path.getPointAtLength(len * k / 240), d = (q.x / 16 - x) ** 2 + (q.y / 9 - y) ** 2; if (d < bd) { bd = d; best = k / 240; } }
+      return best;
+    });
+    map.classList.add('is-armed');
+    path.style.strokeDashoffset = '1';
+    let done = false;
+    onView(map, (vis) => {
+      if (!vis || done) return;
+      done = true;
+      const t0 = performance.now(), dur = 900 + pts.length * 700;
+      map.classList.add('is-flying');
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / dur), e = p < 0.5 ? 2 * p * p : 1 - (2 - 2 * p) ** 2 / 2;
+        path.style.strokeDashoffset = String(1 - e);
+        const q = path.getPointAtLength(len * e);
+        drone.style.left = (q.x / 16) + '%'; drone.style.top = (q.y / 9) + '%'; // SVG ma skalę 1600×900
+        pts.forEach((el, i) => el.classList.toggle('is-on', e >= at[i] - 0.005));
+        if (p < 1) requestAnimationFrame(tick); else setTimeout(() => map.classList.remove('is-flying'), 600);
+      };
+      requestAnimationFrame(tick);
+    }, { threshold: 0.45 });
+  });
+
+  // Kursor-celownik: ramka wizjera zamiast strzałki; nad zdjęciem i filmem „łapie ostrość”.
+  if (fx.includes('cursor') && finePointer) {
+    const cur = document.createElement('div');
+    cur.className = 'wg-cur'; cur.setAttribute('aria-hidden', 'true');
+    cur.innerHTML = '<i></i><i></i><i></i><i></i><b></b>';
+    document.body.append(cur);
+    document.documentElement.classList.add('wg-cursor-on');
+    let x = innerWidth / 2, y = innerHeight / 2, cx = x, cy = y, run = false;
+    const loop = () => {
+      cx += (x - cx) * (reduce ? 1 : 0.35); cy += (y - cy) * (reduce ? 1 : 0.35);
+      cur.style.transform = `translate3d(${cx}px,${cy}px,0)`;
+      if (Math.abs(x - cx) + Math.abs(y - cy) > 0.3) requestAnimationFrame(loop); else run = false;
+    };
+    addEventListener('pointermove', (e) => {
+      if (e.pointerType === 'touch') return;
+      x = e.clientX; y = e.clientY;
+      const t = e.target.closest ? e.target : null;
+      const field = t?.closest('input, textarea, select, iframe');
+      cur.classList.toggle('is-visible', !field);
+      cur.classList.toggle('is-focus', !!t?.closest('img, video, .film__play, .wg-torch, [data-lb]'));
+      cur.classList.toggle('is-link', !!t?.closest('a, button, summary, [role=button]') && !t?.closest('img, video, .film__play, [data-lb]'));
+      if (!run) { run = true; requestAnimationFrame(loop); }
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => cur.classList.remove('is-visible'));
+    if (demo === 'cursor') { cur.classList.add('is-visible'); cur.style.transform = `translate3d(${cx}px,${cy}px,0)`; }
+  }
+
+  // Migawka: zasłona zamyka się po kliknięciu linku do innej podstrony i otwiera na nowej.
+  const shut = $('[data-wg-shutter]');
+  if (shut && !reduce) {
+    document.addEventListener('click', (e) => {
+      if (e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const a = e.target.closest('a[href]');
+      if (!a || a.target || a.hasAttribute('download') || a.hasAttribute('data-lb')) return;
+      const u = new URL(a.href, location.href);
+      if (u.origin !== location.origin || (u.pathname === location.pathname && u.search === location.search)) return;
+      if (/\.(webp|jpe?g|png|mp4|pdf)$/i.test(u.pathname)) return;
+      e.preventDefault();
+      try { sessionStorage.setItem('raf-shut', '1'); } catch {}
+      shut.classList.add('is-closing');
+      setTimeout(() => { location.href = u.href; }, 280);
+    });
+    // Powrót „wstecz” z pamięci przeglądarki – zasłona nie może zostać zamknięta.
+    addEventListener('pageshow', (e) => { if (e.persisted) shut.classList.remove('is-closing'); });
+    if (demo === 'shutter') setTimeout(() => { shut.classList.add('is-closing'); setTimeout(() => shut.classList.remove('is-closing'), 520); }, 600);
+  }
+
   // Delikatne pojawianie się sekcji
   if ('IntersectionObserver' in window && !reduce) {
     const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
