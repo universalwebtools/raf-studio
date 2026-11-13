@@ -333,7 +333,66 @@ const WIDGET_PANELS = [
   ['map', 'Mapa obszaru działania', [ON, POS, NOTE('Lista miejscowości i mapa (OpenStreetMap). Mapa wczytuje się dopiero po kliknięciu „Pokaż mapę”, więc nie spowalnia strony – polityka prywatności sama dopisze o tym zdanie.'),
     T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 3 }), { key: 'places', label: 'Miejscowości', type: 'lines' },
     T('lat', 'Środek mapy – szerokość geogr.', { type: 'number' }), T('lon', 'Środek mapy – długość geogr.', { type: 'number' }), T('zoom', 'Przybliżenie (5 = kraj, 10 = region, 13 = miasto)', { type: 'number' })]],
+  ['marquee', 'Przesuwający się napis', [ON, POS, NOTE('Pas z bardzo dużymi słowami, które płyną w bok bez przerwy. Dobry jako mocny przerywnik między sekcjami.'),
+    { key: 'items', label: 'Słowa / hasła', type: 'lines' }, { key: 'dark', label: 'Ciemne tło', type: 'checkbox' }]],
+  ['spotlight', 'Wyróżniona realizacja', [ON, POS, NOTE('Jedno duże zdjęcie i krótki opis ostatniej albo najważniejszej realizacji, z przyciskiem. Przykładowe teksty podmień na swoje.'),
+    T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł'), TA('text', 'Opis', { rows: 4 }), IMG('image', 'Zdjęcie'),
+    T('cta', 'Tekst przycisku'), T('link', 'Dokąd prowadzi przycisk', { placeholder: 'np. portfolio/ albo https://…', help: 'Adres podstrony (np. portfolio/, filmy/rolki/) albo pełny link.' })]],
+  ['quote', 'Cytat na zdjęciu', [ON, POS, NOTE('Zdjęcie na całą szerokość z dużym zdaniem na środku. Przy przewijaniu zdjęcie przesuwa się wolniej niż strona (efekt głębi).'),
+    TA('text', 'Zdanie', { rows: 2, max: 90 }), T('author', 'Podpis (opcjonalnie)'), IMG('image', 'Zdjęcie w tle')]],
+  ['pricing', 'Pakiety i ceny', [ON, POS, NOTE('Karty z pakietami. Przykładowe pakiety i ceny są tylko miejscami do uzupełnienia – wpisz swoje, zanim włączysz widżet.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Pakiety', itemLabel: 'Pakiet', max: 4, newItem: { name: '', price: '', text: '', features: [''], featured: false }, fields: [
+      T('name', 'Nazwa'), T('price', 'Cena (np. od 1500 zł)'), TA('text', 'Krótki opis', { rows: 2 }), { key: 'features', label: 'Co zawiera', type: 'lines' },
+      { key: 'featured', label: 'Wyróżniony (ciemna karta)', type: 'checkbox' }] },
+    T('badge', 'Napis na wyróżnionym pakiecie'), T('cta', 'Tekst przycisku'), T('note', 'Dopisek pod pakietami')]],
+  ['faq', 'Pytania i odpowiedzi', [ON, POS, NOTE('Lista pytań – odpowiedź rozwija się po kliknięciu. Przykładowe odpowiedzi podmień na swoje.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Pytania', itemLabel: 'Pytanie', newItem: { q: '', a: '' }, fields: [T('q', 'Pytanie'), TA('a', 'Odpowiedź', { rows: 3 })] }]],
+  ['insta', 'Kafelki z Instagrama', [ON, POS, NOTE('Rząd kwadratowych zdjęć z przyciskiem do Twojego profilu. Zdjęcia wybierasz sam – strona nie łączy się z Instagramem, więc nic jej nie spowalnia.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMGS('Zdjęcia (najlepiej 6)'),
+    T('cta', 'Tekst przycisku'), T('link', 'Link do profilu', { type: 'url', help: 'Puste = link do Instagrama z „Dane firmy i SEO”.' })]],
+  ['progress', 'Pasek postępu przewijania', [ON, NOTE('Cienka złota linia na samej górze ekranu, która rośnie w miarę przewijania strony. Widoczna na każdej podstronie. Bez dodatkowych ustawień.')]],
+  ['notice', 'Ogłoszenie w rogu ekranu', [ON, NOTE('Mała karta w lewym dolnym rogu, na każdej podstronie – np. o wolnych terminach albo promocji. Odwiedzający może ją zamknąć i nie wraca do końca wizyty.'),
+    TA('text', 'Treść ogłoszenia', { rows: 3, max: 140 }), T('cta', 'Tekst linku (opcjonalnie)'), T('link', 'Dokąd prowadzi link', { placeholder: 'np. kontakt/ albo https://…' })]],
+  ['floatCta', 'Pływający przycisk kontaktu', [ON, NOTE('Przycisk przyklejony w prawym dolnym rogu, na każdej podstronie. Telefon i e-mail bierze z „Dane firmy i SEO”.'),
+    T('label', 'Napis na przycisku'),
+    { key: 'target', label: 'Co robi po kliknięciu', type: 'select', options: [['contact', 'Otwiera formularz kontaktowy'], ['phone', 'Dzwoni na Twój numer'], ['whatsapp', 'Otwiera rozmowę na WhatsAppie'], ['email', 'Otwiera nowy e-mail']] }]],
+  ['toTop', 'Przycisk „do góry”', [ON, NOTE('Okrągły przycisk ze strzałką w prawym dolnym rogu. Pojawia się po przewinięciu strony w dół i wraca na samą górę. Bez dodatkowych ustawień.')]],
 ];
+
+// Treść startowa nowych widżetów (gdy nie ma ich jeszcze w zapisanej treści strony).
+const PIC = (name, alt) => ({ src: `media/portfolio/${name}.webp`, small: `media/portfolio/${name}-800.webp`, x: 50, y: 50, alt });
+const WIDGET_DEFAULTS = {
+  marquee: { position: 'afterAbout', dark: false, items: ['Fotografia', 'Film', 'Dron', 'Śluby', 'Eventy', 'Reklama'] },
+  spotlight: { position: 'afterPortfolio', kicker: 'Ostatnia realizacja', title: 'Tu wpisz nazwę realizacji', text: 'Dwa–trzy zdania o tym, co to była za realizacja, dla kogo i co było w niej najważniejsze.', image: PIC('slub-129', 'Para młoda podczas sesji ślubnej'), cta: 'Zobacz portfolio', link: 'portfolio/' },
+  quote: { position: 'afterFilm', text: 'Obraz, który zostaje.', author: 'RAF.studio', image: PIC('zareczyny-51', 'Para w złotym świetle') },
+  pricing: { position: 'afterOffer', title: 'Pakiety', lead: 'Każdą realizację wyceniam indywidualnie – to punkty wyjścia.', badge: 'Najczęściej wybierany', cta: 'Zapytaj o termin', note: 'Ceny orientacyjne. Dokładną wycenę przygotuję po krótkiej rozmowie.', items: [
+    { name: 'Sesja', price: 'od … zł', text: 'Tu wpisz, dla kogo jest ten pakiet.', features: ['Tu wpisz, co zawiera', 'Kolejny punkt', 'Kolejny punkt'], featured: false },
+    { name: 'Reportaż', price: 'od … zł', text: 'Tu wpisz, dla kogo jest ten pakiet.', features: ['Tu wpisz, co zawiera', 'Kolejny punkt', 'Kolejny punkt'], featured: true },
+    { name: 'Foto + film', price: 'od … zł', text: 'Tu wpisz, dla kogo jest ten pakiet.', features: ['Tu wpisz, co zawiera', 'Kolejny punkt', 'Kolejny punkt'], featured: false }] },
+  faq: { position: 'beforeContact', title: 'Częste pytania', lead: '', items: [
+    { q: 'Jak zarezerwować termin?', a: 'Tu wpisz odpowiedź – np. jak wygląda rezerwacja i czy potrzebna jest umowa lub zadatek.' },
+    { q: 'Kiedy dostanę zdjęcia lub film?', a: 'Tu wpisz odpowiedź – np. ile trwa obróbka i w jakiej formie oddajesz materiał.' },
+    { q: 'Czy dojeżdżasz poza Bielsko-Białą?', a: 'Tu wpisz odpowiedź – np. gdzie pracujesz i jak rozliczasz dojazd.' },
+    { q: 'Czy mogę zamówić zdjęcia i film razem?', a: 'Tu wpisz odpowiedź.' }] },
+  insta: { position: 'beforeContact', title: 'Na bieżąco na Instagramie', lead: '', cta: 'Zobacz na Instagramie', link: '', items: [
+    { image: PIC('slub-00', 'Para młoda i samochód ślubny') }, { image: PIC('zareczyny-38', 'Sesja zaręczynowa') }, { image: PIC('panienski-02', 'Wieczór panieński') },
+    { image: PIC('audi-00', 'Sesja samochodu') }, { image: PIC('fitness-07', 'Sesja fitness') }, { image: PIC('produkt-31', 'Zdjęcie produktowe') }] },
+  notice: { text: 'Tu wpisz krótkie ogłoszenie, np. o wolnych terminach.', cta: 'Zapytaj o termin', link: 'kontakt/' },
+  floatCta: { label: 'Napisz do mnie', target: 'contact' },
+};
+// Jak pokazać widżet w podglądzie zaraz po kliknięciu: przewinięcie do konkretnego miejsca (px)
+// zamiast do samego widżetu – dla efektów, które nie są osobną sekcją.
+const WIDGET_VIEW = { heroZoom: { scroll: 320, smooth: true }, progress: { scroll: 900, smooth: true }, toTop: { scroll: 900, smooth: true }, notice: { scroll: 0 }, floatCta: { scroll: 0 }, filmHover: { scroll: 0 } };
+const WIDGET_HINT = {
+  heroZoom: 'Podgląd sam przewinął stronę kawałek w dół – przewiń w górę i w dół, żeby zobaczyć zbliżenie.',
+  filmHover: 'Najedź myszką na miniaturę filmu w podglądzie.',
+  progress: 'Złota linia jest na samej górze podglądu – przewijaj, żeby zobaczyć, jak rośnie.',
+  toTop: 'Przycisk jest w prawym dolnym rogu podglądu.',
+  notice: 'Ogłoszenie jest w lewym dolnym rogu podglądu.',
+  floatCta: 'Przycisk jest w prawym dolnym rogu podglądu.',
+};
 
 function panels() {
   const list = [];
@@ -371,12 +430,50 @@ function panels() {
   } });
   if (!data.widgets) data.widgets = {};
   for (const [key, label, fields] of WIDGET_PANELS) {
-    if (!data.widgets[key]) data.widgets[key] = { enabled: false };
+    if (!data.widgets[key]) data.widgets[key] = { enabled: false, ...structuredClone(WIDGET_DEFAULTS[key] || {}) };
+    if (data.widgets[key].removed) continue;
     const on = !!data.widgets[key].enabled;
-    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' ? 'filmy/' : '', fields });
+    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' ? 'filmy/' : '', fields, widget: key,
+      remove: () => removeWidget(key, label) });
   }
+  const gone = WIDGET_PANELS.filter(([key]) => data.widgets[key]?.removed);
+  if (gone.length) list.push({ id: 'widgets-removed', group: 'Widżety do dodania', label: `↺ Usunięte (${gone.length})`, title: 'Usunięte widżety', custom: renderRemovedWidgets });
   list.push({ id: 'site', group: 'Ustawienia', label: 'Dane firmy i SEO', base: 'site', page: '', fields: SITE_FIELDS });
   return list;
+}
+
+/* ---------- Usuwanie widżetów z listy ---------- */
+function removeWidget(key, label) {
+  const w = data.widgets[key];
+  const live = w.enabled ? '\n\nTen widżet jest teraz WŁĄCZONY – po opublikowaniu zniknie też ze strony.' : '';
+  if (!confirm(`Usunąć widżet „${label}” z listy?${live}\n\nW razie czego przywrócisz go z pozycji „Usunięte” na dole listy widżetów.`)) return;
+  commitHistory();
+  const ids = panels().filter((p) => p.widget).map((p) => p.id);
+  const at = ids.indexOf(`widget-${key}`);
+  w.removed = true; w.enabled = false;
+  changed();
+  commitHistory();
+  if (currentPanel === `widget-${key}`) openPanel(ids[at + 1] || ids[at - 1] || 'widgets-removed');
+  else { renderSide(); renderPreview(); }
+  toast(`Usunięto z listy: ${label}`);
+}
+function restoreWidget(key, label) {
+  commitHistory();
+  delete data.widgets[key].removed;
+  changed();
+  commitHistory();
+  openPanel(`widget-${key}`);
+  toast(`Przywrócono: ${label}`);
+}
+function renderRemovedWidgets(panel) {
+  const gone = WIDGET_PANELS.filter(([key]) => data.widgets[key]?.removed);
+  panel.append(
+    h('h2', {}, 'Usunięte widżety'),
+    h('p', { class: 'sub' }, 'Widżety, które odrzuciłeś. Przywrócony widżet wraca na listę wyłączony, z zachowaną treścią.'),
+    h('div', { class: 'list' }, gone.map(([key, label, fields]) => h('div', { class: 'list__item is-group gone' },
+      h('div', {}, h('b', {}, label), h('div', { class: 'help' }, fields.find((f) => f.type === 'note')?.text || '')),
+      h('button', { type: 'button', class: 'btn btn--small', onclick: () => restoreWidget(key, label) }, '↺ Przywróć')))),
+  );
 }
 
 /* ---------- Portfolio ---------- */
@@ -427,7 +524,10 @@ function renderSide() {
   let group = '';
   for (const p of panels()) {
     if (p.group !== group) { group = p.group; side.append(h('h4', {}, group)); }
-    side.append(h('button', { type: 'button', class: (p.add ? 'add ' : '') + (currentPanel === p.id ? 'is-on' : ''), title: p.label, onclick: () => (p.action ? p.action() : openPanel(p.id)) }, p.label));
+    const btn = h('button', { type: 'button', class: (p.add ? 'add ' : '') + (currentPanel === p.id ? 'is-on' : ''), title: p.title || p.label, onclick: () => (p.action ? p.action() : openPanel(p.id)) }, p.label);
+    side.append(p.remove
+      ? h('div', { class: 'side__row' }, btn, h('button', { type: 'button', class: 'side__del', title: `Usuń „${p.title}” z listy`, 'aria-label': `Usuń widżet „${p.title}” z listy`, onclick: p.remove }, '✕'))
+      : btn);
   }
 }
 
@@ -440,6 +540,16 @@ function renderPanel() {
   if (p.custom) p.custom(panelEl);
   else {
     panelEl.append(h('h2', {}, p.title || p.label), h('p', { class: 'sub' }, p.group));
+    if (p.widget) {
+      const on = !!data.widgets[p.widget].enabled;
+      panelEl.append(h('div', { class: 'wg-note' + (on ? ' is-on' : '') },
+        h('div', {}, h('b', {}, on ? 'Włączony.' : 'Podgląd na próbę.'), ' ',
+          on ? 'Po prawej widzisz go tak, jak na stronie.' : 'Po prawej widzisz, jak ten widżet będzie wyglądał. Na stronie pojawi się dopiero, gdy zaznaczysz „Włączony” i opublikujesz.',
+          WIDGET_HINT[p.widget] ? ' ' + WIDGET_HINT[p.widget] : ''),
+        h('div', { class: 'wg-note__row' },
+          h('button', { type: 'button', class: 'btn btn--small', onclick: () => { previewPath = p.page; renderPreview({ focus: true }); } }, '◎ Pokaż w podglądzie'),
+          h('button', { type: 'button', class: 'btn btn--small btn--danger', onclick: p.remove }, '✕ Usuń z listy'))));
+    }
     panelEl.append(...renderFields(p.base, p.fields));
     if (p.danger) panelEl.append(h('div', { class: 'danger-zone' }, h('button', { type: 'button', class: 'btn btn--small btn--danger', onclick: p.danger }, 'Usuń')));
   }
@@ -453,7 +563,7 @@ function openPanel(id, { keepPage = false } = {}) {
   const p = panels().find((x) => x.id === id);
   $('#panel').scrollTop = 0;
   renderSide(); renderPanel();
-  if (!keepPage && p && p.page != null) { previewPath = p.page; renderPreview({ resetScroll: true }); }
+  if (!keepPage && p && p.page != null) { previewPath = p.page; renderPreview({ resetScroll: true, focus: !!p.widget }); }
   try { localStorage.setItem('raf-editor-panel', id); } catch {}
 }
 
@@ -482,7 +592,10 @@ function focusPath(path) {
 const iframe = $('#preview');
 const PREVIEW_HEAD = `<base href="${location.origin}${SITE_BASE}/"><script>window.RAF_PREVIEW=true</script><style>
 [data-edit]{cursor:pointer}[data-edit]:hover{outline:2px dashed #2563eb;outline-offset:4px}
-.reveal{opacity:1!important;transform:none!important}.is-hl{outline:3px solid #2563eb!important;outline-offset:4px}</style>`;
+.reveal{opacity:1!important;transform:none!important}.is-hl{outline:3px solid #2563eb!important;outline-offset:4px}
+section[data-wg-off]{position:relative;outline:2px dashed #b8925a;outline-offset:-2px}
+section[data-wg-off]::before{content:"Podgląd na próbę – widżet jest wyłączony";position:absolute;top:12px;left:12px;z-index:6;padding:5px 11px;border-radius:99px;background:#b8925a;color:#fff;font:600 12px/1.3 Inter,system-ui,sans-serif;letter-spacing:0;text-transform:none;pointer-events:none}
+.wg-notice[data-wg-off],.wg-fab[data-wg-off],.wg-top[data-wg-off]{outline:2px dashed #b8925a;outline-offset:3px}</style>`;
 const PREVIEW_SCRIPT = `<script>var BASE_LEN=${SITE_BASE.length};
 document.addEventListener('click',function(e){
   var el=e.target.closest('[data-edit]');
@@ -496,9 +609,13 @@ document.addEventListener('submit',function(e){e.preventDefault();},true);
 <\/script>`;
 let previewTimer;
 function schedulePreview() { clearTimeout(previewTimer); previewTimer = setTimeout(renderPreview, 250); }
-function renderPreview({ resetScroll = false } = {}) {
+// Odstęp od góry przy przewijaniu podglądu do widżetu (wysokość przyklejonego menu strony).
+const PREVIEW_TOP = 76;
+function renderPreview({ resetScroll = false, focus = false } = {}) {
   clearTimeout(previewTimer);
-  const all = routes(data, { preview: true, base: SITE_BASE });
+  // Otwarty panel widżetu = widżet widoczny w podglądzie, nawet gdy jest wyłączony.
+  const showWidget = panels().find((x) => x.id === currentPanel)?.widget || '';
+  const all = routes(data, { preview: true, base: SITE_BASE, showWidget });
   const route = all.find((r) => r.path === previewPath) || all[0];
   previewPath = route.path;
   $('#previewPath').textContent = '/' + route.path;
@@ -507,7 +624,24 @@ function renderPreview({ resetScroll = false } = {}) {
   try { html = route.render(); } catch (e) { console.error(e); return; }
   html = backend.previewHtml(html).replace('<head>', '<head>' + PREVIEW_HEAD).replace('</body>', PREVIEW_SCRIPT + '</body>');
   const y = resetScroll ? 0 : (iframe.contentWindow?.scrollY || 0);
-  iframe.onload = () => { iframe.contentWindow.scrollTo(0, y); };
+  const view = focus && showWidget ? (WIDGET_VIEW[showWidget] || {}) : null;
+  iframe.onload = () => {
+    const win = iframe.contentWindow, doc = iframe.contentDocument;
+    if (!view) { win.scrollTo(0, y); return; }
+    if (view.scroll != null) {
+      win.scrollTo({ top: 0, behavior: 'instant' });
+      if (view.scroll) setTimeout(() => { if (iframe.contentWindow === win) win.scrollTo({ top: view.scroll, behavior: view.smooth ? 'smooth' : 'instant' }); }, 350);
+      return;
+    }
+    const el = doc.querySelector(`[data-wg="${showWidget}"]`);
+    if (!el) { win.scrollTo(0, y); return; }
+    // Do widżetu od razu; potem poprawki, bo doczytujące się zdjęcia przesuwają układ strony.
+    let touched = false;
+    for (const ev of ['wheel', 'touchstart', 'keydown', 'mousedown']) win.addEventListener(ev, () => { touched = true; }, { passive: true, once: true });
+    const go = () => { if (!touched && iframe.contentDocument === doc && el.isConnected) win.scrollTo({ top: Math.max(0, el.getBoundingClientRect().top + win.scrollY - PREVIEW_TOP), behavior: 'instant' }); };
+    go();
+    for (const ms of [300, 900, 1800]) setTimeout(go, ms);
+  };
   iframe.srcdoc = html;
 }
 function highlight(path) {
@@ -596,6 +730,7 @@ const ui = {
   if (backend.user) {
     $('.top__actions').prepend(h('button', { type: 'button', class: 'btn btn--ghost btn--small', title: 'Wyloguj', onclick: () => { if (snap() === savedSnap || confirm('Masz nieopublikowane zmiany. Wylogować mimo to?')) backend.logout(); } }, '⎋ ' + backend.user));
   }
+  panels(); // uzupełnia brakujące widżety, zanim zapamiętamy stan „zapisany”
   savedSnap = lastSnap = snap();
   let start = 'home.hero';
   try { start = localStorage.getItem('raf-editor-panel') || start; } catch {}

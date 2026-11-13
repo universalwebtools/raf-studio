@@ -349,6 +349,54 @@
     });
   });
 
+  // Cytat na zdjęciu – zdjęcie przesuwa się wolniej niż strona.
+  $$('[data-wg-parallax]').forEach((sec) => {
+    if (reduce) return;
+    const bg = $('.wg-quote__bg', sec);
+    const upd = raf(() => {
+      const r = sec.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      const p = (r.top + r.height / 2 - innerHeight / 2) / (innerHeight / 2 + r.height / 2); // -1…1
+      bg.style.transform = `translate3d(0,${(-p * 9).toFixed(2)}%,0)`;
+    });
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', upd);
+    upd();
+  });
+
+  // Pasek postępu przewijania.
+  $$('[data-wg-progress]').forEach((bar) => {
+    const fill = $('span', bar);
+    const upd = raf(() => {
+      const max = document.documentElement.scrollHeight - innerHeight;
+      fill.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`;
+    });
+    addEventListener('scroll', upd, { passive: true });
+    addEventListener('resize', upd);
+    upd();
+  });
+
+  // Przycisk „do góry” – pojawia się po przewinięciu.
+  $$('[data-wg-top]').forEach((btn) => {
+    const upd = raf(() => btn.classList.toggle('is-on', scrollY > 700));
+    addEventListener('scroll', upd, { passive: true });
+    btn.addEventListener('click', () => scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }));
+    upd();
+  });
+
+  // Ogłoszenie w rogu – po zamknięciu nie wraca do końca wizyty.
+  $$('[data-wg-notice]').forEach((box) => {
+    const key = 'raf-notice-' + box.dataset.wgNotice;
+    let closed = false;
+    try { closed = sessionStorage.getItem(key) === '1'; } catch {}
+    if (!closed && box.hidden) setTimeout(() => { box.hidden = false; }, 1800);
+    $('button', box)?.addEventListener('click', () => {
+      if (window.RAF_PREVIEW) return;
+      box.hidden = true;
+      try { sessionStorage.setItem(key, '1'); } catch {}
+    });
+  });
+
   // Delikatne pojawianie się sekcji
   if ('IntersectionObserver' in window && !reduce) {
     const io = new IntersectionObserver((es) => es.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } }), { rootMargin: '0px 0px -8% 0px' });
