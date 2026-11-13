@@ -191,7 +191,7 @@ function filmCard(ctx, f, { large = false } = {}) {
   const poster = f.image?.src
     ? img(ctx, f.image, { path: `portfolio.films.${i}.image`, sizes: large ? '(max-width:800px) 100vw, 50vw' : '(max-width:700px) 100vw, 33vw' })
     : v.thumb ? `<img src="${esc(v.thumb)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">` : '<div class="ph"></div>';
-  const hover = v.type === 'file' && ctx.data.widgets?.filmHover?.enabled ? ` data-wg-hover="${esc(url(v.src))}"` : '';
+  const hover = v.type === 'file' && wgOn(ctx, 'filmHover') ? ` data-wg-hover="${esc(url(v.src))}"` : '';
   return `<figure class="film${large ? ' film--large' : ''}${f.vertical ? ' film--vertical' : ''}"${hover}>
     <button type="button" class="film__play" ${play} aria-label="Odtwórz film: ${esc(f.title)}">
       ${poster}<span class="film__icon" aria-hidden="true"></span>
@@ -325,7 +325,11 @@ const cta = (ctx) => {
 /* ---------- Widżety (włączane w edytorze: „Widżety do dodania”) ---------- */
 
 const WG = (ctx) => ctx.data.widgets || {};
-const wgOn = (ctx, key) => !!WG(ctx)[key]?.enabled;
+// Widżet jest widoczny, gdy jest włączony (i nieusunięty z listy) – albo gdy edytor pokazuje jego podgląd (ctx.showWidget).
+const wgLive = (ctx, key) => !!WG(ctx)[key]?.enabled && !WG(ctx)[key]?.removed;
+const wgOn = (ctx, key) => wgLive(ctx, key) || (!!ctx.preview && ctx.showWidget === key);
+// Znacznik dla edytora: po nim podgląd odnajduje widżet; data-wg-off = pokazany tylko na próbę.
+const wgMark = (ctx, key) => (ctx.preview ? ` data-wg="${key}"${wgLive(ctx, key) ? '' : ' data-wg-off'}` : '');
 const wgHead = (ctx, key, w, { center = true } = {}) => (w.title || w.lead) ? `<div class="section__head${center ? ' center' : ''}">
       ${w.title ? `<h2${ed(ctx, `widgets.${key}.title`)}>${esc(w.title)}</h2>` : ''}
       ${w.lead ? `<p class="lead"${ed(ctx, `widgets.${key}.lead`)}>${esc(w.lead)}</p>` : ''}
@@ -456,14 +460,128 @@ const WIDGETS = {
   </div>
 </section>`;
   },
+  // 11. Przesuwający się napis
+  marquee(ctx, w) {
+    const items = (w.items || []).filter(Boolean);
+    if (!items.length) return '';
+    const one = items.map((x, i) => `<li${ed(ctx, `widgets.marquee.items.${i}`)}>${esc(x)}</li>`).join('');
+    return `<section class="wg-marquee${w.dark ? ' wg-marquee--dark' : ''}" aria-label="${esc(items.join(', '))}">
+  <ul class="wg-marquee__track" aria-hidden="true">${one}${one}</ul>
+</section>`;
+  },
+  // 12. Wyróżniona realizacja
+  spotlight(ctx, w) {
+    if (!w.title && !w.image?.src) return '';
+    const href = w.link ? (/^(https?:|mailto:|tel:)/.test(w.link) ? esc(w.link) : url(w.link)) : '';
+    return `<section class="section wg-spot">
+  <div class="wrap wg-spot__grid">
+    <div class="wg-spot__img">${img(ctx, w.image, { path: 'widgets.spotlight.image', sizes: '(max-width:800px) 100vw, 60vw' })}</div>
+    <div class="wg-spot__copy">
+      ${w.kicker ? `<p class="kicker"${ed(ctx, 'widgets.spotlight.kicker')}>${esc(w.kicker)}</p>` : ''}
+      ${w.title ? `<h2${ed(ctx, 'widgets.spotlight.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.text ? `<p${ed(ctx, 'widgets.spotlight.text')}>${esc(w.text)}</p>` : ''}
+      ${href && w.cta ? `<a class="btn btn--dark" href="${href}"${ed(ctx, 'widgets.spotlight.cta')}>${esc(w.cta)}</a>` : ''}
+    </div>
+  </div>
+</section>`;
+  },
+  // 13. Cytat na zdjęciu (zdjęcie przesuwa się wolniej niż strona)
+  quote(ctx, w) {
+    if (!w.text) return '';
+    return `<section class="wg-quote" data-wg-parallax>
+  <div class="wg-quote__bg">${img(ctx, w.image, { path: 'widgets.quote.image', sizes: '100vw' })}</div>
+  <blockquote class="wrap wg-quote__in">
+    <p${ed(ctx, 'widgets.quote.text')}>${esc(w.text)}</p>
+    ${w.author ? `<footer${ed(ctx, 'widgets.quote.author')}>${esc(w.author)}</footer>` : ''}
+  </blockquote>
+</section>`;
+  },
+  // 14. Pakiety i ceny
+  pricing(ctx, w) {
+    const items = (w.items || []).filter((x) => x.name);
+    if (!items.length) return '';
+    return `<section class="section section--alt">
+  <div class="wrap">${wgHead(ctx, 'pricing', w)}
+    <div class="wg-price">${items.map((x, i) => `<article class="wg-price__card${x.featured ? ' is-featured' : ''}">
+      ${x.featured && w.badge ? `<span class="wg-price__badge">${esc(w.badge)}</span>` : ''}
+      <h3${ed(ctx, `widgets.pricing.items.${i}.name`)}>${esc(x.name)}</h3>
+      ${x.price ? `<p class="wg-price__price"${ed(ctx, `widgets.pricing.items.${i}.price`)}>${esc(x.price)}</p>` : ''}
+      ${x.text ? `<p class="wg-price__text"${ed(ctx, `widgets.pricing.items.${i}.text`)}>${esc(x.text)}</p>` : ''}
+      <ul>${(x.features || []).filter(Boolean).map((f, j) => `<li${ed(ctx, `widgets.pricing.items.${i}.features.${j}`)}>${esc(f)}</li>`).join('')}</ul>
+      <a class="btn ${x.featured ? 'btn--light' : 'btn--dark'}" href="${url(`kontakt/`)}">${esc(w.cta || 'Zapytaj o termin')}</a>
+    </article>`).join('')}</div>
+    ${w.note ? `<p class="center help-note"${ed(ctx, 'widgets.pricing.note')}>${esc(w.note)}</p>` : ''}
+  </div>
+</section>`;
+  },
+  // 15. Pytania i odpowiedzi
+  faq(ctx, w) {
+    const items = (w.items || []).filter((x) => x.q && x.a);
+    if (!items.length) return '';
+    return `<section class="section">
+  <div class="wrap wrap--narrow">${wgHead(ctx, 'faq', w)}
+    <div class="wg-faq">${items.map((x, i) => `<details class="wg-faq__item"${ctx.preview && !i ? ' open' : ''}>
+      <summary${ed(ctx, `widgets.faq.items.${i}.q`)}>${esc(x.q)}</summary>
+      <p${ed(ctx, `widgets.faq.items.${i}.a`)}>${esc(x.a)}</p>
+    </details>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // 16. Kafelki z Instagrama (zdjęcia ze strony, link do profilu – bez łączenia się z Instagramem)
+  insta(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    const link = w.link || ctx.data.site.instagram;
+    if (!items.length) return '';
+    return `<section class="section wg-insta">
+  <div class="wrap">${wgHead(ctx, 'insta', w)}
+    <div class="wg-insta__grid">${items.map((x, i) => {
+      const pic = img(ctx, x.image, { path: `widgets.insta.items.${i}.image`, sizes: '(max-width:700px) 50vw, 17vw' });
+      return link ? `<a href="${esc(link)}" rel="noopener" aria-label="Instagram RAF.studio">${pic}</a>` : `<div>${pic}</div>`;
+    }).join('')}</div>
+    ${link ? `<p class="center"><a class="btn btn--dark" href="${esc(link)}" rel="noopener"${ed(ctx, 'widgets.insta.cta')}>${esc(w.cta || 'Zobacz na Instagramie')}</a></p>` : ''}
+  </div>
+</section>`;
+  },
 };
 
 // Widżety w danym miejscu strony głównej, w stałej kolejności.
-const WIDGET_ORDER = ['counters', 'logos', 'chapters', 'hscroll', 'beforeAfter', 'reviews', 'calendar', 'map'];
+const WIDGET_ORDER = ['counters', 'logos', 'marquee', 'chapters', 'hscroll', 'beforeAfter', 'spotlight', 'quote', 'reviews', 'pricing', 'faq', 'insta', 'calendar', 'map'];
 function widgetsAt(ctx, position) {
   const all = WG(ctx);
-  return WIDGET_ORDER.filter((k) => all[k]?.enabled && (all[k].position || 'beforeContact') === position)
-    .map((k) => WIDGETS[k](ctx, all[k])).join('\n');
+  return WIDGET_ORDER.filter((k) => all[k] && wgOn(ctx, k) && (all[k].position || 'beforeContact') === position)
+    .map((k) => WIDGETS[k](ctx, all[k]).replace('<section', `<section${wgMark(ctx, k)}`)).join('\n');
+}
+
+// Widżety widoczne na każdej podstronie (przyklejone do ekranu).
+function globalWidgets(ctx) {
+  const all = WG(ctx), { site } = ctx.data;
+  const out = [];
+  if (wgOn(ctx, 'progress')) out.push(`<div class="wg-progress"${wgMark(ctx, 'progress')} data-wg-progress aria-hidden="true"><span></span></div>`);
+  const n = all.notice;
+  if (n && wgOn(ctx, 'notice') && n.text) {
+    const href = n.link ? (/^(https?:|mailto:|tel:)/.test(n.link) ? esc(n.link) : url(n.link)) : '';
+    out.push(`<aside class="wg-notice"${wgMark(ctx, 'notice')} data-wg-notice="${esc(String(n.text).length + '-' + String(n.text).slice(0, 24))}" aria-label="Ogłoszenie"${ctx.preview ? '' : ' hidden'}>
+  <p${ed(ctx, 'widgets.notice.text')}>${esc(n.text)}</p>
+  ${href && n.cta ? `<a class="more" href="${href}"${ed(ctx, 'widgets.notice.cta')}>${esc(n.cta)}</a>` : ''}
+  <button type="button" aria-label="Zamknij ogłoszenie">✕</button>
+</aside>`);
+  }
+  const dock = [];
+  if (wgOn(ctx, 'toTop')) dock.push(`<button type="button" class="wg-top"${wgMark(ctx, 'toTop')} data-wg-top aria-label="Wróć na górę strony">↑</button>`);
+  const f = all.floatCta;
+  if (f && wgOn(ctx, 'floatCta')) {
+    const digits = String(site.phone || '').replace(/\D/g, '');
+    const href = f.target === 'phone' && digits ? `tel:${esc(String(site.phone).replace(/\s/g, ''))}`
+      : f.target === 'whatsapp' && digits ? `https://wa.me/${digits.length === 9 ? '48' + digits : digits}`
+      : f.target === 'email' && site.email ? `mailto:${esc(site.email)}`
+      : url(`kontakt/`);
+    // Na samej stronie kontaktu przycisk prowadzący do formularza byłby zbędny.
+    if (!(href === url(`kontakt/`) && ctx.path.startsWith('kontakt/'))) {
+      dock.push(`<a class="wg-fab"${wgMark(ctx, 'floatCta')} href="${href}"${/^https:/.test(href) ? ' rel="noopener"' : ''}${ed(ctx, 'widgets.floatCta.label')}>${esc(f.label || 'Napisz do mnie')}</a>`);
+    }
+  }
+  if (dock.length) out.push(`<div class="wg-dock">${dock.join('')}</div>`);
+  return out.join('\n');
 }
 
 /* ---------- Strony ---------- */
@@ -732,7 +850,7 @@ function privacyPage(ctx) {
 <p>Wiadomość z formularza jest przekazywana na naszą skrzynkę e-mail za pośrednictwem usługi FormSubmit (formsubmit.co). Dalej przechowujemy ją w skrzynce pocztowej tak jak zwykły e-mail. Podanie danych jest dobrowolne, ale bez adresu e-mail nie możemy odpowiedzieć.</p>
 
 <h2>5. Cookies</h2>
-<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}${ctx.data.widgets?.map?.enabled ? ' Mapa na stronie głównej (OpenStreetMap) wczytuje się dopiero po kliknięciu „Pokaż mapę” – wtedy serwer OpenStreetMap otrzymuje Twój adres IP.' : ''}</p>
+<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}${wgLive(ctx, 'map') ? ' Mapa na stronie głównej (OpenStreetMap) wczytuje się dopiero po kliknięciu „Pokaż mapę” – wtedy serwer OpenStreetMap otrzymuje Twój adres IP.' : ''}</p>
 ${films ? `<h2>6. Filmy z YouTube i Vimeo</h2>
 <p>Filmy są osadzone z serwisów YouTube (Google) i Vimeo. Odtwarzacz wczytuje się dopiero po kliknięciu przycisku odtwarzania – dopiero wtedy serwis otrzymuje Twój adres IP i może zapisać własne cookies zgodnie ze swoją polityką prywatności. Miniatury niektórych filmów mogą być pobierane z serwerów YouTube podczas wyświetlania strony.</p>` : ''}
 <h2>${films ? 7 : 6}. Odbiorcy danych</h2>
@@ -832,6 +950,7 @@ ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 ${header(ctx, { overlay })}
 <main id="tresc">${body}</main>
 ${footer(ctx)}
+${globalWidgets(ctx)}
 <script src="${asset(`site.js`)}" defer></script>
 ${statsScript(ctx)}</body>
 </html>`;
@@ -839,9 +958,9 @@ ${statsScript(ctx)}</body>
 
 /* ---------- Lista wszystkich podstron ---------- */
 
-export function routes(data, { preview = false, base = '', noindex = false, v = '' } = {}) {
+export function routes(data, { preview = false, base = '', noindex = false, v = '', showWidget = '' } = {}) {
   const { site, home, services, portfolio, blog } = data;
-  const mk = (path, fn) => ({ path, render: () => { BASE = base; ASSET_V = v; return fn({ data, path, preview, noindex }); } });
+  const mk = (path, fn) => ({ path, render: () => { BASE = base; ASSET_V = v; return fn({ data, path, preview, noindex, showWidget }); } });
   const t = (s) => `${s} | ${site.name}`;
   const crumbs = (items) => ({
     '@context': 'https://schema.org', '@type': 'BreadcrumbList',

@@ -35,6 +35,15 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .side button:hover { background: var(--bg); }
 .side button.is-on { background: var(--ink); color: #fff; }
 .side .add { color: var(--blue); }
+.side__row { display: flex; align-items: center; gap: 2px; }
+.side__row > button:first-child { flex: 1; min-width: 0; }
+.side .side__del { flex: none; width: 26px; padding: 7px 0; text-align: center; color: var(--muted); opacity: .35; font-size: 12px; }
+.side__row:hover .side__del, .side .side__del:focus-visible { opacity: 1; }
+.side .side__del:hover { background: #fef2f2; color: var(--err); }
+.wg-note { background: #fbf6ee; border: 1px solid #ead9bf; border-radius: 10px; padding: 12px 14px; margin: -6px 0 20px; font-size: 13px; }
+.wg-note.is-on { background: #f0f7f1; border-color: #cfe5d3; }
+.wg-note__row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.list__item.gone { grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
 
 .panel { overflow: auto; padding: 22px 22px 80px; border-right: 1px solid var(--line); }
 .panel h2 { font-size: 20px; margin: 0 0 4px; letter-spacing: -.01em; }
