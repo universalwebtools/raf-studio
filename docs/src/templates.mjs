@@ -542,15 +542,193 @@ const WIDGETS = {
   </div>
 </section>`;
   },
+  // 21. Stykówka – pasek kliszy z numerami klatek
+  contactSheet(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="wg-sheet">
+  <div class="wrap">${wgHead(ctx, 'contactSheet', w, { center: false })}</div>
+  <div class="wg-sheet__strip" data-lightbox tabindex="0" aria-label="Stykówka – przewiń w bok">
+    <div class="wg-sheet__film">${items.map((x, i) => `<a class="wg-sheet__frame" href="${esc(url(x.image.src))}" data-lb>
+      <span class="wg-sheet__n" aria-hidden="true">${i + 1}${i % 2 ? 'A' : ''}</span>${img(ctx, x.image, { path: `widgets.contactSheet.items.${i}.image`, sizes: '(max-width:700px) 70vw, 30vw' })}</a>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // 22. Ciemnia – odbitki „wywołują się”, gdy wjadą na ekran
+  darkroom(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="wg-dark" data-wg-develop>
+  <div class="wrap">${wgHead(ctx, 'darkroom', w)}
+    <div class="wg-dark__row">${items.map((x, i) => `<figure class="wg-dark__print" style="--r:${[-2.5, 1.5, -1, 2.5][i % 4]}deg">
+      <a href="${esc(url(x.image.src))}" data-lb>${img(ctx, x.image, { path: `widgets.darkroom.items.${i}.image`, sizes: '(max-width:700px) 90vw, 30vw' })}</a>
+      ${x.caption ? `<figcaption${ed(ctx, `widgets.darkroom.items.${i}.caption`)}>${esc(x.caption)}</figcaption>` : ''}
+    </figure>`).join('')}</div>
+  </div>
+</section>`.replace('class="wg-dark__row"', 'class="wg-dark__row" data-lightbox');
+  },
+  // 23. Latarka – kursor odsłania ciemne zdjęcie
+  torch(ctx, w) {
+    if (!w.image?.src) return '';
+    return `<section class="wg-torch" data-wg-torch>
+  <div class="wg-torch__img">${img(ctx, w.image, { path: 'widgets.torch.image', sizes: '100vw' })}</div>
+  <div class="wg-torch__shade" aria-hidden="true"></div>
+  <div class="wrap wg-torch__in">
+    ${w.title ? `<h2${ed(ctx, 'widgets.torch.title')}>${esc(w.title)}</h2>` : ''}
+    ${w.lead ? `<p${ed(ctx, 'widgets.torch.lead')}>${esc(w.lead)}</p>` : ''}
+  </div>
+</section>`;
+  },
+  // 24. Stos odbitek – kliknięcie odkłada wierzchnie zdjęcie na spód
+  stack(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="section wg-stack">
+  <div class="wrap wg-stack__grid">
+    <div class="wg-stack__copy">
+      ${w.title ? `<h2${ed(ctx, 'widgets.stack.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p class="lead"${ed(ctx, 'widgets.stack.lead')}>${esc(w.lead)}</p>` : ''}
+      <button type="button" class="btn btn--dark" data-wg-stack-next>Następne zdjęcie →</button>
+    </div>
+    <div class="wg-stack__pile" data-wg-stack>${items.map((x, i) => `<figure class="wg-stack__card" style="--r:${[-4, 3, -2, 5, -3, 2][i % 6]}deg">
+      ${img(ctx, x.image, { path: `widgets.stack.items.${i}.image`, sizes: '(max-width:700px) 80vw, 40vw' })}
+      <figcaption${ed(ctx, `widgets.stack.items.${i}.caption`)}>${esc(x.caption || '')}</figcaption>
+    </figure>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // 25. Mozaika – zdjęcie rozsypane na kafelki składa się przy przewijaniu
+  mosaic(ctx, w) {
+    if (!w.image?.src) return '';
+    return `<section class="wg-mosaic" data-wg-mosaic>
+  <div class="wg-mosaic__sticky">
+    <div class="wrap">${wgHead(ctx, 'mosaic', w)}
+      <div class="wg-mosaic__frame" data-src="${esc(url(w.image.src))}"${ed(ctx, 'widgets.mosaic.image')}>${img(ctx, w.image, { sizes: '(max-width:900px) 100vw, 80vw' })}</div>
+    </div>
+  </div>
+</section>`;
+  },
+  // 26. Oś czasu filmu – pasek jak w programie montażowym, kliknięcie w scenę przeskakuje do niej
+  timeline(ctx, w) {
+    const films = (ctx.data.portfolio.films || []).filter((f) => f.file);
+    const f = films.find((x) => x.file === w.film) || films[0];
+    if (!f) return '';
+    const sec = (t) => { const m = String(t ?? '').trim().match(/^(?:(\d+):)?(\d+(?:[.,]\d+)?)$/); return m ? (Number(m[1] || 0) * 60 + Number(m[2].replace(',', '.'))) : 0; };
+    const fmt = (n) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`;
+    const scenes = (w.scenes || []).map((x, i) => ({ ...x, i, t: sec(x.time) })).filter((x) => x.label).sort((a, b) => a.t - b.t);
+    return `<section class="wg-tl">
+  <div class="wrap">${wgHead(ctx, 'timeline', w)}
+    <div class="wg-tl__player" data-wg-timeline data-src="${esc(url(f.file))}">
+      <div class="wg-tl__screen">
+        <video playsinline preload="none"${f.image?.src ? ` poster="${esc(url(f.image.src))}"` : ''} aria-label="${esc(f.title)}"></video>
+        <button type="button" class="wg-tl__start" aria-label="Odtwórz film: ${esc(f.title)}"><span class="film__icon" aria-hidden="true"></span></button>
+      </div>
+      <div class="wg-tl__panel">
+        <div class="wg-tl__meta"><strong>${esc(f.title)}</strong><span data-wg-tl-time>0:00</span></div>
+        <div class="wg-tl__track">
+          ${scenes.map((x, k) => `<button type="button" class="wg-tl__clip" data-t="${x.t}" style="--c:${k % 4}"><small>${fmt(x.t)}</small><span>${esc(x.label)}</span></button>`).join('')}
+          <i class="wg-tl__head" aria-hidden="true"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>`;
+  },
+  // 27. Ściana rolek – pionowe filmy w ramkach telefonów, grają po kolei bez dźwięku
+  reelWall(ctx, w) {
+    const n = Math.max(2, Math.min(8, Number(w.count) || 5));
+    const films = (ctx.data.portfolio.films || []).filter((f) => f.vertical && f.file).slice(0, n);
+    if (!films.length) return '';
+    const cols = new Set(collections(ctx.data).map((c) => c.id));
+    return `<section class="wg-reels" data-wg-reelwall>
+  <div class="wrap">${wgHead(ctx, 'reelWall', w)}</div>
+  <div class="wg-reels__row">${films.map((f) => {
+    const inner = `<span class="wg-reels__screen">${f.image?.src ? img(ctx, f.image, { sizes: '220px' }) : '<span class="ph"></span>'}<video muted playsinline loop preload="none" aria-hidden="true"></video></span>`;
+    return cols.has(f.collection)
+      ? `<a class="wg-reels__phone" data-src="${esc(url(f.file))}" href="${url(`filmy/${esc(f.collection)}/`)}#${esc(reelId(f))}" aria-label="Oglądaj rolkę: ${esc(f.title)}">${inner}</a>`
+      : `<div class="wg-reels__phone" data-src="${esc(url(f.file))}">${inner}</div>`;
+  }).join('')}</div>
+</section>`;
+  },
+  // 28. Pas z filmem w tle
+  videoBand(ctx, w) {
+    const f = (ctx.data.portfolio.films || []).find((x) => x.file && x.file === w.film);
+    const hero = ctx.data.home.hero;
+    const src = f ? f.file : hero.video;
+    const poster = f ? f.image : hero.image;
+    if (!src) return '';
+    const href = w.link ? (/^(https?:|mailto:|tel:)/.test(w.link) ? esc(w.link) : url(w.link)) : '';
+    return `<section class="wg-vband" data-wg-vband data-src="${esc(url(src))}">
+  <div class="wg-vband__media">${img(ctx, poster, { sizes: '100vw' })}<video muted loop playsinline preload="none" aria-hidden="true"></video></div>
+  <div class="wrap wg-vband__in">
+    ${w.title ? `<h2${ed(ctx, 'widgets.videoBand.title')}>${esc(w.title)}</h2>` : ''}
+    ${w.text ? `<p${ed(ctx, 'widgets.videoBand.text')}>${esc(w.text)}</p>` : ''}
+    ${href && w.cta ? `<a class="btn btn--light" href="${href}"${ed(ctx, 'widgets.videoBand.cta')}>${esc(w.cta)}</a>` : ''}
+  </div>
+</section>`;
+  },
+  // 29. Wysokościomierz – kadr „wznosi się” przy przewijaniu, licznik pokazuje metry
+  altimeter(ctx, w) {
+    if (!w.image?.src) return '';
+    const max = Math.max(10, Math.min(9999, Number(w.max) || 120));
+    return `<section class="wg-alt" data-wg-alt data-max="${max}">
+  <div class="wg-alt__sticky">
+    <div class="wg-alt__img">${img(ctx, w.image, { path: 'widgets.altimeter.image', sizes: '100vw' })}</div>
+    <div class="wg-alt__hud" aria-hidden="true">
+      <div class="wg-alt__scale"><i></i></div>
+      <div class="wg-alt__read"><strong data-wg-alt-n>${max}</strong><span>m</span><small>wysokość lotu</small></div>
+    </div>
+    <div class="wrap wg-alt__copy">
+      ${w.title ? `<h2${ed(ctx, 'widgets.altimeter.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p${ed(ctx, 'widgets.altimeter.lead')}>${esc(w.lead)}</p>` : ''}
+    </div>
+  </div>
+</section>`;
+  },
+  // 30. Trasa lotu – linia przelotu rysuje się na zdjęciu z góry, z numerami ujęć
+  flightPath(ctx, w) {
+    if (!w.image?.src) return '';
+    const pts = (w.points || []).map((p) => ({ x: Math.max(0, Math.min(100, Number(p.x) || 0)), y: Math.max(0, Math.min(100, Number(p.y) || 0)), label: p.label || '' }));
+    // Gładka krzywa przez wszystkie punkty (Catmull-Rom → Bézier).
+    let d = '';
+    pts.map((p) => ({ x: p.x * 16, y: p.y * 9 })).forEach((p, i, pts) => {
+      if (!i) { d = `M${p.x} ${p.y}`; return; }
+      const p0 = pts[i - 2] || pts[i - 1], p1 = pts[i - 1], p3 = pts[i + 1] || p;
+      const c1x = p1.x + (p.x - p0.x) / 6, c1y = p1.y + (p.y - p0.y) / 6, c2x = p.x - (p3.x - p1.x) / 6, c2y = p.y - (p3.y - p1.y) / 6;
+      d += ` C${c1x.toFixed(1)} ${c1y.toFixed(1)} ${c2x.toFixed(1)} ${c2y.toFixed(1)} ${p.x} ${p.y}`;
+    });
+    return `<section class="section wg-path">
+  <div class="wrap">${wgHead(ctx, 'flightPath', w)}
+    <div class="wg-path__map" data-wg-path>
+      ${img(ctx, w.image, { path: 'widgets.flightPath.image', sizes: '(max-width:900px) 100vw, 1200px' })}
+      ${pts.length > 1 ? `<svg viewBox="0 0 1600 900" aria-hidden="true"><path d="${d}" pathLength="1"/></svg>` : ''}
+      ${pts.map((p, i) => `<span class="wg-path__pt" style="left:${p.x}%;top:${p.y}%" data-i="${i}"><b>${i + 1}</b></span>`).join('')}
+      ${pts.length > 1 ? '<span class="wg-path__drone" aria-hidden="true"></span>' : ''}
+    </div>
+    ${pts.some((p) => p.label) ? `<ol class="wg-path__legend">${pts.map((p, i) => `<li${ed(ctx, `widgets.flightPath.points.${i}.label`)}>${esc(p.label || `Ujęcie ${i + 1}`)}</li>`).join('')}</ol>` : ''}
+  </div>
+</section>`;
+  },
 };
 
 // Widżety w danym miejscu strony głównej, w stałej kolejności.
-const WIDGET_ORDER = ['counters', 'logos', 'marquee', 'chapters', 'hscroll', 'beforeAfter', 'spotlight', 'quote', 'reviews', 'pricing', 'faq', 'insta', 'calendar', 'map'];
+const WIDGET_ORDER = ['counters', 'logos', 'marquee', 'chapters', 'hscroll', 'beforeAfter', 'spotlight', 'quote', 'reviews', 'pricing', 'faq', 'insta', 'contactSheet', 'darkroom', 'stack', 'torch', 'mosaic', 'timeline', 'reelWall', 'videoBand', 'altimeter', 'flightPath', 'calendar', 'map'];
 function widgetsAt(ctx, position) {
   const all = WG(ctx);
   return WIDGET_ORDER.filter((k) => all[k] && wgOn(ctx, k) && (all[k].position || 'beforeContact') === position)
     .map((k) => WIDGETS[k](ctx, all[k]).replace('<section', `<section${wgMark(ctx, k)}`)).join('\n');
 }
+
+// Efekty całej strony (klaps, kursor-celownik, migawka) – włączane atrybutem na <body>.
+const FX = ['clapper', 'cursor', 'shutter'];
+const fxAttrs = (ctx) => {
+  const on = FX.filter((k) => wgOn(ctx, k));
+  return `${on.length ? ` data-wg-fx="${on.join(' ')}"` : ''}${ctx.preview && ctx.showWidget ? ` data-wg-demo="${esc(ctx.showWidget)}"` : ''}`;
+};
+// Migawka: zasłona musi istnieć, zanim cokolwiek się narysuje – stąd krótki skrypt od razu po niej.
+const shutterHtml = (ctx) => (wgOn(ctx, 'shutter') ? `<div class="wg-shut" data-wg-shutter aria-hidden="true"><i></i><i></i></div>
+<script>try{if(sessionStorage.getItem('raf-shut')){sessionStorage.removeItem('raf-shut');document.documentElement.classList.add('wg-shut-open')}}catch(e){}</script>
+` : '');
 
 // Widżety widoczne na każdej podstronie (przyklejone do ekranu).
 function globalWidgets(ctx) {
@@ -945,8 +1123,8 @@ ${ctx.noindex ? '<meta name="robots" content="noindex,nofollow">\n' : ''}<title>
 <link rel="stylesheet" href="${asset(`style.css`)}">
 ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).replace(/</g, '\\u003c')}</script>`).join('\n')}
 </head>
-<body${overlay ? ' class="has-overlay"' : ''}>
-<a class="skip" href="#tresc">Przejdź do treści</a>
+<body${overlay ? ' class="has-overlay"' : ''}${fxAttrs(ctx)}>
+${shutterHtml(ctx)}<a class="skip" href="#tresc">Przejdź do treści</a>
 ${header(ctx, { overlay })}
 <main id="tresc">${body}</main>
 ${footer(ctx)}

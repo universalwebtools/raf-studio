@@ -208,6 +208,39 @@ function fieldGroups(path, f) {
     f.help && h('div', { class: 'help' }, f.help));
 }
 
+// Punkty na zdjęciu: kliknięcie w zdjęcie dodaje punkt, punkt da się przeciągnąć.
+function fieldPoints(path, f) {
+  const arr = get(path) || (set(path, []), get(path));
+  const image = get(f.imagePath) || {};
+  const frame = h('div', { class: 'pts__frame', title: 'Kliknij, żeby dodać punkt. Przeciągnij punkt, żeby go przesunąć.' },
+    h('img', { src: media(image.src), alt: '', style: `object-position:${image.x ?? 50}% ${image.y ?? 50}%`, draggable: false }));
+  const pos = (e) => { const r = frame.getBoundingClientRect(); return { x: Math.round(Math.max(0, Math.min(100, (e.clientX - r.left) / r.width * 100)) * 10) / 10, y: Math.round(Math.max(0, Math.min(100, (e.clientY - r.top) / r.height * 100)) * 10) / 10 }; };
+  arr.forEach((pt, i) => {
+    const dot = h('span', { class: 'pts__dot', style: `left:${pt.x}%;top:${pt.y}%` }, String(i + 1));
+    dot.addEventListener('pointerdown', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      dot.setPointerCapture(e.pointerId);
+      const move = (ev) => { const q = pos(ev); pt.x = q.x; pt.y = q.y; dot.style.left = q.x + '%'; dot.style.top = q.y + '%'; changed(); };
+      const up = () => { dot.removeEventListener('pointermove', move); dot.removeEventListener('pointerup', up); };
+      dot.addEventListener('pointermove', move); dot.addEventListener('pointerup', up);
+    });
+    dot.addEventListener('click', (e) => e.stopPropagation());
+    frame.append(dot);
+  });
+  frame.addEventListener('click', (e) => {
+    if (!image.src) return;
+    if (f.max && arr.length >= f.max) { toast(`Najwyżej ${f.max} punktów`, true); return; }
+    arr.push({ ...pos(e), label: '' }); changed({ rerender: true });
+  });
+  return h('div', { class: 'field' }, h('div', { class: 'label' }, f.label),
+    h('div', { class: 'pts' }, frame,
+      h('div', { class: 'img__hint' }, image.src ? 'Kliknij na zdjęciu kolejne miejsca przelotu. Punkty można przeciągać. Linia połączy je w kolejności z listy.' : 'Najpierw wgraj zdjęcie powyżej.')),
+    h('div', { class: 'list', style: 'margin-top:8px' }, arr.map((pt, i) => h('div', { class: 'list__item' },
+      h('input', { type: 'text', value: pt.label || '', placeholder: `Opis ujęcia ${i + 1}`, 'data-path': `${path}.${i}.label`, oninput: (e) => { pt.label = e.target.value; changed(); } }),
+      listTools(path, i, arr)))),
+    f.help && h('div', { class: 'help' }, f.help));
+}
+
 function renderFields(base, fields) {
   return fields.map((f) => {
     const path = f.key === '' ? base : base ? `${base}.${f.key}` : f.key;
@@ -217,6 +250,7 @@ function renderFields(base, fields) {
       case 'groups': return fieldGroups(path, f);
       case 'checkbox': return fieldCheckbox(path, f);
       case 'select': return fieldSelect(path, f);
+      case 'points': return fieldPoints(path, { ...f, imagePath: `${base}.${f.image}` });
       case 'note': return h('p', { class: 'help', style: 'margin:-6px 0 18px' }, f.text);
       default: return fieldText(path, f);
     }
@@ -358,6 +392,35 @@ const WIDGET_PANELS = [
   ['floatCta', 'Pływający przycisk kontaktu', [ON, NOTE('Przycisk przyklejony w prawym dolnym rogu, na każdej podstronie. Telefon i e-mail bierze z „Dane firmy i SEO”.'),
     T('label', 'Napis na przycisku'),
     { key: 'target', label: 'Co robi po kliknięciu', type: 'select', options: [['contact', 'Otwiera formularz kontaktowy'], ['phone', 'Dzwoni na Twój numer'], ['whatsapp', 'Otwiera rozmowę na WhatsAppie'], ['email', 'Otwiera nowy e-mail']] }]],
+  ['contactSheet', 'Stykówka (pasek kliszy)', [ON, POS, NOTE('Ciemny pasek jak z kliszy fotograficznej: klatki z numerami i perforacją. Zdjęcia są czarno-białe i nabierają koloru po najechaniu. Pasek przesuwa się w bok (myszką lub palcem), kliknięcie powiększa zdjęcie.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMGS('Klatki (najlepiej 8–14)', 'Klatka')]],
+  ['darkroom', 'Ciemnia (wywoływanie odbitek)', [ON, POS, NOTE('Ciemna sekcja w czerwonym świetle ciemni. Odbitki w białych ramkach „wywołują się” jedna po drugiej – z jasnej, rozmytej plamy do ostrego zdjęcia – gdy sekcja wjedzie na ekran.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Odbitki (najlepiej 3)', itemLabel: 'Odbitka', max: 6, newItem: { caption: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie'), T('caption', 'Podpis pod odbitką (opcjonalnie)')] }]],
+  ['torch', 'Latarka (odsłanianie zdjęcia)', [ON, POS, NOTE('Zdjęcie jest ukryte w ciemności, a kursor działa jak latarka i odsłania je kawałek po kawałku. Na telefonie plama światła sama krąży po zdjęciu. Najlepiej działa zdjęcie z wieloma szczegółami.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie')]],
+  ['stack', 'Stos odbitek', [ON, POS, NOTE('Zdjęcia leżą na sobie jak odbitki na stole. Kliknięcie w stos (albo przycisk obok) odkłada wierzchnie zdjęcie na spód.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'items', type: 'groups', label: 'Odbitki (najlepiej 4–8)', itemLabel: 'Odbitka', newItem: { caption: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie'), T('caption', 'Podpis na ramce')] }]],
+  ['mosaic', 'Mozaika z jednego zdjęcia', [ON, POS, NOTE('Jedno zdjęcie rozsypane na 24 kafelki. Sekcja zatrzymuje się na ekranie, a kafelki zlatują się i składają w całość w miarę przewijania.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie')]],
+  ['timeline', 'Oś czasu filmu', [ON, POS, NOTE('Film z paskiem scen jak w programie montażowym. Kliknięcie w scenę przeskakuje do tego momentu, a czerwona głowica pokazuje, gdzie jesteś. Przykładowe sceny mają umowne nazwy i czasy – ustaw swoje.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }),
+    { key: 'film', label: 'Film', type: 'select', options: () => (data.portfolio.films || []).filter((x) => x.file).map((x) => [x.file, x.title]), help: 'Do wyboru są filmy wgrane na stronę (nie z YouTube).' },
+    { key: 'scenes', type: 'groups', label: 'Sceny', itemLabel: 'Scena', max: 10, newItem: { time: '0:00', label: '' }, fields: [T('time', 'Początek sceny (minuty:sekundy, np. 0:42)'), T('label', 'Nazwa sceny')] }]],
+  ['clapper', 'Klaps przed filmem', [ON, NOTE('Po kliknięciu „odtwórz” na dowolnym filmie na stronie przez sekundę widać klaps filmowy z tytułem filmu – klapnięcie i dopiero film. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
+  ['reelWall', 'Ściana rolek', [ON, POS, NOTE('Rolki ustawione obok siebie w ramkach telefonów. Gdy sekcja jest na ekranie, grają po kolei po kilka sekund, bez dźwięku. Kliknięcie otwiera rolkę w odtwarzaczu. Rolki bierze automatycznie z listy „Filmy” (pionowe, wgrane na stronę).'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), T('count', 'Ile rolek pokazać (2–8)', { type: 'number' })]],
+  ['videoBand', 'Pas z filmem w tle', [ON, POS, NOTE('Szeroki pas z cichym filmem w tle i krótkim tekstem na wierzchu. Film wczytuje się dopiero, gdy pas pojawi się na ekranie, więc nie spowalnia strony.'),
+    { key: 'film', label: 'Film w tle', type: 'select', options: () => [['', 'Wideo z nagłówka strony głównej'], ...(data.portfolio.films || []).filter((x) => x.file).map((x) => [x.file, x.title])] },
+    T('title', 'Tytuł'), TA('text', 'Tekst', { rows: 3 }), T('cta', 'Tekst przycisku (opcjonalnie)'), T('link', 'Dokąd prowadzi przycisk', { placeholder: 'np. filmy/ albo https://…' })]],
+  ['altimeter', 'Wysokościomierz (wznoszenie drona)', [ON, POS, NOTE('Sekcja zatrzymuje się na ekranie: zdjęcie z drona zaczyna w dużym zbliżeniu i oddala się przy przewijaniu, jakby dron się wznosił, a licznik po prawej pokazuje rosnącą wysokość. Wgraj ostre zdjęcie z góry.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie z drona'), T('max', 'Wysokość końcowa w metrach (np. 120)', { type: 'number' })]],
+  ['flightPath', 'Trasa lotu', [ON, POS, NOTE('Na zdjęciu z góry rysuje się linia przelotu drona z ponumerowanymi ujęciami; pod spodem lista z opisami. Przykładowe punkty i opisy są umowne – ustaw je według prawdziwego lotu.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMG('image', 'Zdjęcie z góry'),
+    { key: 'points', type: 'points', label: 'Punkty trasy', image: 'image', max: 12 }]],
+  ['cursor', 'Kursor-celownik', [ON, NOTE('Na komputerze strzałka myszki zamienia się w ramkę wizjera aparatu. Nad zdjęciem lub filmem ramka zmniejsza się i robi zielona, jakby łapała ostrość. Na telefonach nic się nie zmienia. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
+  ['shutter', 'Migawka między podstronami', [ON, NOTE('Przy przejściu z jednej podstrony na drugą ekran na ułamek sekundy zamyka się i otwiera jak migawka aparatu. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
   ['toTop', 'Przycisk „do góry”', [ON, NOTE('Okrągły przycisk ze strzałką w prawym dolnym rogu. Pojawia się po przewinięciu strony w dół i wraca na samą górę. Bez dodatkowych ustawień.')]],
 ];
 
@@ -379,12 +442,28 @@ const WIDGET_DEFAULTS = {
   insta: { position: 'beforeContact', title: 'Na bieżąco na Instagramie', lead: '', cta: 'Zobacz na Instagramie', link: '', items: [
     { image: PIC('slub-00', 'Para młoda i samochód ślubny') }, { image: PIC('zareczyny-38', 'Sesja zaręczynowa') }, { image: PIC('panienski-02', 'Wieczór panieński') },
     { image: PIC('audi-00', 'Sesja samochodu') }, { image: PIC('fitness-07', 'Sesja fitness') }, { image: PIC('produkt-31', 'Zdjęcie produktowe') }] },
+  contactSheet: { position: 'afterPortfolio', title: 'Stykówka', lead: 'Kilka klatek z ostatnich realizacji. Przesuń pasek w bok, kliknij klatkę, żeby ją powiększyć.', items: [
+    ['slub-00', 'Para młoda i samochód ślubny'], ['slub-21', 'Ślub'], ['slub-36', 'Ślub'], ['zareczyny-51', 'Para w złotym świetle'], ['panienski-06', 'Wieczór panieński'],
+    ['audi-08', 'Sesja samochodu'], ['fitness-14', 'Sesja fitness'], ['groomer-07', 'Salon groomerski'], ['osp-01', 'Straż pożarna'], ['slub-105', 'Ślub']].map(([n, alt]) => ({ image: PIC(n, alt) })) },
+  darkroom: { position: 'afterAbout', title: 'Prosto z ciemni', lead: 'Każde zdjęcie potrzebuje chwili, żeby się pojawić.', items: [
+    { image: PIC('slub-78', 'Ślub'), caption: '' }, { image: PIC('zareczyny-38', 'Sesja zaręczynowa'), caption: '' }, { image: PIC('panienski-11', 'Wieczór panieński'), caption: '' }] },
+  torch: { position: 'afterFilm', title: 'Poszukaj kadru', lead: 'Przesuń kursor po zdjęciu.', image: PIC('slub-153', 'Zdjęcie ślubne') },
+  stack: { position: 'afterPortfolio', title: 'Odbitki na stole', lead: 'Kliknij stos, żeby zobaczyć następne zdjęcie.', items: [
+    ['slub-138', 'Ślub'], ['zareczyny-51', 'Zaręczyny'], ['panienski-15', 'Wieczór panieński'], ['audi-16', 'Motoryzacja'], ['fitness-28', 'Sesja'], ['produkt-36', 'Produkt']].map(([n, c]) => ({ image: PIC(n, c), caption: c })) },
+  mosaic: { position: 'afterOffer', title: 'Kadr składa się z detali', lead: '', image: PIC('slub-87', 'Zdjęcie ślubne') },
+  timeline: { position: 'afterFilm', title: 'Film scena po scenie', lead: 'Kliknij scenę, żeby do niej przeskoczyć.', film: 'media/filmy/lato-jasienica-podsumowanie.mp4', scenes: [
+    { time: '0:00', label: 'Otwarcie' }, { time: '0:20', label: 'Scena 2' }, { time: '0:42', label: 'Scena 3' }, { time: '1:05', label: 'Finał' }] },
+  reelWall: { position: 'afterFilm', title: 'Rolki', lead: 'Krótkie, pionowe formy do mediów społecznościowych.', count: 5 },
+  videoBand: { position: 'afterOffer', film: '', title: 'Historie w ruchu', text: 'Tu wpisz jedno–dwa zdania o swoich filmach.', cta: 'Zobacz filmy', link: 'filmy/' },
+  altimeter: { position: 'afterOffer', title: 'Perspektywa z góry', lead: 'Przewijaj – dron się wznosi.', image: { src: 'media/uslugi-dron.webp', x: 50, y: 50, alt: 'Ujęcie z drona' }, max: 120 },
+  flightPath: { position: 'afterFilm', title: 'Trasa jednego lotu', lead: 'Tak wygląda plan przelotu – każdy punkt to osobne ujęcie.', image: { src: 'media/uslugi-dron.webp', x: 50, y: 50, alt: 'Ujęcie z drona' }, points: [
+    { x: 14, y: 72, label: 'Start i wznoszenie' }, { x: 34, y: 40, label: 'Przelot nad terenem' }, { x: 58, y: 56, label: 'Okrążenie głównego obiektu' }, { x: 82, y: 30, label: 'Odjazd i szeroki plan' }] },
   notice: { text: 'Tu wpisz krótkie ogłoszenie, np. o wolnych terminach.', cta: 'Zapytaj o termin', link: 'kontakt/' },
   floatCta: { label: 'Napisz do mnie', target: 'contact' },
 };
 // Jak pokazać widżet w podglądzie zaraz po kliknięciu: przewinięcie do konkretnego miejsca (px)
 // zamiast do samego widżetu – dla efektów, które nie są osobną sekcją.
-const WIDGET_VIEW = { heroZoom: { scroll: 320, smooth: true }, progress: { scroll: 900, smooth: true }, toTop: { scroll: 900, smooth: true }, notice: { scroll: 0 }, floatCta: { scroll: 0 }, filmHover: { scroll: 0 } };
+const WIDGET_VIEW = { heroZoom: { scroll: 320, smooth: true }, progress: { scroll: 900, smooth: true }, toTop: { scroll: 900, smooth: true }, notice: { scroll: 0 }, floatCta: { scroll: 0 }, filmHover: { scroll: 0 }, clapper: { scroll: 0 }, cursor: { scroll: 0 }, shutter: { scroll: 0 } };
 const WIDGET_HINT = {
   heroZoom: 'Podgląd sam przewinął stronę kawałek w dół – przewiń w górę i w dół, żeby zobaczyć zbliżenie.',
   filmHover: 'Najedź myszką na miniaturę filmu w podglądzie.',
@@ -392,6 +471,13 @@ const WIDGET_HINT = {
   toTop: 'Przycisk jest w prawym dolnym rogu podglądu.',
   notice: 'Ogłoszenie jest w lewym dolnym rogu podglądu.',
   floatCta: 'Przycisk jest w prawym dolnym rogu podglądu.',
+  clapper: 'Podgląd pokazał klaps na pierwszym filmie. Kliknij miniaturę dowolnego filmu w podglądzie, żeby zobaczyć go jeszcze raz.',
+  cursor: 'Przesuń myszkę nad podgląd – najedź na zdjęcie i na przycisk.',
+  shutter: 'Podgląd pokazał migawkę raz. Kliknij „Pokaż w podglądzie”, żeby zobaczyć ją ponownie.',
+  torch: 'Przesuń myszkę po ciemnym zdjęciu w podglądzie.',
+  mosaic: 'Przewijaj podgląd w dół – kafelki złożą się w zdjęcie.',
+  altimeter: 'Przewijaj podgląd w dół – kadr się oddala, a licznik rośnie.',
+  timeline: 'Kliknij scenę na pasku w podglądzie.',
 };
 
 function panels() {
@@ -433,7 +519,7 @@ function panels() {
     if (!data.widgets[key]) data.widgets[key] = { enabled: false, ...structuredClone(WIDGET_DEFAULTS[key] || {}) };
     if (data.widgets[key].removed) continue;
     const on = !!data.widgets[key].enabled;
-    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' ? 'filmy/' : '', fields, widget: key,
+    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' || key === 'clapper' ? 'filmy/' : '', fields, widget: key,
       remove: () => removeWidget(key, label) });
   }
   const gone = WIDGET_PANELS.filter(([key]) => data.widgets[key]?.removed);

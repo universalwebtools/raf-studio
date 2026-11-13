@@ -43,6 +43,10 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .wg-note { background: #fbf6ee; border: 1px solid #ead9bf; border-radius: 10px; padding: 12px 14px; margin: -6px 0 20px; font-size: 13px; }
 .wg-note.is-on { background: #f0f7f1; border-color: #cfe5d3; }
 .wg-note__row { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.pts { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 10px; }
+.pts__frame { position: relative; aspect-ratio: 16 / 9; border-radius: 6px; overflow: hidden; background: var(--bg); cursor: crosshair; touch-action: none; }
+.pts__frame img { width: 100%; height: 100%; object-fit: cover; display: block; user-select: none; -webkit-user-drag: none; }
+.pts__dot { position: absolute; width: 24px; height: 24px; margin: -12px 0 0 -12px; border-radius: 50%; background: var(--accent); color: #fff; display: grid; place-items: center; font-size: 12px; font-weight: 700; box-shadow: 0 0 0 2px #fff, 0 2px 8px rgba(0,0,0,.4); cursor: grab; user-select: none; }
 .list__item.gone { grid-template-columns: 1fr auto; align-items: center; gap: 12px; }
 
 .panel { overflow: auto; padding: 22px 22px 80px; border-right: 1px solid var(--line); }
