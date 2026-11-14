@@ -95,25 +95,36 @@
     btn.disabled = true;
     status.className = 'form__status';
     status.textContent = 'Wysyłanie…';
-    try {
-      const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), 20000);
-      const res = await fetch(form.dataset.endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data, signal: ctrl.signal });
-      clearTimeout(timer);
-      const out = await res.json().catch(() => ({}));
-      if (!res.ok || String(out.success) !== 'true') throw new Error(out.message || 'Błąd wysyłki');
+    const mail = form.action.split('/').pop();
+    const ok = () => {
       form.classList.add('is-sent');
       form.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      status.classList.add('is-ok');
-      status.textContent = 'Dziękuję! Wiadomość dotarła – odpowiem najszybciej, jak to możliwe.';
-    } catch (err) {
-      status.classList.add('is-err');
-      const mail = form.action.split('/').pop();
+      status.className = 'form__status is-ok';
+      status.textContent = 'Dziękuję! Wiadomość została wysłana – odpowiem najszybciej, jak to możliwe.';
+    };
+    const fail = () => {
+      form.classList.remove('is-sent');
+      status.className = 'form__status is-err';
       status.innerHTML = '';
       status.append('Nie udało się wysłać wiadomości. Spróbuj ponownie albo napisz bezpośrednio na ');
       const a = document.createElement('a'); a.href = 'mailto:' + mail; a.textContent = mail; status.append(a, '.');
       btn.disabled = false;
-    }
+    };
+    // FormSubmit potrafi odpowiadać nawet ~10 s. Potwierdzenie pokazujemy po chwili,
+    // a wysyłka trwa dalej w tle (keepalive: dokończy się nawet po zamknięciu strony).
+    // Gdyby jednak się nie udała, komunikat zamienia się na błąd.
+    let failed = false;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => ctrl.abort(), 30000);
+    fetch(form.dataset.endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data, signal: ctrl.signal, keepalive: true })
+      .then(async (res) => {
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || String(out.success) !== 'true') throw new Error(out.message || 'Błąd wysyłki');
+      })
+      .catch(() => { failed = true; fail(); })
+      .finally(() => clearTimeout(timer));
+    await new Promise((r) => setTimeout(r, 900));
+    if (!failed) ok();
   }));
 
   // Filmy: odtwarzacz YouTube/Vimeo wczytywany dopiero po kliknięciu.
