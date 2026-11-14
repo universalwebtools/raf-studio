@@ -88,16 +88,22 @@
     const status = $('.form__status', form);
     const btn = $('button[type=submit]', form);
     const data = new FormData(form);
-    if (data.get('_honey')) return; // pułapka na boty
+    // Pułapka na boty działa po stronie FormSubmit przy zwykłej wysyłce (bez JS).
+    // Tu ją pomijamy, bo autouzupełnianie przeglądarki potrafi ją wypełnić i wiadomość by przepadła.
+    data.delete('_honey');
     data.set('_replyto', data.get('email'));
     btn.disabled = true;
     status.className = 'form__status';
     status.textContent = 'Wysyłanie…';
     try {
-      const res = await fetch(form.dataset.endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data });
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 20000);
+      const res = await fetch(form.dataset.endpoint, { method: 'POST', headers: { Accept: 'application/json' }, body: data, signal: ctrl.signal });
+      clearTimeout(timer);
       const out = await res.json().catch(() => ({}));
       if (!res.ok || String(out.success) !== 'true') throw new Error(out.message || 'Błąd wysyłki');
       form.classList.add('is-sent');
+      form.scrollIntoView({ block: 'center', behavior: 'smooth' });
       status.classList.add('is-ok');
       status.textContent = 'Dziękuję! Wiadomość dotarła – odpowiem najszybciej, jak to możliwe.';
     } catch (err) {

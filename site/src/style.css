@@ -268,7 +268,7 @@ p { margin: 0 0 1em; }
 }
 
 /* Formularz – dodatki */
-.form__hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form__hp { display: none !important; }
 .form label small { color: var(--muted); font-weight: 400; }
 .form__consent { display: flex !important; grid-template-columns: none; gap: 10px !important; align-items: flex-start; font-weight: 400 !important; font-size: 13px !important; color: var(--muted); }
 .form__consent input { width: 18px !important; height: 18px; margin: 2px 0 0; flex: none; accent-color: var(--ink); }
@@ -276,7 +276,7 @@ p { margin: 0 0 1em; }
 .form__status:empty { display: none; }
 .form__status.is-ok { color: #15803d; font-weight: 600; }
 .form__status.is-err { color: #b91c1c; }
-.form.is-sent > :not(.form__status) { display: none; }
+.form.is-sent > :not(.form__status), .form.is-sent .form__consent { display: none !important; }
 .form.is-sent .form__status { font-size: 18px; padding: 30px 0; text-align: center; }
 .form button[disabled] { opacity: .6; cursor: progress; }
 

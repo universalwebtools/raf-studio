@@ -103,7 +103,7 @@ function contactForm(ctx) {
       <input type="hidden" name="_template" value="table">
       <input type="hidden" name="_captcha" value="false">
       <input type="hidden" name="_next" value="${esc(thanks)}">
-      <div class="form__hp" aria-hidden="true"><label>Nie wypełniaj<input name="_honey" tabindex="-1" autocomplete="off"></label></div>
+      <input class="form__hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" hidden>
       <label>Twoje imię<input name="Imię" autocomplete="name" required maxlength="100"></label>
       <div class="form__row">
         <label>Adres e-mail<input name="email" type="email" autocomplete="email" required maxlength="150"></label>
