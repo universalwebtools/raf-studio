@@ -422,6 +422,36 @@ const WIDGET_PANELS = [
   ['cursor', 'Kursor-celownik', [ON, NOTE('Na komputerze strzałka myszki zamienia się w ramkę wizjera aparatu. Nad zdjęciem lub filmem ramka zmniejsza się i robi zielona, jakby łapała ostrość. Na telefonach nic się nie zmienia. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
   ['shutter', 'Migawka między podstronami', [ON, NOTE('Przy przejściu z jednej podstrony na drugą ekran na ułamek sekundy zamyka się i otwiera jak migawka aparatu. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
   ['toTop', 'Przycisk „do góry”', [ON, NOTE('Okrągły przycisk ze strzałką w prawym dolnym rogu. Pojawia się po przewinięciu strony w dół i wraca na samą górę. Bez dodatkowych ustawień.')]],
+  // Trzecia seria
+  ['tilt', 'Zdjęcia 3D przy ruchu myszy', [ON, NOTE('Na komputerze zdjęcia w portfolio, karty usług i wpisów lekko przechylają się za kursorem, jak karta trzymana w dłoni, z delikatnym odblaskiem. Na telefonach nic się nie zmienia. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
+  ['wave', 'Siatka z efektem fali', [ON, NOTE('Zdjęcia w portfolio, karty usług, wpisy i filmy pojawiają się kaskadą – jedno po drugim, jak fala – zamiast wszystkie naraz. Działa na wszystkich podstronach. Bez dodatkowych ustawień.')]],
+  ['collage', 'Kolaż, który sam się układa', [ON, POS, NOTE('Do 7 zdjęć w białych ramkach jak odbitki rozrzucone na stole. Gdy sekcja wjedzie na ekran, zdjęcia „spadają” po kolei na swoje miejsca. Po najechaniu zdjęcie się prostuje, kliknięcie powiększa.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMGS('Zdjęcia (do 7)')]],
+  ['carousel3d', 'Karuzela 3D', [ON, POS, NOTE('Zdjęcia ustawione na obracającym się walcu. Kręci się powoli sama, można ją przeciągnąć myszką lub palcem albo użyć strzałek. Kliknięcie powiększa zdjęcie. Najlepiej 8–12 zdjęć.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), IMGS('Zdjęcia (3–14, najlepiej pionowe)')]],
+  ['swipe', 'Talia kart (przesuń w bok)', [ON, POS, NOTE('Zdjęcia ułożone w stos jak karty. Przeciągnij wierzchnie w bok (myszką lub palcem) albo kliknij strzałkę – odlatuje, a pod spodem czeka następne.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), { key: 'items', type: 'groups', label: 'Karty (najlepiej 5–10)', itemLabel: 'Karta', newItem: { caption: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie'), T('caption', 'Podpis (opcjonalnie)')] }]],
+  ['fullGallery', 'Galeria pełnoekranowa z miniaturami', [ON, POS, NOTE('Ciemna sekcja na całą szerokość: duże zdjęcie, strzałki po bokach i pasek miniatur pod spodem. Działa też strzałkami na klawiaturze i przesunięciem palcem.'),
+    T('title', 'Tytuł (opcjonalnie)'), TA('lead', 'Opis', { rows: 2 }), { key: 'items', type: 'groups', label: 'Zdjęcia', itemLabel: 'Zdjęcie', newItem: { caption: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie'), T('caption', 'Podpis (opcjonalnie)')] }]],
+  ['stories', 'Relacje jak na Instagramie', [ON, POS, NOTE('Pionowy „telefon” z paskami postępu u góry. Zdjęcia zmieniają się same co kilka sekund; stuknięcie w prawą część – następne, w lewą – poprzednie, przytrzymanie – pauza.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), T('name', 'Podpis obok logo (np. Za kulisami)'), T('seconds', 'Ile sekund na jedno zdjęcie', { type: 'number' }), { key: 'items', type: 'groups', label: 'Zdjęcia (najlepiej pionowe)', itemLabel: 'Zdjęcie', newItem: { caption: '', image: { src: '', x: 50, y: 50, alt: '' } }, fields: [IMG('image', 'Zdjęcie'), T('caption', 'Podpis (opcjonalnie)')] }]],
+  ['showreel', 'Showreel na cały ekran', [ON, POS, NOTE('Duże zdjęcie z jednym przyciskiem „Obejrzyj showreel”. Kliknięcie otwiera wybrany film na cały ekran, z dźwiękiem. Zamykasz krzyżykiem albo klawiszem Esc.'),
+    { key: 'film', label: 'Film', type: 'select', options: () => (data.portfolio.films || []).filter((x) => x.file).map((x) => [x.file, x.title]), help: 'Do wyboru są filmy wgrane na stronę (nie z YouTube).' },
+    T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł'), T('cta', 'Napis na przycisku'), IMG('image', 'Zdjęcie w tle (puste = kadr z filmu)')]],
+  ['droneBtn', 'Pas startowy (dron odlatuje)', [ON, POS, NOTE('Pas z krótkim tekstem i przyciskiem z małym dronem. Po najechaniu dron zawisa i kręci śmigłami, po kliknięciu odlatuje w górę – i dopiero wtedy otwiera się formularz kontaktu.'),
+    T('title', 'Tytuł'), TA('lead', 'Opis', { rows: 2 }), T('cta', 'Napis na przycisku'), T('link', 'Dokąd prowadzi przycisk', { placeholder: 'np. kontakt/ albo uslugi/dron/' })]],
+  ['fullMenu', 'Menu pełnoekranowe ze zdjęciem', [ON, NOTE('Zamiast zwykłego menu w nagłówku jest przycisk „☰”, który otwiera menu na cały ekran: duże napisy, a w tle zdjęcie zmieniające się pod każdą pozycją. Działa na komputerze i telefonie, na wszystkich podstronach.'),
+    NOTE('Zdjęcie w tle dla każdej pozycji menu:'),
+    IMG('images.uslugi', 'Oferta'), IMG('images.portfolio', 'Portfolio'), IMG('images.filmy', 'Filmy'), IMG('images.o-mnie', 'O mnie'), IMG('images.blog', 'Dziennik'), IMG('images.kontakt', 'Kontakt')]],
+  ['breadcrumbs', 'Okruszki (gdzie jestem)', [ON, NOTE('Mała ścieżka nad treścią każdej podstrony, np. „Strona główna › Oferta › Dron” – łatwiej wrócić poziom wyżej, a Google lepiej rozumie układ strony. Na stronie głównej się nie pokazuje. Bez dodatkowych ustawień.')]],
+  ['search', 'Wyszukiwarka', [ON, NOTE('Lupa w nagłówku (albo klawisz „/”) otwiera okno wyszukiwania. Szuka w usługach, wpisach, filmach i podstronach – od razu przy pisaniu, bez polskich znaków też znajdzie („slub” → „Ślub”). Lista aktualizuje się sama przy każdej publikacji.'),
+    T('placeholder', 'Podpowiedź w polu wyszukiwania')]],
+  ['stickyBar', 'Pasek „Zapytaj o termin” na telefonie', [ON, NOTE('Na telefonie, po przewinięciu nagłówka, na dole ekranu przykleja się pasek z przyciskiem do formularza i (opcjonalnie) drugim przyciskiem. Na komputerze go nie widać. Telefon i e-mail bierze z „Dane firmy i SEO”.'),
+    T('label', 'Napis na głównym przycisku'),
+    { key: 'second', label: 'Drugi przycisk', type: 'select', options: [['phone', 'Zadzwoń (gdy jest wpisany telefon)'], ['email', 'Napisz e-mail'], ['', 'Bez drugiego przycisku']] },
+    T('secondLabel', 'Napis na drugim przycisku (puste = domyślny)')]],
+  ['langEn', 'Przycisk EN (wersja angielska)', [ON, NOTE('W nagłówku pojawia się mały przycisk „EN”. Otwiera tę samą podstronę przetłumaczoną automatycznie na angielski przez Tłumacza Google – bez pisania osobnej wersji. Tłumaczenie bywa niedoskonałe; pełna, ręcznie pisana wersja angielska to osobny, większy projekt. Polityka prywatności sama dopisze o tym zdanie.'),
+    T('title', 'Podpowiedź po najechaniu na przycisk')]],
 ];
 
 // Treść startowa nowych widżetów (gdy nie ma ich jeszcze w zapisanej treści strony).
@@ -460,10 +490,29 @@ const WIDGET_DEFAULTS = {
     { x: 14, y: 72, label: 'Start i wznoszenie' }, { x: 34, y: 40, label: 'Przelot nad terenem' }, { x: 58, y: 56, label: 'Okrążenie głównego obiektu' }, { x: 82, y: 30, label: 'Odjazd i szeroki plan' }] },
   notice: { text: 'Tu wpisz krótkie ogłoszenie, np. o wolnych terminach.', cta: 'Zapytaj o termin', link: 'kontakt/' },
   floatCta: { label: 'Napisz do mnie', target: 'contact' },
+  collage: { position: 'afterPortfolio', title: 'Odbitki z ostatnich miesięcy', lead: '', items: [
+    ['slub-00', 'Para młoda i samochód ślubny'], ['zareczyny-51', 'Para w złotym świetle'], ['panienski-02', 'Wieczór panieński'], ['audi-08', 'Sesja samochodu'],
+    ['slub-90', 'Ślub'], ['fitness-14', 'Sesja fitness'], ['zareczyny-60', 'Zaręczyny']].map(([n, alt]) => ({ image: PIC(n, alt) })) },
+  carousel3d: { position: 'afterPortfolio', title: 'Galeria dookoła', lead: 'Przeciągnij, żeby obrócić.', items: [
+    ['slub-21', 'Ślub'], ['zareczyny-02', 'Zaręczyny'], ['panienski-09', 'Wieczór panieński'], ['fitness-19', 'Sesja fitness'], ['slub-105', 'Ślub'], ['zareczyny-16', 'Zaręczyny'],
+    ['groomer-24', 'Salon groomerski'], ['audi-16', 'Motoryzacja'], ['slub-138', 'Ślub'], ['panienski-18', 'Wieczór panieński']].map(([n, alt]) => ({ image: PIC(n, alt) })) },
+  swipe: { position: 'afterOffer', title: 'Przesuń kartę', lead: 'Przeciągnij zdjęcie w bok – pod spodem czeka następne.', items: [
+    ['slub-153', 'Ślub'], ['zareczyny-29', 'Zaręczyny'], ['panienski-21', 'Wieczór panieński'], ['fitness-56', 'Sesja fitness'], ['produkt-41', 'Produkt'], ['osp-02', 'Straż pożarna']].map(([n, c]) => ({ image: PIC(n, c), caption: c })) },
+  fullGallery: { position: 'afterPortfolio', title: 'Wybrane kadry', lead: '', items: [
+    ['slub-00', 'Ślub z Audi RS'], ['zareczyny-51', 'Złota godzina'], ['slub-129', 'Ślub'], ['zareczyny-38', 'Zaręczyny'], ['panienski-14', 'Wieczór panieński'],
+    ['audi-00', 'Motoryzacja'], ['zaklad-25', 'Zakład pracy'], ['osp-00', 'Straż pożarna']].map(([n, c]) => ({ image: PIC(n, c), caption: c })) },
+  stories: { position: 'afterAbout', title: 'Za kulisami', lead: 'Krótka relacja z planu – stuknij w prawo, żeby przejść dalej.', name: 'Za kulisami', seconds: 5, items: [
+    ['panienski-00', 'Przygotowania'], ['slub-36', 'Ceremonia'], ['zareczyny-64', 'Plener'], ['groomer-36', 'Sesja dla firmy'], ['fitness-01', 'Sesja fitness']].map(([n, c]) => ({ image: PIC(n, c), caption: c })) },
+  showreel: { position: 'afterHero', film: 'media/filmy/lato-jasienica-podsumowanie.mp4', kicker: 'Showreel', title: 'Minuta, która pokazuje więcej niż sto słów', cta: 'Obejrzyj showreel', image: { src: '', x: 50, y: 50, alt: '' } },
+  droneBtn: { position: 'beforeContact', title: 'Potrzebujesz ujęć z góry?', lead: 'Zdjęcia i filmy z drona – nieruchomości, wydarzenia, reklama.', cta: 'Zapytaj o drona', link: 'kontakt/' },
+  fullMenu: { images: { uslugi: { src: 'media/uslugi-eventy.webp', x: 50, y: 50, alt: '' }, portfolio: PIC('slub-00', ''), filmy: { src: 'media/uslugi-film.webp', x: 50, y: 50, alt: '' }, 'o-mnie': { src: 'media/portret.webp', x: 50, y: 30, alt: '' }, blog: PIC('zareczyny-51', ''), kontakt: { src: 'media/uslugi-dron.webp', x: 50, y: 50, alt: '' } } },
+  search: { placeholder: 'Szukaj: ślub, dron, film…' },
+  stickyBar: { label: 'Zapytaj o termin', second: 'phone', secondLabel: '' },
+  langEn: { title: 'English (automatic translation)' },
 };
 // Jak pokazać widżet w podglądzie zaraz po kliknięciu: przewinięcie do konkretnego miejsca (px)
 // zamiast do samego widżetu – dla efektów, które nie są osobną sekcją.
-const WIDGET_VIEW = { heroZoom: { scroll: 320, smooth: true }, progress: { scroll: 900, smooth: true }, toTop: { scroll: 900, smooth: true }, notice: { scroll: 0 }, floatCta: { scroll: 0 }, filmHover: { scroll: 0 }, clapper: { scroll: 0 }, cursor: { scroll: 0 }, shutter: { scroll: 0 } };
+const WIDGET_VIEW = { tilt: { scroll: 0 }, wave: { scroll: 0 }, fullMenu: { scroll: 0 }, breadcrumbs: { scroll: 0 }, search: { scroll: 0 }, stickyBar: { scroll: 600, smooth: true }, langEn: { scroll: 0 }, heroZoom: { scroll: 320, smooth: true }, progress: { scroll: 900, smooth: true }, toTop: { scroll: 900, smooth: true }, notice: { scroll: 0 }, floatCta: { scroll: 0 }, filmHover: { scroll: 0 }, clapper: { scroll: 0 }, cursor: { scroll: 0 }, shutter: { scroll: 0 } };
 const WIDGET_HINT = {
   heroZoom: 'Podgląd sam przewinął stronę kawałek w dół – przewiń w górę i w dół, żeby zobaczyć zbliżenie.',
   filmHover: 'Najedź myszką na miniaturę filmu w podglądzie.',
@@ -478,7 +527,22 @@ const WIDGET_HINT = {
   mosaic: 'Przewijaj podgląd w dół – kafelki złożą się w zdjęcie.',
   altimeter: 'Przewijaj podgląd w dół – kadr się oddala, a licznik rośnie.',
   timeline: 'Kliknij scenę na pasku w podglądzie.',
+  tilt: 'Najedź myszką na zdjęcie w podglądzie portfolio i poruszaj kursorem.',
+  wave: 'Przewijaj podgląd portfolio – zdjęcia pojawiają się falą.',
+  fullMenu: 'Podgląd otworzył menu. Najedź na pozycje, żeby zmieniać zdjęcie w tle; zamknij krzyżykiem.',
+  breadcrumbs: 'Ścieżka jest nad tytułem podstrony w podglądzie.',
+  search: 'Podgląd otworzył wyszukiwarkę z wpisanym słowem „dron”. Wpisz coś innego, żeby sprawdzić.',
+  stickyBar: 'Pasek widać tylko na telefonie – przełącz podgląd na „Telefon” u góry.',
+  langEn: 'Przycisk „EN” jest w nagłówku podglądu (w podglądzie tłumaczenie nie otworzy się poprawnie – sprawdź na opublikowanej stronie).',
+  swipe: 'Przeciągnij wierzchnie zdjęcie w bok albo kliknij strzałkę.',
+  carousel3d: 'Przeciągnij karuzelę myszką albo kliknij strzałki.',
+  stories: 'Kliknij prawą część „telefonu”, żeby przejść dalej.',
+  showreel: 'Kliknij „Obejrzyj showreel” w podglądzie.',
+  droneBtn: 'Kliknij przycisk w podglądzie – dron odleci (w podglądzie bez przejścia dalej).',
 };
+
+// Na której podstronie podgląd pokazuje dany widżet (domyślnie strona główna).
+const WIDGET_PAGE = { filmHover: 'filmy/', clapper: 'filmy/', tilt: 'portfolio/', wave: 'portfolio/', breadcrumbs: 'uslugi/' };
 
 function panels() {
   const list = [];
@@ -519,7 +583,7 @@ function panels() {
     if (!data.widgets[key]) data.widgets[key] = { enabled: false, ...structuredClone(WIDGET_DEFAULTS[key] || {}) };
     if (data.widgets[key].removed) continue;
     const on = !!data.widgets[key].enabled;
-    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: key === 'filmHover' || key === 'clapper' ? 'filmy/' : '', fields, widget: key,
+    list.push({ id: `widget-${key}`, group: 'Widżety do dodania', label: (on ? '● ' : '○ ') + label, title: label, base: `widgets.${key}`, page: WIDGET_PAGE[key] || '', fields, widget: key,
       remove: () => removeWidget(key, label) });
   }
   const gone = WIDGET_PANELS.filter(([key]) => data.widgets[key]?.removed);

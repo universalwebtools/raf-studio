@@ -37,21 +37,16 @@ const paras = (ctx, list, path) => (list || []).map((p, i) => `<p${ed(ctx, `${pa
 
 function header(ctx, { overlay }) {
   const { site } = ctx.data;
-  const links = [
-    ['uslugi/', 'Oferta'],
-    ['portfolio/', 'Portfolio'],
-    ...((ctx.data.portfolio.films || []).length ? [['filmy/', 'Filmy']] : []),
-    ['o-mnie/', 'O mnie'],
-    ['blog/', 'Dziennik'],
-    ['kontakt/', 'Kontakt'],
-  ];
+  const links = navLinks(ctx);
   const cur = ctx.path;
-  return `<header class="hdr${overlay ? ' hdr--overlay' : ''}" data-hdr>
+  const tools = (wgOn(ctx, 'search') ? `<button class="hdr__tool" type="button" data-wg-search-open aria-label="Szukaj na stronie"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>` : '') + enLink(ctx);
+  return `<header class="hdr${overlay ? ' hdr--overlay' : ''}${wgOn(ctx, 'fullMenu') ? ' hdr--menu' : ''}" data-hdr>
   <div class="wrap hdr__in">
     <a class="hdr__logo" href="${url(``)}" aria-label="${esc(site.name)} – strona główna">
       <img class="logo-light" src="${esc(url(site.logoLight))}" alt="${esc(site.name)}" width="120" height="39">
       <img class="logo-dark" src="${esc(url(site.logoDark))}" alt="" width="120" height="39" aria-hidden="true">
     </a>
+    ${tools ? `<div class="hdr__tools">${tools}</div>` : ''}
     <button class="hdr__burger" type="button" aria-label="Menu" aria-expanded="false" data-burger><span></span><span></span></button>
     <nav class="hdr__nav" aria-label="Główne menu">
       ${links.map(([href, label]) => `<a href="${url(href)}"${cur.startsWith(href) ? ' aria-current="page"' : ''}>${label}</a>`).join('')}
@@ -709,10 +704,118 @@ const WIDGETS = {
   </div>
 </section>`;
   },
+
+  /* ---------- Trzecia seria widżetów ---------- */
+
+  // Kolaż, który sam się układa: zdjęcia „spadają” na miejsce przy wejściu sekcji.
+  collage(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src).slice(0, 7);
+    if (!items.length) return '';
+    const spots = [[1, 10, 29, -6], [27, 2, 25, 4], [49, 12, 27, -3], [73, 3, 25, 6], [6, 50, 25, 3], [33, 46, 28, -5], [64, 52, 27, 4]];
+    return `<section class="section wg-collage">
+  <div class="wrap">${wgHead(ctx, 'collage', w)}
+    <div class="wg-collage__board" data-wg-collage data-lightbox>${items.map((x, i) => { const [l, t, wd, r] = spots[i]; return `<a class="wg-collage__item" href="${esc(url(x.image.src))}" data-lb style="--l:${l}%;--t:${t}%;--w:${wd}%;--r:${r}deg;--i:${i}">${img(ctx, x.image, { path: `widgets.collage.items.${i}.image`, sizes: '(max-width:800px) 50vw, 30vw' })}</a>`; }).join('')}</div>
+  </div>
+</section>`;
+  },
+  // Karuzela 3D: zdjęcia na obracającym się walcu.
+  carousel3d(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src).slice(0, 14);
+    if (items.length < 3) return '';
+    const n = items.length, k = (1 / (2 * Math.tan(Math.PI / n))).toFixed(4);
+    return `<section class="section section--alt wg-ring-sec">
+  <div class="wrap">${wgHead(ctx, 'carousel3d', w)}</div>
+  <div class="wg-ring" data-wg-ring style="--n:${n};--k:${k}">
+    <div class="wg-ring__stage" data-lightbox>${items.map((x, i) => `<a class="wg-ring__item" href="${esc(url(x.image.src))}" data-lb style="--a:${(360 / n * i).toFixed(3)}deg">${img(ctx, x.image, { path: `widgets.carousel3d.items.${i}.image`, sizes: '280px' })}</a>`).join('')}</div>
+  </div>
+  <div class="wg-ring__nav"><button type="button" data-dir="-1" aria-label="Poprzednie zdjęcie">‹</button><button type="button" data-dir="1" aria-label="Następne zdjęcie">›</button></div>
+</section>`;
+  },
+  // Talia kart: przesuń zdjęcie w bok, a pod spodem czeka następne.
+  swipe(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="section wg-swipe-sec">
+  <div class="wrap wg-swipe-wrap">
+    <div class="wg-swipe__copy">
+      ${w.title ? `<h2${ed(ctx, 'widgets.swipe.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p class="lead"${ed(ctx, 'widgets.swipe.lead')}>${esc(w.lead)}</p>` : ''}
+      <div class="wg-swipe__nav"><button type="button" data-dir="-1" aria-label="W lewo">←</button><span class="wg-swipe__count" aria-live="polite">1 / ${items.length}</span><button type="button" data-dir="1" aria-label="W prawo">→</button></div>
+    </div>
+    <div class="wg-swipe" data-wg-swipe>${items.map((x, i) => `<figure class="wg-swipe__card" style="--i:${i}">${img(ctx, x.image, { path: `widgets.swipe.items.${i}.image`, sizes: '(max-width:800px) 90vw, 420px' })}${x.caption ? `<figcaption${ed(ctx, `widgets.swipe.items.${i}.caption`)}>${esc(x.caption)}</figcaption>` : ''}</figure>`).join('')}</div>
+  </div>
+</section>`;
+  },
+  // Galeria pełnoekranowa z paskiem miniatur.
+  fullGallery(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="wg-fg" data-wg-fg>
+  ${w.title || w.lead ? `<div class="wrap wg-fg__head">${w.title ? `<h2${ed(ctx, 'widgets.fullGallery.title')}>${esc(w.title)}</h2>` : ''}${w.lead ? `<p class="lead"${ed(ctx, 'widgets.fullGallery.lead')}>${esc(w.lead)}</p>` : ''}</div>` : ''}
+  <div class="wg-fg__stage">
+    ${items.map((x, i) => `<figure class="wg-fg__slide${i ? '' : ' is-on'}">${img(ctx, x.image, { path: `widgets.fullGallery.items.${i}.image`, sizes: '100vw' })}${x.caption ? `<figcaption${ed(ctx, `widgets.fullGallery.items.${i}.caption`)}>${esc(x.caption)}</figcaption>` : ''}</figure>`).join('')}
+    <button type="button" class="wg-fg__arrow wg-fg__arrow--l" data-dir="-1" aria-label="Poprzednie zdjęcie">‹</button>
+    <button type="button" class="wg-fg__arrow wg-fg__arrow--r" data-dir="1" aria-label="Następne zdjęcie">›</button>
+  </div>
+  <div class="wg-fg__thumbs">${items.map((x, i) => `<button type="button" class="${i ? '' : 'is-on'}" data-i="${i}" aria-label="Zdjęcie ${i + 1}"><img src="${esc(url(x.image.small || x.image.src))}" alt="" loading="lazy" decoding="async" style="object-position:${x.image.x ?? 50}% ${x.image.y ?? 50}%"></button>`).join('')}</div>
+</section>`;
+  },
+  // Galeria jak relacje na Instagramie: paski postępu, przełączanie stuknięciem.
+  stories(ctx, w) {
+    const items = (w.items || []).filter((x) => x.image?.src);
+    if (!items.length) return '';
+    return `<section class="section section--alt wg-stories-sec">
+  <div class="wrap wg-stories-wrap">
+    <div class="wg-stories__copy">
+      ${w.title ? `<h2${ed(ctx, 'widgets.stories.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p class="lead"${ed(ctx, 'widgets.stories.lead')}>${esc(w.lead)}</p>` : ''}
+    </div>
+    <div class="wg-stories" data-wg-stories data-ms="${Math.max(2, Math.min(15, Number(w.seconds) || 5)) * 1000}" tabindex="0" aria-roledescription="relacja" aria-label="${esc(w.title || 'Relacja')}">
+      <div class="wg-stories__bars">${items.map(() => '<span><i></i></span>').join('')}</div>
+      <div class="wg-stories__who"><img src="${esc(url(ctx.data.site.logoLight))}" alt="" width="60" height="20"><small${ed(ctx, 'widgets.stories.name')}>${esc(w.name || '')}</small></div>
+      ${items.map((x, i) => `<figure class="wg-stories__slide${i ? '' : ' is-on'}">${img(ctx, x.image, { path: `widgets.stories.items.${i}.image`, sizes: '360px' })}${x.caption ? `<figcaption${ed(ctx, `widgets.stories.items.${i}.caption`)}>${esc(x.caption)}</figcaption>` : ''}</figure>`).join('')}
+      <button type="button" class="wg-stories__tap wg-stories__tap--l" data-dir="-1" aria-label="Poprzednie"></button>
+      <button type="button" class="wg-stories__tap wg-stories__tap--r" data-dir="1" aria-label="Następne"></button>
+    </div>
+  </div>
+</section>`;
+  },
+  // Showreel na cały ekran: jeden przycisk, film z dźwiękiem.
+  showreel(ctx, w) {
+    const films = (ctx.data.portfolio.films || []).filter((f) => f.file);
+    const film = films.find((f) => f.file === w.film) || films[0];
+    const src = w.film && !film ? w.film : film?.file;
+    if (!src) return '';
+    const poster = w.image?.src ? w.image : film?.image;
+    return `<section class="wg-reel">
+  <div class="wg-reel__bg">${img(ctx, poster, { path: w.image?.src ? 'widgets.showreel.image' : '', sizes: '100vw' })}</div>
+  <div class="wrap wg-reel__in">
+    ${w.kicker ? `<p class="kicker"${ed(ctx, 'widgets.showreel.kicker')}>${esc(w.kicker)}</p>` : ''}
+    ${w.title ? `<h2${ed(ctx, 'widgets.showreel.title')}>${esc(w.title)}</h2>` : ''}
+    <button type="button" class="wg-reel__play" data-wg-showreel="${esc(url(src))}" data-title="${esc(film?.title || w.title || 'Showreel')}"><span aria-hidden="true"></span>${esc(w.cta || 'Obejrzyj showreel')}</button>
+  </div>
+</section>`;
+  },
+  // Pas startowy: przycisk z dronem, który odlatuje po kliknięciu.
+  droneBtn(ctx, w) {
+    const href = w.link ? (/^(https?:|mailto:|tel:)/.test(w.link) ? esc(w.link) : url(w.link)) : url(`kontakt/`);
+    return `<section class="wg-launch">
+  <div class="wrap wg-launch__in">
+    <div>
+      ${w.title ? `<h2${ed(ctx, 'widgets.droneBtn.title')}>${esc(w.title)}</h2>` : ''}
+      ${w.lead ? `<p${ed(ctx, 'widgets.droneBtn.lead')}>${esc(w.lead)}</p>` : ''}
+    </div>
+    <a class="wg-launch__btn" href="${href}" data-wg-launch>
+      <svg class="wg-launch__drone" viewBox="0 0 64 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M10 14h16M38 14h16M18 14v4M46 14v4"/><path d="M22 22h20l-4 8H26z" fill="currentColor"/><path d="M26 30l-4 6M38 30l4 6"/></g><g class="wg-launch__props" stroke="currentColor" stroke-width="2"><path d="M6 10h24M34 10h24"/></g></svg>
+      <span${ed(ctx, 'widgets.droneBtn.cta')}>${esc(w.cta || 'Zapytaj o drona')}</span>
+    </a>
+  </div>
+</section>`;
+  },
 };
 
 // Widżety w danym miejscu strony głównej, w stałej kolejności.
-const WIDGET_ORDER = ['counters', 'logos', 'marquee', 'chapters', 'hscroll', 'beforeAfter', 'spotlight', 'quote', 'reviews', 'pricing', 'faq', 'insta', 'contactSheet', 'darkroom', 'stack', 'torch', 'mosaic', 'timeline', 'reelWall', 'videoBand', 'altimeter', 'flightPath', 'calendar', 'map'];
+const WIDGET_ORDER = ['counters', 'logos', 'marquee', 'chapters', 'hscroll', 'beforeAfter', 'spotlight', 'quote', 'reviews', 'pricing', 'faq', 'insta', 'contactSheet', 'darkroom', 'stack', 'torch', 'mosaic', 'collage', 'carousel3d', 'swipe', 'fullGallery', 'stories', 'showreel', 'timeline', 'reelWall', 'videoBand', 'altimeter', 'flightPath', 'droneBtn', 'calendar', 'map'];
 function widgetsAt(ctx, position) {
   const all = WG(ctx);
   return WIDGET_ORDER.filter((k) => all[k] && wgOn(ctx, k) && (all[k].position || 'beforeContact') === position)
@@ -720,7 +823,7 @@ function widgetsAt(ctx, position) {
 }
 
 // Efekty całej strony (klaps, kursor-celownik, migawka) – włączane atrybutem na <body>.
-const FX = ['clapper', 'cursor', 'shutter'];
+const FX = ['clapper', 'cursor', 'shutter', 'tilt', 'wave'];
 const fxAttrs = (ctx) => {
   const on = FX.filter((k) => wgOn(ctx, k));
   return `${on.length ? ` data-wg-fx="${on.join(' ')}"` : ''}${ctx.preview && ctx.showWidget ? ` data-wg-demo="${esc(ctx.showWidget)}"` : ''}`;
@@ -759,7 +862,99 @@ function globalWidgets(ctx) {
     }
   }
   if (dock.length) out.push(`<div class="wg-dock">${dock.join('')}</div>`);
+  // Przyklejony pasek na dole ekranu telefonu.
+  const b = all.stickyBar;
+  if (b && wgOn(ctx, 'stickyBar') && !ctx.path.startsWith('kontakt/')) {
+    const tel = String(site.phone || '').replace(/\s/g, '');
+    const second = b.second === 'phone' && tel ? [`tel:${esc(tel)}`, b.secondLabel || 'Zadzwoń']
+      : b.second === 'email' && site.email ? [`mailto:${esc(site.email)}`, b.secondLabel || 'Napisz e-mail'] : null;
+    out.push(`<div class="wg-bar${second ? '' : ' wg-bar--one'}"${wgMark(ctx, 'stickyBar')} data-wg-bar>
+  <a class="wg-bar__main" href="${url(`kontakt/`)}"${ed(ctx, 'widgets.stickyBar.label')}>${esc(b.label || 'Zapytaj o termin')}</a>
+  ${second ? `<a class="wg-bar__alt" href="${second[0]}">${esc(second[1])}</a>` : ''}
+</div>`);
+  }
+  // Menu pełnoekranowe ze zdjęciem zmieniającym się pod każdą pozycją.
+  const m = all.fullMenu;
+  if (m && wgOn(ctx, 'fullMenu')) {
+    const links = navLinks(ctx);
+    out.push(`<div class="wg-menu"${wgMark(ctx, 'fullMenu')} data-wg-menu hidden role="dialog" aria-modal="true" aria-label="Menu">
+  <div class="wg-menu__bg" aria-hidden="true">${links.map(([href], i) => { const im = m.images?.[href.replace(/\/$/, '')]; return `<div class="wg-menu__img${i ? '' : ' is-on'}" data-for="${i}">${im?.src ? img(ctx, im, { sizes: '100vw' }) : ''}</div>`; }).join('')}</div>
+  <nav class="wg-menu__nav" aria-label="Menu">${links.map(([href, label], i) => `<a href="${url(href)}" data-i="${i}"${ctx.path.startsWith(href) ? ' aria-current="page"' : ''}><small>0${i + 1}</small>${esc(label)}</a>`).join('')}</nav>
+  <div class="wg-menu__foot">${site.email ? `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>` : ''}${site.gallery ? `<a href="${esc(site.gallery)}" rel="noopener">Strefa klienta</a>` : ''}</div>
+  <button type="button" class="wg-menu__close" aria-label="Zamknij menu">✕</button>
+</div>`);
+  }
+  // Wyszukiwarka (lista do przeszukania w search.json, wczytywana przy pierwszym otwarciu).
+  if (wgOn(ctx, 'search')) {
+    out.push(`<div class="wg-search"${wgMark(ctx, 'search')} data-wg-search="${url(`search.json`)}" hidden role="dialog" aria-modal="true" aria-label="Szukaj na stronie">
+  <div class="wg-search__box">
+    <input type="search" placeholder="${esc(all.search.placeholder || 'Szukaj: ślub, dron, film…')}" aria-label="Czego szukasz?" autocomplete="off">
+    <button type="button" class="wg-search__close" aria-label="Zamknij wyszukiwarkę">✕</button>
+    <ul class="wg-search__list" role="listbox"></ul>
+    ${ctx.preview ? `<script type="application/json" class="wg-search__data">${JSON.stringify(searchIndex(ctx.data)).replace(/</g, '\\u003c')}</script>` : ''}
+    <p class="wg-search__empty" hidden>Nic nie znalazłem. Spróbuj innego słowa albo <a href="${url(`kontakt/`)}">napisz do mnie</a>.</p>
+  </div>
+</div>`);
+  }
   return out.join('\n');
+}
+
+// Pozycje głównego menu (wspólne dla nagłówka i menu pełnoekranowego).
+function navLinks(ctx) {
+  return [
+    ['uslugi/', 'Oferta'],
+    ['portfolio/', 'Portfolio'],
+    ...((ctx.data.portfolio.films || []).length ? [['filmy/', 'Filmy']] : []),
+    ['o-mnie/', 'O mnie'],
+    ['blog/', 'Dziennik'],
+    ['kontakt/', 'Kontakt'],
+  ];
+}
+
+// Okruszki: „Strona główna › Oferta › Dron” na każdej podstronie poza główną.
+function breadcrumbs(ctx) {
+  if (!wgOn(ctx, 'breadcrumbs') || !ctx.path || ctx.path === '404.html') return '';
+  const { services, blog, portfolio } = ctx.data;
+  const top = { uslugi: 'Oferta', portfolio: 'Portfolio', filmy: 'Filmy', 'o-mnie': 'O mnie', blog: 'Dziennik', kontakt: 'Kontakt', 'polityka-prywatnosci': 'Polityka prywatności' };
+  const seg = ctx.path.replace(/\/$/, '').split('/');
+  const name = (i) => {
+    const s = seg[i];
+    if (i === 0) return top[s] || s;
+    if (seg[0] === 'uslugi') return services.find((x) => x.slug === s)?.title || s;
+    if (seg[0] === 'blog') return blog.find((x) => x.slug === s)?.title || s;
+    if (seg[0] === 'filmy') return (portfolio.filmCollections || []).find((x) => x.id === s)?.title || s;
+    if (s === 'dziekujemy') return 'Dziękujemy';
+    return s;
+  };
+  const items = [[url(``), 'Strona główna'], ...seg.map((_, i) => [url(seg.slice(0, i + 1).join('/') + '/'), name(i)])];
+  return `<nav class="wg-crumbs"${wgMark(ctx, 'breadcrumbs')} aria-label="Jesteś tutaj"><div class="wrap"><ol>${items.map(([href, label], i) => i === items.length - 1
+    ? `<li aria-current="page">${esc(label)}</li>` : `<li><a href="${href}">${esc(label)}</a></li>`).join('')}</ol></div></nav>`;
+}
+
+// Przycisk EN: ta sama podstrona przetłumaczona automatycznie przez Tłumacza Google.
+function enLink(ctx) {
+  if (!wgOn(ctx, 'langEn')) return '';
+  let host;
+  try { host = new URL(ctx.data.site.url).host; } catch { return ''; }
+  const href = `https://${host.replace(/-/g, '--').replace(/\./g, '-')}.translate.goog/${ctx.path === '404.html' ? '' : ctx.path}?_x_tr_sl=pl&_x_tr_tl=en&_x_tr_hl=en`;
+  return `<a class="wg-en"${wgMark(ctx, 'langEn')} href="${esc(href)}" hreflang="en" lang="en" rel="noopener" title="${esc(WG(ctx).langEn?.title || 'English (automatic translation)')}">EN</a>`;
+}
+
+// Lista do wyszukiwarki: podstrony, usługi, wpisy, sekcje filmów i filmy.
+function searchIndex(data) {
+  const { services, blog, portfolio, home } = data;
+  const rows = [
+    ['Oferta', home.offer.lead, 'uslugi/', 'Strona'], ['Portfolio', portfolio.lead, 'portfolio/', 'Strona'],
+    ['O mnie', (home.about.paragraphs || [])[0], 'o-mnie/', 'Strona'], ['Dziennik', home.journal.title, 'blog/', 'Strona'],
+    ['Kontakt', 'Zapytaj o termin – formularz, e-mail', 'kontakt/', 'Strona'],
+    ...services.map((s) => [s.title, `${s.short || ''} ${(s.includes || []).join(' ')}`, `uslugi/${s.slug}/`, 'Usługa']),
+    ...blog.filter((p) => p.published).map((p) => [p.title, p.excerpt, `blog/${p.slug}/`, 'Wpis']),
+    ...(collections(data).length ? [['Filmy', portfolio.filmsLead, 'filmy/', 'Strona']] : []),
+    ...collections(data).map((c) => [c.title, c.lead, `filmy/${c.id}/`, 'Filmy']),
+    ...visibleFilms(data).map((f) => { const c = collections(data).find((x) => x.id === f.collection); return [f.title, `${f.category || ''} ${c?.title || ''}`, c ? `filmy/${c.id}/` : 'filmy/', 'Film']; }),
+    ...(portfolio.categories || []).map((c) => [c, 'Zdjęcia w portfolio', 'portfolio/', 'Zdjęcia']),
+  ];
+  return rows.map(([t, d, u, k]) => ({ t, d: String(d || '').slice(0, 160), u: url(u), k }));
 }
 
 /* ---------- Strony ---------- */
@@ -1028,7 +1223,7 @@ function privacyPage(ctx) {
 <p>Wiadomość z formularza jest przekazywana na naszą skrzynkę e-mail za pośrednictwem usługi FormSubmit (formsubmit.co). Dalej przechowujemy ją w skrzynce pocztowej tak jak zwykły e-mail. Podanie danych jest dobrowolne, ale bez adresu e-mail nie możemy odpowiedzieć.</p>
 
 <h2>5. Cookies</h2>
-<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}${wgLive(ctx, 'map') ? ' Mapa na stronie głównej (OpenStreetMap) wczytuje się dopiero po kliknięciu „Pokaż mapę” – wtedy serwer OpenStreetMap otrzymuje Twój adres IP.' : ''}</p>
+<p>Strona <strong>nie używa plików cookies</strong> ani narzędzi reklamowych i nie śledzi odwiedzających.${stats ? ' Do liczenia odwiedzin używamy usługi GoatCounter, która nie zapisuje cookies ani adresów IP i pokazuje wyłącznie zbiorcze, anonimowe statystyki (np. liczbę wyświetleń podstron).' : ''}${wgLive(ctx, 'map') ? ' Mapa na stronie głównej (OpenStreetMap) wczytuje się dopiero po kliknięciu „Pokaż mapę” – wtedy serwer OpenStreetMap otrzymuje Twój adres IP.' : ''}${ctx.data.widgets?.langEn?.enabled && !ctx.data.widgets.langEn.removed ? ' Przycisk „EN” w nagłówku otwiera stronę przetłumaczoną automatycznie przez Tłumacza Google – dopiero wtedy Google otrzymuje Twój adres IP i może zapisać własne cookies.' : ''}</p>
 ${films ? `<h2>6. Filmy z YouTube i Vimeo</h2>
 <p>Filmy są osadzone z serwisów YouTube (Google) i Vimeo. Odtwarzacz wczytuje się dopiero po kliknięciu przycisku odtwarzania – dopiero wtedy serwis otrzymuje Twój adres IP i może zapisać własne cookies zgodnie ze swoją polityką prywatności. Miniatury niektórych filmów mogą być pobierane z serwerów YouTube podczas wyświetlania strony.</p>` : ''}
 <h2>${films ? 7 : 6}. Odbiorcy danych</h2>
@@ -1126,7 +1321,7 @@ ${jsonld.map((j) => `<script type="application/ld+json">${JSON.stringify(j).repl
 <body${overlay ? ' class="has-overlay"' : ''}${fxAttrs(ctx)}>
 ${shutterHtml(ctx)}<a class="skip" href="#tresc">Przejdź do treści</a>
 ${header(ctx, { overlay })}
-<main id="tresc">${body}</main>
+<main id="tresc">${breadcrumbs(ctx)}${body}</main>
 ${footer(ctx)}
 ${globalWidgets(ctx)}
 <script src="${asset(`site.js`)}" defer></script>
@@ -1178,6 +1373,7 @@ export function renderSite(data, { base = '', noindex = false, v = '' } = {}) {
   const pages = routes(data, { base, noindex, v });
   for (const r of pages) files[r.path + 'index.html'] = r.render();
   files['404.html'] = notFound(data, { base, v });
+  if (data.widgets?.search?.enabled && !data.widgets.search.removed) { BASE = base; files['search.json'] = JSON.stringify(searchIndex(data)); }
   const siteUrl = data.site.url.replace(/\/$/, '');
   const today = new Date().toISOString().slice(0, 10);
 
