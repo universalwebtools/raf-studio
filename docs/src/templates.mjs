@@ -1289,9 +1289,68 @@ function statsScript(ctx) {
 
 /* ---------- Szkielet dokumentu ---------- */
 
+// Tryb „strona w budowie”: każda podstrona (poza polityką prywatności) pokazuje tylko komunikat.
+// W edytorze strona działa normalnie, z paskiem przypominającym, że tryb jest włączony.
+const maintenanceOn = (data) => !!data.site.maintenance?.enabled;
+const MAINT_OPEN = ['polityka-prywatnosci/', 'kontakt/dziekujemy/'];
+function maintenancePage(ctx) {
+  const { site } = ctx.data;
+  const m = site.maintenance || {};
+  const social = [['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube']].filter(([k]) => site[k]);
+  const links = [
+    site.email && `<a href="mailto:${esc(site.email)}">${esc(site.email)}</a>`,
+    site.phone && `<a href="tel:${esc(site.phone.replace(/\s/g, ''))}">${esc(site.phone)}</a>`,
+    ...social.map(([k, l]) => `<a href="${esc(site[k])}" rel="noopener">${l}</a>`),
+  ].filter(Boolean);
+  return `<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${esc(m.title || 'Strona w budowie')} | ${esc(site.name)}</title>
+<meta name="description" content="${esc(m.text || '')}">
+<meta name="theme-color" content="#0b0b0c">
+<link rel="icon" href="${url(`favicon.ico`)}" sizes="48x48">
+<link rel="apple-touch-icon" href="${url(`apple-touch-icon.png`)}">
+<style>
+@font-face { font-family: Inter; src: url("${url(`fonts/inter-latin.woff2`)}") format("woff2"); font-weight: 100 900; font-display: swap; }
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background: #0b0b0c; color: #f3f1ee; display: grid; place-items: center; text-align: center; padding: 32px 20px; -webkit-font-smoothing: antialiased; }
+main { max-width: 640px; }
+img { display: block; margin: 0 auto 56px; width: 150px; height: auto; }
+.k { font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: #b8925a; font-weight: 600; margin: 0 0 18px; }
+h1 { font-size: clamp(36px, 7vw, 64px); line-height: 1.05; letter-spacing: -.04em; font-weight: 600; margin: 0 0 22px; text-wrap: balance; }
+p { font-size: 18px; line-height: 1.65; color: #a9a6a1; margin: 0 0 30px; }
+nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+nav a { color: #f3f1ee; text-decoration: none; padding: 10px 18px; border: 1px solid rgba(255,255,255,.22); border-radius: 99px; font-size: 15px; }
+nav a:hover { background: rgba(255,255,255,.08); }
+nav a.main { background: #fff; color: #141414; border-color: #fff; font-weight: 600; }
+footer { margin-top: 56px; font-size: 13px; color: #6d6a66; }
+footer a { color: inherit; }
+</style>
+</head>
+<body>
+<main>
+  <img src="${esc(url(site.logoLight))}" alt="${esc(site.name)}" width="150" height="49">
+  <p class="k">${esc(m.kicker || 'Strona w budowie')}</p>
+  <h1>${esc(m.title || 'Wracamy za kilka dni')}</h1>
+  ${m.text ? `<p>${esc(m.text)}</p>` : ''}
+  <nav>
+    ${site.gallery && m.showGallery !== false ? `<a class="main" href="${esc(site.gallery)}" rel="noopener">Strefa klienta – Twoje zdjęcia</a>` : ''}
+    ${links.join('\n    ')}
+  </nav>
+  <footer>© ${esc(site.name)} · <a href="${url(`polityka-prywatnosci/`)}">Polityka prywatności</a></footer>
+</main>
+</body>
+</html>`;
+}
+
 function layout(ctx, { title, description, body, image, overlay = false, jsonld = [], hidden = false }) {
   if (hidden) ctx = { ...ctx, noindex: true };
   const { site } = ctx.data;
+  if (ctx.showWidget === 'maintenance' || (maintenanceOn(ctx.data) && !ctx.preview && !MAINT_OPEN.includes(ctx.path))) return maintenancePage(ctx);
+  if (ctx.preview && maintenanceOn(ctx.data)) body = `<div class="maint-note">Tryb „strona w budowie” jest WŁĄCZONY – odwiedzający widzą tylko komunikat. Wyłączysz go w Ustawieniach → Strona w budowie.</div>${body}`;
   const canonical = site.url + '/' + ctx.path;
   const share = site.url + abs(image?.src || site.shareImage);
   return `<!doctype html>

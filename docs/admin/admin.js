@@ -588,7 +588,16 @@ function panels() {
   }
   const gone = WIDGET_PANELS.filter(([key]) => data.widgets[key]?.removed);
   if (gone.length) list.push({ id: 'widgets-removed', group: 'Widżety do dodania', label: `↺ Usunięte (${gone.length})`, title: 'Usunięte widżety', custom: renderRemovedWidgets });
+  if (!data.site.maintenance) data.site.maintenance = { enabled: false, kicker: 'Strona w budowie', title: 'Wracamy za kilka dni', text: 'Pracuję nad nową odsłoną strony. W tym czasie najszybciej złapiesz mnie mailowo – a jeśli masz u mnie galerię, znajdziesz ją w strefie klienta.', showGallery: true };
+  const maint = !!data.site.maintenance.enabled;
   list.push({ id: 'site', group: 'Ustawienia', label: 'Dane firmy i SEO', base: 'site', page: '', fields: SITE_FIELDS });
+  list.push({ id: 'maintenance', group: 'Ustawienia', label: (maint ? '🔴 ' : '') + 'Strona w budowie', title: 'Strona w budowie', base: 'site.maintenance', page: '', previewAs: 'maintenance', fields: [
+    { key: 'enabled', label: 'Zablokuj stronę – pokazuj tylko komunikat „strona w budowie”', type: 'checkbox', rerender: true },
+    { type: 'note', text: 'Po zaznaczeniu i kliknięciu „Opublikuj” każda podstrona raf-studio.pl pokazuje tylko ten komunikat (podgląd obok). Dostępna zostaje polityka prywatności. Edytor działa normalnie – możesz dalej poprawiać stronę, a odwiedzający zobaczą ją dopiero po odznaczeniu i ponownej publikacji. Zmiana na stronie pojawia się po ok. 1–2 minutach.' },
+    T('kicker', 'Mały napis nad tytułem'), T('title', 'Tytuł'), TA('text', 'Tekst', { rows: 3 }),
+    { key: 'showGallery', label: 'Pokaż przycisk „Strefa klienta” (link z „Dane firmy i SEO”)', type: 'checkbox' },
+    { type: 'note', text: 'Pod spodem automatycznie pojawią się e-mail, telefon i linki do social mediów z „Dane firmy i SEO” (te, które są wpisane).' },
+  ] });
   return list;
 }
 
@@ -764,7 +773,8 @@ const PREVIEW_TOP = 76;
 function renderPreview({ resetScroll = false, focus = false } = {}) {
   clearTimeout(previewTimer);
   // Otwarty panel widżetu = widżet widoczny w podglądzie, nawet gdy jest wyłączony.
-  const showWidget = panels().find((x) => x.id === currentPanel)?.widget || '';
+  const cur = panels().find((x) => x.id === currentPanel);
+  const showWidget = cur?.widget || cur?.previewAs || '';
   const all = routes(data, { preview: true, base: SITE_BASE, showWidget });
   const route = all.find((r) => r.path === previewPath) || all[0];
   previewPath = route.path;
