@@ -26,5 +26,12 @@
   "seoTitle": "RAF Studio – Fotografia i Film | Bielsko-Biała",
   "seoDescription": "RAF Studio – fotografia i film w Bielsku-Białej i okolicach. Fotografia ślubna, sesje, wnętrza, ujęcia z drona i filmy dla ludzi oraz marek.",
   "shareImage": "media/hero-taniec.webp",
-  "copyright": "© RAF.studio. Fotografia, film i historie blisko ludzi."
+  "copyright": "© RAF.studio. Fotografia, film i historie blisko ludzi.",
+  "maintenance": {
+    "enabled": true,
+    "kicker": "Strona w budowie",
+    "title": "Wracam niebawem.",
+    "text": "Pracuję nad nową odsłoną strony. W tym czasie najszybciej złapiesz mnie mailowo – a jeśli masz u mnie galerię, znajdziesz ją w strefie klienta.",
+    "showGallery": true
+  }
 }

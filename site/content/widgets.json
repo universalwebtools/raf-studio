@@ -360,5 +360,996 @@
     "lat": 49.79,
     "lon": 18.93,
     "zoom": 10
+  },
+  "marquee": {
+    "enabled": false,
+    "position": "afterAbout",
+    "dark": false,
+    "items": [
+      "Fotografia",
+      "Film",
+      "Dron",
+      "Śluby",
+      "Eventy",
+      "Reklama"
+    ]
+  },
+  "spotlight": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "kicker": "Ostatnia realizacja",
+    "title": "Tu wpisz nazwę realizacji",
+    "text": "Dwa–trzy zdania o tym, co to była za realizacja, dla kogo i co było w niej najważniejsze.",
+    "image": {
+      "src": "media/portfolio/slub-129.webp",
+      "small": "media/portfolio/slub-129-800.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Para młoda podczas sesji ślubnej"
+    },
+    "cta": "Zobacz portfolio",
+    "link": "portfolio/"
+  },
+  "quote": {
+    "enabled": false,
+    "position": "afterFilm",
+    "text": "Obraz, który zostaje.",
+    "author": "RAF.studio",
+    "image": {
+      "src": "media/portfolio/zareczyny-51.webp",
+      "small": "media/portfolio/zareczyny-51-800.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Para w złotym świetle"
+    }
+  },
+  "pricing": {
+    "enabled": false,
+    "position": "afterOffer",
+    "title": "Pakiety",
+    "lead": "Każdą realizację wyceniam indywidualnie – to punkty wyjścia.",
+    "badge": "Najczęściej wybierany",
+    "cta": "Zapytaj o termin",
+    "note": "Ceny orientacyjne. Dokładną wycenę przygotuję po krótkiej rozmowie.",
+    "items": [
+      {
+        "name": "Sesja",
+        "price": "od … zł",
+        "text": "Tu wpisz, dla kogo jest ten pakiet.",
+        "features": [
+          "Tu wpisz, co zawiera",
+          "Kolejny punkt",
+          "Kolejny punkt"
+        ],
+        "featured": false
+      },
+      {
+        "name": "Reportaż",
+        "price": "od … zł",
+        "text": "Tu wpisz, dla kogo jest ten pakiet.",
+        "features": [
+          "Tu wpisz, co zawiera",
+          "Kolejny punkt",
+          "Kolejny punkt"
+        ],
+        "featured": true
+      },
+      {
+        "name": "Foto + film",
+        "price": "od … zł",
+        "text": "Tu wpisz, dla kogo jest ten pakiet.",
+        "features": [
+          "Tu wpisz, co zawiera",
+          "Kolejny punkt",
+          "Kolejny punkt"
+        ],
+        "featured": false
+      }
+    ]
+  },
+  "faq": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Częste pytania",
+    "lead": "",
+    "items": [
+      {
+        "q": "Jak zarezerwować termin?",
+        "a": "Tu wpisz odpowiedź – np. jak wygląda rezerwacja i czy potrzebna jest umowa lub zadatek."
+      },
+      {
+        "q": "Kiedy dostanę zdjęcia lub film?",
+        "a": "Tu wpisz odpowiedź – np. ile trwa obróbka i w jakiej formie oddajesz materiał."
+      },
+      {
+        "q": "Czy dojeżdżasz poza Bielsko-Białą?",
+        "a": "Tu wpisz odpowiedź – np. gdzie pracujesz i jak rozliczasz dojazd."
+      },
+      {
+        "q": "Czy mogę zamówić zdjęcia i film razem?",
+        "a": "Tu wpisz odpowiedź."
+      }
+    ]
+  },
+  "insta": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Na bieżąco na Instagramie",
+    "lead": "",
+    "cta": "Zobacz na Instagramie",
+    "link": "",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-00.webp",
+          "small": "media/portfolio/slub-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda i samochód ślubny"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja zaręczynowa"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-02.webp",
+          "small": "media/portfolio/panienski-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-00.webp",
+          "small": "media/portfolio/audi-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja samochodu"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-07.webp",
+          "small": "media/portfolio/fitness-07-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/produkt-31.webp",
+          "small": "media/portfolio/produkt-31-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zdjęcie produktowe"
+        }
+      }
+    ]
+  },
+  "progress": {
+    "enabled": false
+  },
+  "notice": {
+    "enabled": false,
+    "text": "Tu wpisz krótkie ogłoszenie, np. o wolnych terminach.",
+    "cta": "Zapytaj o termin",
+    "link": "kontakt/"
+  },
+  "floatCta": {
+    "enabled": false,
+    "label": "Napisz do mnie",
+    "target": "contact"
+  },
+  "contactSheet": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Stykówka",
+    "lead": "Kilka klatek z ostatnich realizacji. Przesuń pasek w bok, kliknij klatkę, żeby ją powiększyć.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-00.webp",
+          "small": "media/portfolio/slub-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda i samochód ślubny"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-21.webp",
+          "small": "media/portfolio/slub-21-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-36.webp",
+          "small": "media/portfolio/slub-36-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-51.webp",
+          "small": "media/portfolio/zareczyny-51-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para w złotym świetle"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-06.webp",
+          "small": "media/portfolio/panienski-06-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-08.webp",
+          "small": "media/portfolio/audi-08-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja samochodu"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-14.webp",
+          "small": "media/portfolio/fitness-14-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/groomer-07.webp",
+          "small": "media/portfolio/groomer-07-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Salon groomerski"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/osp-01.webp",
+          "small": "media/portfolio/osp-01-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Straż pożarna"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-105.webp",
+          "small": "media/portfolio/slub-105-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      }
+    ]
+  },
+  "darkroom": {
+    "enabled": false,
+    "position": "afterAbout",
+    "title": "Prosto z ciemni",
+    "lead": "Każde zdjęcie potrzebuje chwili, żeby się pojawić.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-78.webp",
+          "small": "media/portfolio/slub-78-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        },
+        "caption": ""
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja zaręczynowa"
+        },
+        "caption": ""
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-11.webp",
+          "small": "media/portfolio/panienski-11-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        },
+        "caption": ""
+      }
+    ]
+  },
+  "torch": {
+    "enabled": false,
+    "position": "afterFilm",
+    "title": "Poszukaj kadru",
+    "lead": "Przesuń kursor po zdjęciu.",
+    "image": {
+      "src": "media/portfolio/slub-153.webp",
+      "small": "media/portfolio/slub-153-800.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Zdjęcie ślubne"
+    }
+  },
+  "stack": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Odbitki na stole",
+    "lead": "Kliknij stos, żeby zobaczyć następne zdjęcie.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-138.webp",
+          "small": "media/portfolio/slub-138-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        },
+        "caption": "Ślub"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-51.webp",
+          "small": "media/portfolio/zareczyny-51-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        },
+        "caption": "Zaręczyny"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-15.webp",
+          "small": "media/portfolio/panienski-15-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        },
+        "caption": "Wieczór panieński"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-16.webp",
+          "small": "media/portfolio/audi-16-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Motoryzacja"
+        },
+        "caption": "Motoryzacja"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-28.webp",
+          "small": "media/portfolio/fitness-28-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja"
+        },
+        "caption": "Sesja"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/produkt-36.webp",
+          "small": "media/portfolio/produkt-36-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Produkt"
+        },
+        "caption": "Produkt"
+      }
+    ]
+  },
+  "mosaic": {
+    "enabled": false,
+    "position": "afterOffer",
+    "title": "Kadr składa się z detali",
+    "lead": "",
+    "image": {
+      "src": "media/portfolio/slub-87.webp",
+      "small": "media/portfolio/slub-87-800.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Zdjęcie ślubne"
+    }
+  },
+  "timeline": {
+    "enabled": false,
+    "position": "afterFilm",
+    "title": "Film scena po scenie",
+    "lead": "Kliknij scenę, żeby do niej przeskoczyć.",
+    "film": "media/filmy/lato-jasienica-podsumowanie.mp4",
+    "scenes": [
+      {
+        "time": "0:00",
+        "label": "Otwarcie"
+      },
+      {
+        "time": "0:20",
+        "label": "Scena 2"
+      },
+      {
+        "time": "0:42",
+        "label": "Scena 3"
+      },
+      {
+        "time": "1:05",
+        "label": "Finał"
+      }
+    ]
+  },
+  "clapper": {
+    "enabled": false
+  },
+  "reelWall": {
+    "enabled": false,
+    "position": "afterFilm",
+    "title": "Rolki",
+    "lead": "Krótkie, pionowe formy do mediów społecznościowych.",
+    "count": 5
+  },
+  "videoBand": {
+    "enabled": false,
+    "position": "afterOffer",
+    "film": "",
+    "title": "Historie w ruchu",
+    "text": "Tu wpisz jedno–dwa zdania o swoich filmach.",
+    "cta": "Zobacz filmy",
+    "link": "filmy/"
+  },
+  "altimeter": {
+    "enabled": false,
+    "position": "afterOffer",
+    "title": "Perspektywa z góry",
+    "lead": "Przewijaj – dron się wznosi.",
+    "image": {
+      "src": "media/uslugi-dron.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Ujęcie z drona"
+    },
+    "max": 120
+  },
+  "flightPath": {
+    "enabled": false,
+    "position": "afterFilm",
+    "title": "Trasa jednego lotu",
+    "lead": "Tak wygląda plan przelotu – każdy punkt to osobne ujęcie.",
+    "image": {
+      "src": "media/uslugi-dron.webp",
+      "x": 50,
+      "y": 50,
+      "alt": "Ujęcie z drona"
+    },
+    "points": [
+      {
+        "x": 14,
+        "y": 72,
+        "label": "Start i wznoszenie"
+      },
+      {
+        "x": 34,
+        "y": 40,
+        "label": "Przelot nad terenem"
+      },
+      {
+        "x": 58,
+        "y": 56,
+        "label": "Okrążenie głównego obiektu"
+      },
+      {
+        "x": 82,
+        "y": 30,
+        "label": "Odjazd i szeroki plan"
+      }
+    ]
+  },
+  "cursor": {
+    "enabled": false
+  },
+  "shutter": {
+    "enabled": false
+  },
+  "toTop": {
+    "enabled": false
+  },
+  "tilt": {
+    "enabled": false
+  },
+  "wave": {
+    "enabled": false
+  },
+  "collage": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Odbitki z ostatnich miesięcy",
+    "lead": "",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-00.webp",
+          "small": "media/portfolio/slub-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para młoda i samochód ślubny"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-51.webp",
+          "small": "media/portfolio/zareczyny-51-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Para w złotym świetle"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-02.webp",
+          "small": "media/portfolio/panienski-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-08.webp",
+          "small": "media/portfolio/audi-08-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja samochodu"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-90.webp",
+          "small": "media/portfolio/slub-90-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-14.webp",
+          "small": "media/portfolio/fitness-14-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-60.webp",
+          "small": "media/portfolio/zareczyny-60-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        }
+      }
+    ]
+  },
+  "carousel3d": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Galeria dookoła",
+    "lead": "Przeciągnij, żeby obrócić.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-21.webp",
+          "small": "media/portfolio/slub-21-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-02.webp",
+          "small": "media/portfolio/zareczyny-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-09.webp",
+          "small": "media/portfolio/panienski-09-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-19.webp",
+          "small": "media/portfolio/fitness-19-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-105.webp",
+          "small": "media/portfolio/slub-105-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-16.webp",
+          "small": "media/portfolio/zareczyny-16-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/groomer-24.webp",
+          "small": "media/portfolio/groomer-24-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Salon groomerski"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-16.webp",
+          "small": "media/portfolio/audi-16-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Motoryzacja"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-138.webp",
+          "small": "media/portfolio/slub-138-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        }
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-18.webp",
+          "small": "media/portfolio/panienski-18-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        }
+      }
+    ]
+  },
+  "swipe": {
+    "enabled": false,
+    "position": "afterOffer",
+    "title": "Przesuń kartę",
+    "lead": "Przeciągnij zdjęcie w bok – pod spodem czeka następne.",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-153.webp",
+          "small": "media/portfolio/slub-153-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        },
+        "caption": "Ślub"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-29.webp",
+          "small": "media/portfolio/zareczyny-29-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        },
+        "caption": "Zaręczyny"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-21.webp",
+          "small": "media/portfolio/panienski-21-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        },
+        "caption": "Wieczór panieński"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-56.webp",
+          "small": "media/portfolio/fitness-56-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        },
+        "caption": "Sesja fitness"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/produkt-41.webp",
+          "small": "media/portfolio/produkt-41-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Produkt"
+        },
+        "caption": "Produkt"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/osp-02.webp",
+          "small": "media/portfolio/osp-02-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Straż pożarna"
+        },
+        "caption": "Straż pożarna"
+      }
+    ]
+  },
+  "fullGallery": {
+    "enabled": false,
+    "position": "afterPortfolio",
+    "title": "Wybrane kadry",
+    "lead": "",
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/slub-00.webp",
+          "small": "media/portfolio/slub-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub z Audi RS"
+        },
+        "caption": "Ślub z Audi RS"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-51.webp",
+          "small": "media/portfolio/zareczyny-51-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Złota godzina"
+        },
+        "caption": "Złota godzina"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-129.webp",
+          "small": "media/portfolio/slub-129-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ślub"
+        },
+        "caption": "Ślub"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-38.webp",
+          "small": "media/portfolio/zareczyny-38-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zaręczyny"
+        },
+        "caption": "Zaręczyny"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/panienski-14.webp",
+          "small": "media/portfolio/panienski-14-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Wieczór panieński"
+        },
+        "caption": "Wieczór panieński"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/audi-00.webp",
+          "small": "media/portfolio/audi-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Motoryzacja"
+        },
+        "caption": "Motoryzacja"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zaklad-25.webp",
+          "small": "media/portfolio/zaklad-25-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Zakład pracy"
+        },
+        "caption": "Zakład pracy"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/osp-00.webp",
+          "small": "media/portfolio/osp-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Straż pożarna"
+        },
+        "caption": "Straż pożarna"
+      }
+    ]
+  },
+  "stories": {
+    "enabled": false,
+    "position": "afterAbout",
+    "title": "Za kulisami",
+    "lead": "Krótka relacja z planu – stuknij w prawo, żeby przejść dalej.",
+    "name": "Za kulisami",
+    "seconds": 5,
+    "items": [
+      {
+        "image": {
+          "src": "media/portfolio/panienski-00.webp",
+          "small": "media/portfolio/panienski-00-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Przygotowania"
+        },
+        "caption": "Przygotowania"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/slub-36.webp",
+          "small": "media/portfolio/slub-36-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Ceremonia"
+        },
+        "caption": "Ceremonia"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/zareczyny-64.webp",
+          "small": "media/portfolio/zareczyny-64-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Plener"
+        },
+        "caption": "Plener"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/groomer-36.webp",
+          "small": "media/portfolio/groomer-36-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja dla firmy"
+        },
+        "caption": "Sesja dla firmy"
+      },
+      {
+        "image": {
+          "src": "media/portfolio/fitness-01.webp",
+          "small": "media/portfolio/fitness-01-800.webp",
+          "x": 50,
+          "y": 50,
+          "alt": "Sesja fitness"
+        },
+        "caption": "Sesja fitness"
+      }
+    ]
+  },
+  "showreel": {
+    "enabled": false,
+    "position": "afterHero",
+    "film": "media/filmy/lato-jasienica-podsumowanie.mp4",
+    "kicker": "Showreel",
+    "title": "Minuta, która pokazuje więcej niż sto słów",
+    "cta": "Obejrzyj showreel",
+    "image": {
+      "src": "",
+      "x": 50,
+      "y": 50,
+      "alt": ""
+    }
+  },
+  "droneBtn": {
+    "enabled": false,
+    "position": "beforeContact",
+    "title": "Potrzebujesz ujęć z góry?",
+    "lead": "Zdjęcia i filmy z drona – nieruchomości, wydarzenia, reklama.",
+    "cta": "Zapytaj o drona",
+    "link": "kontakt/"
+  },
+  "fullMenu": {
+    "enabled": false,
+    "images": {
+      "uslugi": {
+        "src": "media/uslugi-eventy.webp",
+        "x": 50,
+        "y": 50,
+        "alt": ""
+      },
+      "portfolio": {
+        "src": "media/portfolio/slub-00.webp",
+        "small": "media/portfolio/slub-00-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": ""
+      },
+      "filmy": {
+        "src": "media/uslugi-film.webp",
+        "x": 50,
+        "y": 50,
+        "alt": ""
+      },
+      "o-mnie": {
+        "src": "media/portret.webp",
+        "x": 50,
+        "y": 30,
+        "alt": ""
+      },
+      "blog": {
+        "src": "media/portfolio/zareczyny-51.webp",
+        "small": "media/portfolio/zareczyny-51-800.webp",
+        "x": 50,
+        "y": 50,
+        "alt": ""
+      },
+      "kontakt": {
+        "src": "media/uslugi-dron.webp",
+        "x": 50,
+        "y": 50,
+        "alt": ""
+      }
+    }
+  },
+  "breadcrumbs": {
+    "enabled": false
+  },
+  "search": {
+    "enabled": false,
+    "placeholder": "Szukaj: ślub, dron, film…"
+  },
+  "stickyBar": {
+    "enabled": false,
+    "label": "Zapytaj o termin",
+    "second": "phone",
+    "secondLabel": ""
+  },
+  "langEn": {
+    "enabled": false,
+    "title": "English (automatic translation)"
   }
 }
